@@ -915,8 +915,6 @@ export default function VirtualInstances() {
         </DialogContent>
       </Dialog>
 
-        </DialogContent>
-      </Dialog>
 
       {/* 挂载镜像实例弹窗 */}
       <Dialog open={!!showMountDrive} onOpenChange={() => setShowMountDrive(null)}>
