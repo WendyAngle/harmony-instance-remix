@@ -64,6 +64,9 @@ export default function CloudDrive() {
   const [formName, setFormName] = useState("");
   const [formCapacity, setFormCapacity] = useState("");
   const [formType, setFormType] = useState<"SSD" | "HDD">("SSD");
+  const [formLinkedTemplate, setFormLinkedTemplate] = useState("");
+  const [formCacheDir, setFormCacheDir] = useState("");
+  const [formAccessUrl, setFormAccessUrl] = useState("");
   const [formRemark, setFormRemark] = useState("");
   const [mountTarget, setMountTarget] = useState("");
 
