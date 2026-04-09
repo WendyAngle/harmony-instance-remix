@@ -197,7 +197,7 @@ export interface SocialAccount {
   username: string;
   weight: number;
   status: AccountStatus;
-  virtualDeviceId: string | null; // 虚拟设备ID
+  cloudDriveId: string | null; // 镜像实例ID
   physicalDeviceId: string | null; // 物理设备ID
   proxyIp: string | null;
   timezone: string;
@@ -207,18 +207,18 @@ export interface SocialAccount {
 }
 
 export const socialAccounts: SocialAccount[] = [
-  { id: "ACC-001", type: "cloud", platform: "tiktok", nickname: "TechVibes", username: "@techvibes_01", weight: 85, status: "alive", virtualDeviceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479", physicalDeviceId: "DEV-001", proxyIp: "45.32.100.1", timezone: "America/New_York", language: "en-US", location: "40.7128,-74.0060", lastCheck: "2026-04-02 10:00" },
-  { id: "ACC-002", type: "cloud", platform: "tiktok", nickname: "DanceQueen", username: "@dancequeen_x", weight: 72, status: "alive", virtualDeviceId: "6ba7b810-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-001", proxyIp: "45.32.100.2", timezone: "America/Los_Angeles", language: "en-US", location: "34.0522,-118.2437", lastCheck: "2026-04-02 10:00" },
-  { id: "ACC-003", type: "cloud", platform: "facebook", nickname: "GlobalNews", username: "globalnews.page", weight: 90, status: "alive", virtualDeviceId: "f47ac10b-58cc-4372-a567-0e02b2c3d479", physicalDeviceId: "DEV-001", proxyIp: "45.32.100.1", timezone: "Europe/London", language: "en-GB", location: "51.5074,-0.1278", lastCheck: "2026-04-02 09:30" },
-  { id: "ACC-004", type: "cloud", platform: "twitter", nickname: "CryptoKing", username: "@cryptoking_eth", weight: 65, status: "limited", virtualDeviceId: "6ba7b813-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-002", proxyIp: "103.21.50.9", timezone: "Asia/Singapore", language: "en-SG", location: "1.3521,103.8198", lastCheck: "2026-04-02 08:00" },
-  { id: "ACC-005", type: "cloud", platform: "instagram", nickname: "FoodieLife", username: "@foodielife_sg", weight: 78, status: "alive", virtualDeviceId: "6ba7b812-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-002", proxyIp: "103.21.50.8", timezone: "Asia/Tokyo", language: "ja-JP", location: "35.6762,139.6503", lastCheck: "2026-04-02 09:00" },
-  { id: "ACC-006", type: "cloud", platform: "tiktok", nickname: "GamerPro", username: "@gamerpro_gg", weight: 55, status: "banned", virtualDeviceId: "6ba7b814-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-002", proxyIp: "103.21.50.10", timezone: "Europe/Berlin", language: "de-DE", location: "52.5200,13.4050", lastCheck: "2026-04-01 20:00" },
-  { id: "ACC-007", type: "cloud", platform: "facebook", nickname: "ShopDaily", username: "shopdaily.store", weight: 88, status: "alive", virtualDeviceId: "6ba7b816-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-003", proxyIp: "185.92.30.5", timezone: "Asia/Bangkok", language: "th-TH", location: "13.7563,100.5018", lastCheck: "2026-04-02 07:30" },
-  { id: "ACC-008", type: "cloud", platform: "twitter", nickname: "AIResearch", username: "@airesearch_lab", weight: 95, status: "alive", virtualDeviceId: "6ba7b818-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-005", proxyIp: "185.92.30.6", timezone: "America/Chicago", language: "en-US", location: "41.8781,-87.6298", lastCheck: "2026-04-02 10:15" },
-  { id: "ACC-009", type: "windows", platform: "facebook", nickname: "Michael", username: "@michael_fb", weight: 80, status: "alive", virtualDeviceId: "6ba7b819-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-007", proxyIp: "45.32.100.15", timezone: "America/New_York", language: "en-US", location: "40.7128,-74.0060", lastCheck: "2026-04-02 10:20" },
-  { id: "ACC-010", type: "windows", platform: "tiktok", nickname: "Michael_TT", username: "@michael_tt", weight: 70, status: "alive", virtualDeviceId: "6ba7b819-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-007", proxyIp: "45.32.100.15", timezone: "America/New_York", language: "en-US", location: "40.7128,-74.0060", lastCheck: "2026-04-02 10:20" },
-  { id: "ACC-011", type: "windows", platform: "instagram", nickname: "StyleDaily", username: "@style_daily", weight: 75, status: "alive", virtualDeviceId: "6ba7b81a-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-007", proxyIp: "91.108.56.25", timezone: "Europe/Paris", language: "fr-FR", location: "48.8566,2.3522", lastCheck: "2026-04-02 09:45" },
-  { id: "ACC-012", type: "windows", platform: "twitter", nickname: "NewsBot", username: "@news_bot", weight: 60, status: "limited", virtualDeviceId: "6ba7b81c-9dad-11d1-80b4-00c04fd430c8", physicalDeviceId: "DEV-008", proxyIp: "103.21.50.30", timezone: "Asia/Tokyo", language: "ja-JP", location: "35.6762,139.6503", lastCheck: "2026-04-02 08:30" },
+  { id: "ACC-001", type: "cloud", platform: "tiktok", nickname: "TechVibes", username: "@techvibes_01", weight: 85, status: "alive", cloudDriveId: "cd-001", physicalDeviceId: "DEV-001", proxyIp: "45.32.100.1", timezone: "America/New_York", language: "en-US", location: "40.7128,-74.0060", lastCheck: "2026-04-02 10:00" },
+  { id: "ACC-002", type: "cloud", platform: "tiktok", nickname: "DanceQueen", username: "@dancequeen_x", weight: 72, status: "alive", cloudDriveId: "cd-002", physicalDeviceId: "DEV-001", proxyIp: "45.32.100.2", timezone: "America/Los_Angeles", language: "en-US", location: "34.0522,-118.2437", lastCheck: "2026-04-02 10:00" },
+  { id: "ACC-003", type: "cloud", platform: "facebook", nickname: "GlobalNews", username: "globalnews.page", weight: 90, status: "alive", cloudDriveId: "cd-001", physicalDeviceId: "DEV-001", proxyIp: "45.32.100.1", timezone: "Europe/London", language: "en-GB", location: "51.5074,-0.1278", lastCheck: "2026-04-02 09:30" },
+  { id: "ACC-004", type: "cloud", platform: "twitter", nickname: "CryptoKing", username: "@cryptoking_eth", weight: 65, status: "limited", cloudDriveId: "cd-003", physicalDeviceId: "DEV-002", proxyIp: "103.21.50.9", timezone: "Asia/Singapore", language: "en-SG", location: "1.3521,103.8198", lastCheck: "2026-04-02 08:00" },
+  { id: "ACC-005", type: "cloud", platform: "instagram", nickname: "FoodieLife", username: "@foodielife_sg", weight: 78, status: "alive", cloudDriveId: "cd-004", physicalDeviceId: "DEV-002", proxyIp: "103.21.50.8", timezone: "Asia/Tokyo", language: "ja-JP", location: "35.6762,139.6503", lastCheck: "2026-04-02 09:00" },
+  { id: "ACC-006", type: "cloud", platform: "tiktok", nickname: "GamerPro", username: "@gamerpro_gg", weight: 55, status: "banned", cloudDriveId: "cd-005", physicalDeviceId: "DEV-002", proxyIp: "103.21.50.10", timezone: "Europe/Berlin", language: "de-DE", location: "52.5200,13.4050", lastCheck: "2026-04-01 20:00" },
+  { id: "ACC-007", type: "cloud", platform: "facebook", nickname: "ShopDaily", username: "shopdaily.store", weight: 88, status: "alive", cloudDriveId: "cd-001", physicalDeviceId: "DEV-003", proxyIp: "185.92.30.5", timezone: "Asia/Bangkok", language: "th-TH", location: "13.7563,100.5018", lastCheck: "2026-04-02 07:30" },
+  { id: "ACC-008", type: "cloud", platform: "twitter", nickname: "AIResearch", username: "@airesearch_lab", weight: 95, status: "alive", cloudDriveId: "cd-002", physicalDeviceId: "DEV-005", proxyIp: "185.92.30.6", timezone: "America/Chicago", language: "en-US", location: "41.8781,-87.6298", lastCheck: "2026-04-02 10:15" },
+  { id: "ACC-009", type: "windows", platform: "facebook", nickname: "Michael", username: "@michael_fb", weight: 80, status: "alive", cloudDriveId: "cd-004", physicalDeviceId: "DEV-007", proxyIp: "45.32.100.15", timezone: "America/New_York", language: "en-US", location: "40.7128,-74.0060", lastCheck: "2026-04-02 10:20" },
+  { id: "ACC-010", type: "windows", platform: "tiktok", nickname: "Michael_TT", username: "@michael_tt", weight: 70, status: "alive", cloudDriveId: "cd-004", physicalDeviceId: "DEV-007", proxyIp: "45.32.100.15", timezone: "America/New_York", language: "en-US", location: "40.7128,-74.0060", lastCheck: "2026-04-02 10:20" },
+  { id: "ACC-011", type: "windows", platform: "instagram", nickname: "StyleDaily", username: "@style_daily", weight: 75, status: "alive", cloudDriveId: "cd-006", physicalDeviceId: "DEV-007", proxyIp: "91.108.56.25", timezone: "Europe/Paris", language: "fr-FR", location: "48.8566,2.3522", lastCheck: "2026-04-02 09:45" },
+  { id: "ACC-012", type: "windows", platform: "twitter", nickname: "NewsBot", username: "@news_bot", weight: 60, status: "limited", cloudDriveId: "cd-005", physicalDeviceId: "DEV-008", proxyIp: "103.21.50.30", timezone: "Asia/Tokyo", language: "ja-JP", location: "35.6762,139.6503", lastCheck: "2026-04-02 08:30" },
 ];
 
 // ============ 代理IP ============
@@ -233,7 +233,7 @@ export interface ProxyItem {
   region: string;
   country: string;
   status: ProxyStatus;
-  virtualDeviceIds: string[]; // 绑定的虚拟设备
+  cloudDriveIds: string[]; // 绑定的镜像实例
   boundAccountIds: string[]; // 绑定的账号
   latency: number;
   anonymity: "high" | "medium" | "low";
@@ -242,18 +242,18 @@ export interface ProxyItem {
 }
 
 export const proxyItems: ProxyItem[] = [
-  { id: "PX-001", ip: "45.32.100.1", port: 1080, protocol: "SOCKS5", region: "US-East", country: "美国", status: "available", virtualDeviceIds: ["f47ac10b-58cc-4372-a567-0e02b2c3d479"], boundAccountIds: ["ACC-001", "ACC-003"], latency: 85, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 1250 },
-  { id: "PX-002", ip: "45.32.100.2", port: 1080, protocol: "SOCKS5", region: "US-West", country: "美国", status: "available", virtualDeviceIds: ["6ba7b810-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-002"], latency: 120, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 890 },
-  { id: "PX-003", ip: "103.21.50.8", port: 8080, protocol: "HTTP", region: "EU-West", country: "英国", status: "available", virtualDeviceIds: ["6ba7b812-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-005"], latency: 45, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 2100 },
-  { id: "PX-004", ip: "103.21.50.9", port: 8080, protocol: "HTTP", region: "Asia-East", country: "日本", status: "available", virtualDeviceIds: ["6ba7b813-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-004"], latency: 65, anonymity: "medium", lastCheck: "2026-04-02 10:30", trafficUsed: 560 },
-  { id: "PX-005", ip: "103.21.50.10", port: 443, protocol: "HTTPS", region: "Asia-SE", country: "新加坡", status: "available", virtualDeviceIds: ["6ba7b814-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-006"], latency: 35, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 1780 },
-  { id: "PX-006", ip: "103.21.50.11", port: 1080, protocol: "SOCKS5", region: "Asia-SE", country: "新加坡", status: "available", virtualDeviceIds: ["6ba7b815-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: [], latency: 40, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 430 },
-  { id: "PX-007", ip: "185.92.30.5", port: 8080, protocol: "HTTP", region: "EU-Central", country: "德国", status: "unavailable", virtualDeviceIds: ["6ba7b816-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-007"], latency: 999, anonymity: "low", lastCheck: "2026-04-02 09:00", trafficUsed: 3200 },
-  { id: "PX-008", ip: "185.92.30.6", port: 1080, protocol: "SOCKS5", region: "Asia-SE", country: "泰国", status: "available", virtualDeviceIds: ["6ba7b818-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-008"], latency: 75, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 980 },
-  { id: "PX-009", ip: "45.32.100.15", port: 443, protocol: "HTTPS", region: "US-Central", country: "美国", status: "available", virtualDeviceIds: ["6ba7b819-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-009", "ACC-010"], latency: 90, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 1560 },
-  { id: "PX-010", ip: "91.108.56.20", port: 8080, protocol: "HTTP", region: "EU-East", country: "俄罗斯", status: "blacklisted", virtualDeviceIds: [], boundAccountIds: [], latency: 200, anonymity: "low", lastCheck: "2026-04-01 15:00", trafficUsed: 5800 },
-  { id: "PX-011", ip: "91.108.56.25", port: 1080, protocol: "SOCKS5", region: "EU-West", country: "法国", status: "available", virtualDeviceIds: ["6ba7b81a-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-011"], latency: 55, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 720 },
-  { id: "PX-012", ip: "103.21.50.30", port: 443, protocol: "HTTPS", region: "Asia-East", country: "日本", status: "available", virtualDeviceIds: ["6ba7b81c-9dad-11d1-80b4-00c04fd430c8"], boundAccountIds: ["ACC-012"], latency: 50, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 340 },
+  { id: "PX-001", ip: "45.32.100.1", port: 1080, protocol: "SOCKS5", region: "US-East", country: "美国", status: "available", cloudDriveIds: ["cd-001"], boundAccountIds: ["ACC-001", "ACC-003"], latency: 85, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 1250 },
+  { id: "PX-002", ip: "45.32.100.2", port: 1080, protocol: "SOCKS5", region: "US-West", country: "美国", status: "available", cloudDriveIds: ["cd-002"], boundAccountIds: ["ACC-002"], latency: 120, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 890 },
+  { id: "PX-003", ip: "103.21.50.8", port: 8080, protocol: "HTTP", region: "EU-West", country: "英国", status: "available", cloudDriveIds: ["cd-004"], boundAccountIds: ["ACC-005"], latency: 45, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 2100 },
+  { id: "PX-004", ip: "103.21.50.9", port: 8080, protocol: "HTTP", region: "Asia-East", country: "日本", status: "available", cloudDriveIds: ["cd-003"], boundAccountIds: ["ACC-004"], latency: 65, anonymity: "medium", lastCheck: "2026-04-02 10:30", trafficUsed: 560 },
+  { id: "PX-005", ip: "103.21.50.10", port: 443, protocol: "HTTPS", region: "Asia-SE", country: "新加坡", status: "available", cloudDriveIds: ["cd-005"], boundAccountIds: ["ACC-006"], latency: 35, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 1780 },
+  { id: "PX-006", ip: "103.21.50.11", port: 1080, protocol: "SOCKS5", region: "Asia-SE", country: "新加坡", status: "available", cloudDriveIds: [], boundAccountIds: [], latency: 40, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 430 },
+  { id: "PX-007", ip: "185.92.30.5", port: 8080, protocol: "HTTP", region: "EU-Central", country: "德国", status: "unavailable", cloudDriveIds: ["cd-001"], boundAccountIds: ["ACC-007"], latency: 999, anonymity: "low", lastCheck: "2026-04-02 09:00", trafficUsed: 3200 },
+  { id: "PX-008", ip: "185.92.30.6", port: 1080, protocol: "SOCKS5", region: "Asia-SE", country: "泰国", status: "available", cloudDriveIds: ["cd-002"], boundAccountIds: ["ACC-008"], latency: 75, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 980 },
+  { id: "PX-009", ip: "45.32.100.15", port: 443, protocol: "HTTPS", region: "US-Central", country: "美国", status: "available", cloudDriveIds: ["cd-004"], boundAccountIds: ["ACC-009", "ACC-010"], latency: 90, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 1560 },
+  { id: "PX-010", ip: "91.108.56.20", port: 8080, protocol: "HTTP", region: "EU-East", country: "俄罗斯", status: "blacklisted", cloudDriveIds: [], boundAccountIds: [], latency: 200, anonymity: "low", lastCheck: "2026-04-01 15:00", trafficUsed: 5800 },
+  { id: "PX-011", ip: "91.108.56.25", port: 1080, protocol: "SOCKS5", region: "EU-West", country: "法国", status: "available", cloudDriveIds: ["cd-006"], boundAccountIds: ["ACC-011"], latency: 55, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 720 },
+  { id: "PX-012", ip: "103.21.50.30", port: 443, protocol: "HTTPS", region: "Asia-East", country: "日本", status: "available", cloudDriveIds: ["cd-005"], boundAccountIds: ["ACC-012"], latency: 50, anonymity: "high", lastCheck: "2026-04-02 10:30", trafficUsed: 340 },
 ];
 
 // ============ 脚本 ============
