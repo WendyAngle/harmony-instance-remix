@@ -219,7 +219,7 @@ export default function CloudDrive() {
                     </div>
                   </TableCell>
                   <TableCell className="text-xs whitespace-nowrap">{getVmName(drive.linkedVmId) || <span className="text-muted-foreground">—</span>}</TableCell>
-                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.cacheDir || <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-xs font-mono whitespace-nowrap">{(() => { const vm = drive.linkedVmId ? virtualInstances.find(v => v.id === drive.linkedVmId) : null; return vm?.type === "cloud" ? <span className="text-muted-foreground">—</span> : (drive.cacheDir || <span className="text-muted-foreground">—</span>); })()}</TableCell>
                   <TableCell className="text-xs font-mono whitespace-nowrap">{drive.proxyIp || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="text-xs font-mono whitespace-nowrap">{drive.serverIp || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="whitespace-nowrap">
