@@ -335,7 +335,7 @@ export default function CloudDrive() {
               <Select value={formLinkedTemplate} onValueChange={setFormLinkedTemplate}>
                 <SelectTrigger><SelectValue placeholder="请选择镜像模版" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">不关联</SelectItem>
+                  <SelectItem value="__none__">不关联</SelectItem>
                   {romImages.filter(img => img.imageStatus === "normal").map(img => (
                     <SelectItem key={img.id} value={img.name}>{img.name}</SelectItem>
                   ))}
@@ -380,7 +380,7 @@ export default function CloudDrive() {
               <Select value={formLinkedTemplate} onValueChange={setFormLinkedTemplate}>
                 <SelectTrigger><SelectValue placeholder="请选择镜像模版" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">不关联</SelectItem>
+                  <SelectItem value="__none__">不关联</SelectItem>
                   {romImages.filter(img => img.imageStatus === "normal").map(img => (
                     <SelectItem key={img.id} value={img.name}>{img.name}</SelectItem>
                   ))}
