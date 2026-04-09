@@ -64,6 +64,9 @@ export default function CloudDrive() {
   const [formName, setFormName] = useState("");
   const [formCapacity, setFormCapacity] = useState("");
   const [formType, setFormType] = useState<"SSD" | "HDD">("SSD");
+  const [formLinkedTemplate, setFormLinkedTemplate] = useState("");
+  const [formCacheDir, setFormCacheDir] = useState("");
+  const [formAccessUrl, setFormAccessUrl] = useState("");
   const [formRemark, setFormRemark] = useState("");
   const [mountTarget, setMountTarget] = useState("");
 
@@ -80,7 +83,7 @@ export default function CloudDrive() {
   const totalPages = Math.max(1, Math.ceil(filteredDrives.length / pageSize));
   const pagedDrives = filteredDrives.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormRemark(""); };
+  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedTemplate(""); setFormCacheDir(""); setFormAccessUrl(""); setFormRemark(""); };
 
   const openCreate = () => { resetForm(); setShowCreate(true); };
 
@@ -93,7 +96,7 @@ export default function CloudDrive() {
     const newDrive: CloudDriveItem = {
       id: `cd-${String(drives.length + 1).padStart(3, "0")}`,
       name: formName, capacity: Number(formCapacity) || 50, used: 0,
-      status: "available", linkedTemplate: null, cacheDir: `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
+      status: "available", linkedTemplate: formLinkedTemplate || null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: formAccessUrl || `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
       createdAt: new Date().toISOString().slice(0, 10), remark: formRemark,
       boundAccounts: [],
     };
@@ -311,11 +314,10 @@ export default function CloudDrive() {
             <DialogDescription>配置新镜像实例的基本信息</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            <div className="space-y-2"><Label>镜像实例名称</Label><Input placeholder="输入镜像实例名称" value={formName} onChange={e => setFormName(e.target.value)} /></div>
+            <div className="space-y-2"><Label><span className="text-destructive">*</span> 镜像实例名称</Label><Input placeholder="输入镜像实例名称" value={formName} onChange={e => setFormName(e.target.value)} /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>容量 (GB)</Label><Input type="number" placeholder="100" value={formCapacity} onChange={e => setFormCapacity(e.target.value)} /></div>
               <div className="space-y-2">
-                <Label>磁盘类型</Label>
+                <Label><span className="text-destructive">*</span> 类型</Label>
                 <Select value={formType} onValueChange={v => setFormType(v as "SSD" | "HDD")}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -324,12 +326,16 @@ export default function CloudDrive() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2"><Label><span className="text-destructive">*</span> 容量 (GB)</Label><Input type="number" placeholder="100" value={formCapacity} onChange={e => setFormCapacity(e.target.value)} /></div>
             </div>
+            <div className="space-y-2"><Label>关联镜像模版</Label><Input placeholder="选填，如：ARM64-Android12-Base" value={formLinkedTemplate} onChange={e => setFormLinkedTemplate(e.target.value)} /></div>
+            <div className="space-y-2"><Label>缓存目录</Label><Input placeholder="/mnt/cache/cd-xxx" value={formCacheDir} onChange={e => setFormCacheDir(e.target.value)} /></div>
+            <div className="space-y-2"><Label>访问URL</Label><Input placeholder="https://img.example.com/cd-xxx" value={formAccessUrl} onChange={e => setFormAccessUrl(e.target.value)} /></div>
             <div className="space-y-2"><Label>备注</Label><Input placeholder="可选备注信息" value={formRemark} onChange={e => setFormRemark(e.target.value)} /></div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreate(false)}>取消</Button>
-            <Button onClick={handleCreate} disabled={!formName.trim()}>创建</Button>
+            <Button onClick={handleCreate} disabled={!formName.trim() || !formCapacity.trim()}>创建</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
