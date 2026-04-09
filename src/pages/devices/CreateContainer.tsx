@@ -21,7 +21,7 @@ interface EnvVariable {
 
 export default function CreateContainer() {
   const navigate = useNavigate();
-  const [createType, setCreateType] = useState<VirtualDeviceType>("cloud");
+  const createType = "cloud" as VirtualDeviceType;
   const [createImageVisibility, setCreateImageVisibility] = useState<"public" | "private">("public");
   const [createImageId, setCreateImageId] = useState("");
   const [autoRestart, setAutoRestart] = useState(false);
@@ -63,8 +63,8 @@ export default function CreateContainer() {
           返回
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">创建虚拟机</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">创建云机或 Windows 虚拟机实例</p>
+          <h1 className="text-2xl font-bold">创建云机</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">创建基于ARM服务器的云机实例</p>
         </div>
       </div>
 
@@ -77,18 +77,6 @@ export default function CreateContainer() {
               <Input placeholder="请输入虚拟机名称" />
             </div>
 
-            {/* 虚拟机类型 */}
-            <div className="space-y-2">
-              <Label>{req} 虚拟机类型</Label>
-              <Select value={createType} onValueChange={(v) => { setCreateType(v as VirtualDeviceType); setCreateImageId(""); }}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cloud">云机</SelectItem>
-                  <SelectItem value="windows">Windows</SelectItem>
-                  
-                </SelectContent>
-              </Select>
-            </div>
 
             {/* 所属主机 */}
             <div className="space-y-2">
@@ -103,9 +91,7 @@ export default function CreateContainer() {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
-                {createType === "cloud" ? "云机部署在ARM服务器上" : "Windows虚拟机部署在X86服务器上"}
-              </p>
+              <p className="text-xs text-muted-foreground">云机部署在ARM服务器上</p>
             </div>
 
             {/* 镜像模版 */}
