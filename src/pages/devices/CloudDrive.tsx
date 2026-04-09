@@ -375,7 +375,18 @@ export default function CloudDrive() {
               </div>
               <div className="space-y-2"><Label><span className="text-destructive">*</span> 容量 (GB)</Label><Input type="number" value={formCapacity} onChange={e => setFormCapacity(e.target.value)} /></div>
             </div>
-            <div className="space-y-2"><Label>关联镜像模版</Label><Input placeholder="如：ARM64-Android12-Base" value={formLinkedTemplate} onChange={e => setFormLinkedTemplate(e.target.value)} /></div>
+            <div className="space-y-2">
+              <Label>关联镜像模版</Label>
+              <Select value={formLinkedTemplate} onValueChange={setFormLinkedTemplate}>
+                <SelectTrigger><SelectValue placeholder="请选择镜像模版" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">不关联</SelectItem>
+                  {romImages.filter(img => img.imageStatus === "normal").map(img => (
+                    <SelectItem key={img.id} value={img.name}>{img.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2"><Label>缓存目录</Label><Input placeholder="/mnt/cache/cd-xxx" value={formCacheDir} onChange={e => setFormCacheDir(e.target.value)} /></div>
             <div className="space-y-2"><Label>访问URL</Label><Input placeholder="https://img.example.com/cd-xxx" value={formAccessUrl} onChange={e => setFormAccessUrl(e.target.value)} /></div>
             <div className="space-y-2"><Label>备注</Label><Input value={formRemark} onChange={e => setFormRemark(e.target.value)} /></div>
