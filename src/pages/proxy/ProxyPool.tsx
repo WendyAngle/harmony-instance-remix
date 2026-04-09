@@ -219,18 +219,18 @@ export default function ProxyPool() {
 
       {/* 新增代理弹窗 */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>新增代理</DialogTitle>
             <DialogDescription>手动录入代理服务器信息</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>IP地址</Label><Input placeholder="45.32.100.20" /></div>
-              <div className="space-y-2"><Label>端口</Label><Input placeholder="1080" /></div>
+              <div className="space-y-2"><Label>IP地址 <span className="text-destructive">*</span></Label><Input placeholder="45.32.100.20" /></div>
+              <div className="space-y-2"><Label>端口 <span className="text-destructive">*</span></Label><Input placeholder="1080" /></div>
               <div className="space-y-2">
-                <Label>协议</Label>
-                <Select><SelectTrigger><SelectValue placeholder="协议" /></SelectTrigger>
+                <Label>协议 <span className="text-destructive">*</span></Label>
+                <Select><SelectTrigger><SelectValue placeholder="选择协议" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="SOCKS5">SOCKS5</SelectItem>
                     <SelectItem value="HTTP">HTTP</SelectItem>
@@ -240,8 +240,56 @@ export default function ProxyPool() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>用户名（可选）</Label><Input placeholder="username" /></div>
-              <div className="space-y-2"><Label>密码（可选）</Label><Input type="password" placeholder="password" /></div>
+              <div className="space-y-2"><Label>国家 <span className="text-destructive">*</span></Label><Input placeholder="如 美国" /></div>
+              <div className="space-y-2"><Label>地区 <span className="text-destructive">*</span></Label><Input placeholder="如 US-East" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>匿名度 <span className="text-destructive">*</span></Label>
+                <Select><SelectTrigger><SelectValue placeholder="选择匿名度" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">高匿名</SelectItem>
+                    <SelectItem value="medium">中等匿名</SelectItem>
+                    <SelectItem value="low">低匿名</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>状态 <span className="text-destructive">*</span></Label>
+                <Select><SelectTrigger><SelectValue placeholder="选择状态" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="available">可用</SelectItem>
+                    <SelectItem value="unavailable">不可用</SelectItem>
+                    <SelectItem value="blacklisted">黑名单</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>绑定镜像实例</Label>
+                <Select><SelectTrigger><SelectValue placeholder="选择镜像实例" /></SelectTrigger>
+                  <SelectContent>
+                    {initialDrives.map(d => (
+                      <SelectItem key={d.id} value={d.id}>{d.name} ({d.id})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>绑定账号</Label>
+                <Select><SelectTrigger><SelectValue placeholder="选择账号" /></SelectTrigger>
+                  <SelectContent>
+                    {socialAccounts.map(a => (
+                      <SelectItem key={a.id} value={a.id}>{a.nickname} ({a.username})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>用户名（可选）</Label><Input placeholder="代理认证用户名" /></div>
+              <div className="space-y-2"><Label>密码（可选）</Label><Input type="password" placeholder="代理认证密码" /></div>
             </div>
           </div>
           <DialogFooter>
