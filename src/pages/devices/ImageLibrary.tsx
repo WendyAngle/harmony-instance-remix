@@ -427,7 +427,6 @@ export default function ImageLibrary() {
                 </PopoverContent>
               </Popover>
             </div>
-            </div>
 
             {/* 架构 & 镜像格式 */}
             <div className="grid grid-cols-2 gap-4">
