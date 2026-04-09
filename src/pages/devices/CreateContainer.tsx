@@ -77,18 +77,6 @@ export default function CreateContainer() {
               <Input placeholder="请输入虚拟机名称" />
             </div>
 
-            {/* 虚拟机类型 */}
-            <div className="space-y-2">
-              <Label>{req} 虚拟机类型</Label>
-              <Select value={createType} onValueChange={(v) => { setCreateType(v as VirtualDeviceType); setCreateImageId(""); }}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cloud">云机</SelectItem>
-                  <SelectItem value="windows">Windows</SelectItem>
-                  
-                </SelectContent>
-              </Select>
-            </div>
 
             {/* 所属主机 */}
             <div className="space-y-2">

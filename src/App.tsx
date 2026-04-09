@@ -9,6 +9,8 @@ import PhysicalDevices from "./pages/devices/PhysicalDevices";
 import HostServers from "./pages/devices/HostServers";
 import VirtualInstances from "./pages/devices/VirtualInstances";
 import CreateContainer from "./pages/devices/CreateContainer";
+import SelectVmType from "./pages/devices/SelectVmType";
+import CreateWindowsVm from "./pages/devices/CreateWindowsVm";
 import ImageLibrary from "./pages/devices/ImageLibrary";
 import CloudDrive from "./pages/devices/CloudDrive";
 import BoardCardManagement from "./pages/devices/BoardCardManagement";
@@ -40,7 +42,9 @@ const App = () => (
             <Route path="/devices/boardcards" element={<BoardCardManagement />} />
             <Route path="/devices/tags" element={<TagManagement />} />
             <Route path="/devices/virtual" element={<VirtualInstances />} />
-            <Route path="/devices/virtual/create" element={<CreateContainer />} />
+            <Route path="/devices/virtual/create" element={<SelectVmType />} />
+            <Route path="/devices/virtual/create/cloud" element={<CreateContainer />} />
+            <Route path="/devices/virtual/create/windows" element={<CreateWindowsVm />} />
             <Route path="/devices/images" element={<ImageLibrary />} />
             <Route path="/devices/clouddrive" element={<CloudDrive />} />
             <Route path="/accounts" element={<AccountManagement />} />
