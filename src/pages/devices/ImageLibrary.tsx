@@ -11,10 +11,10 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { romImages as initialImages, physicalDevices, type RomImage, type ImageType, type ImageVisibility, type ImageStatus, type ImageArchitecture, type ImageOS, type ImageTrustStatus } from "@/data/mock-data";
+import { romImages as initialImages, physicalDevices, type RomImage, type ImageType, type ImageVisibility, type ImageStatus, type ImageArchitecture, type ImageOS, type ImageTrustStatus, type ImageFormat } from "@/data/mock-data";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Upload, RefreshCw, Search, ChevronLeft, ChevronRight, Pencil, Trash2, X } from "lucide-react";
+import { Upload, RefreshCw, Search, ChevronLeft, ChevronRight, Pencil, Trash2, X, Copy, Check } from "lucide-react";
 
 const SOC_TYPES = ["Orion865", "Orion8G2", "Cruise10", "Aries880"];
 const SYNC_NODES = ["yaan-test", "beijing-prod", "shanghai-edge", "shenzhen-node"];
@@ -27,26 +27,20 @@ const imageTypeLabel: Record<ImageType, string> = {
 };
 
 const imageStatusLabel: Record<ImageStatus, string> = {
+  building: "构建中",
   normal: "正常",
-  pending: "待审核",
-  disabled: "禁用",
-  corrupted: "损坏",
+  error: "异常",
+  locked: "已锁定",
 };
 
 const imageStatusVariant: Record<ImageStatus, "default" | "secondary" | "destructive" | "outline"> = {
   normal: "default",
-  pending: "outline",
-  disabled: "secondary",
-  corrupted: "destructive",
+  building: "outline",
+  error: "destructive",
+  locked: "secondary",
 };
 
-const trustStatusLabel: Record<ImageTrustStatus, string> = {
-  trusted: "已信任",
-  untrusted: "未信任",
-  scanning: "扫描中",
-};
-
-const visibilityLabel: Record<ImageVisibility, string> = { public: "公有", custom: "自定义" };
+const visibilityLabel: Record<ImageVisibility, string> = { public: "公有", private: "私有", shared: "共享" };
 
 const PAGE_SIZES = [10, 20, 50];
 
@@ -78,6 +72,7 @@ export default function ImageLibrary() {
   const [uploadFileUrl, setUploadFileUrl] = useState("");
   const [uploadSyncNodes, setUploadSyncNodes] = useState<string[]>([]);
   const [uploadRemark, setUploadRemark] = useState("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const filteredImages = useMemo(() => {
     let result = filterType === "all" ? images : images.filter(r => r.type === filterType);
@@ -109,7 +104,7 @@ export default function ImageLibrary() {
     if (!toggleConfirm) return;
     setImages(prev => prev.map(img =>
       img.id === toggleConfirm.id
-        ? { ...img, imageStatus: img.imageStatus === "normal" ? "disabled" : "normal" }
+        ? { ...img, imageStatus: (img.imageStatus === "normal" ? "locked" : "normal") as ImageStatus }
         : img
     ));
     setToggleConfirm(null);
@@ -135,6 +130,12 @@ export default function ImageLibrary() {
     setEditImage(null);
   };
 
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -156,7 +157,7 @@ export default function ImageLibrary() {
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px] max-w-xs">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input className="pl-8 h-8 text-xs" placeholder="搜索镜像名称/版本/ID..." value={searchText} onChange={e => { setSearchText(e.target.value); setCurrentPage(1); }} />
+          <Input className="pl-8 h-8 text-xs" placeholder="搜索模版名称/版本/ID..." value={searchText} onChange={e => { setSearchText(e.target.value); setCurrentPage(1); }} />
         </div>
         <Select value={filterType} onValueChange={v => { setFilterType(v); setCurrentPage(1); }}>
           <SelectTrigger className="w-40 h-8 text-xs"><SelectValue placeholder="镜像类型" /></SelectTrigger>
@@ -172,10 +173,10 @@ export default function ImageLibrary() {
           <SelectTrigger className="w-28 h-8 text-xs"><SelectValue placeholder="状态" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">全部状态</SelectItem>
+            <SelectItem value="building">构建中</SelectItem>
             <SelectItem value="normal">正常</SelectItem>
-            <SelectItem value="pending">待审核</SelectItem>
-            <SelectItem value="disabled">禁用</SelectItem>
-            <SelectItem value="corrupted">损坏</SelectItem>
+            <SelectItem value="error">异常</SelectItem>
+            <SelectItem value="locked">已锁定</SelectItem>
           </SelectContent>
         </Select>
         <Select value={filterVisibility} onValueChange={v => { setFilterVisibility(v); setCurrentPage(1); }}>
@@ -183,7 +184,8 @@ export default function ImageLibrary() {
           <SelectContent>
             <SelectItem value="all">全部属性</SelectItem>
             <SelectItem value="public">公有</SelectItem>
-            <SelectItem value="custom">自定义</SelectItem>
+            <SelectItem value="private">私有</SelectItem>
+            <SelectItem value="shared">共享</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -193,65 +195,114 @@ export default function ImageLibrary() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>镜像ID</TableHead>
-                <TableHead>类型</TableHead>
-                <TableHead>属性</TableHead>
-                <TableHead>名称</TableHead>
-                <TableHead>版本</TableHead>
-                <TableHead>架构</TableHead>
-                <TableHead>操作系统</TableHead>
-                <TableHead>大小</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>信任状态</TableHead>
-                <TableHead>创建时间</TableHead>
-                <TableHead>备注</TableHead>
-                <TableHead className="text-center">启用/禁用</TableHead>
-                <TableHead>操作</TableHead>
+                <TableHead className="whitespace-nowrap">模版ID</TableHead>
+                <TableHead className="whitespace-nowrap">模版名称</TableHead>
+                <TableHead className="whitespace-nowrap">类型</TableHead>
+                <TableHead className="whitespace-nowrap">标签</TableHead>
+                <TableHead className="whitespace-nowrap">架构</TableHead>
+                <TableHead className="whitespace-nowrap">镜像格式</TableHead>
+                <TableHead className="whitespace-nowrap">操作系统版本</TableHead>
+                <TableHead className="whitespace-nowrap">构建脚本/配置</TableHead>
+                <TableHead className="whitespace-nowrap">磁盘大小</TableHead>
+                <TableHead className="whitespace-nowrap">预置软件清单</TableHead>
+                <TableHead className="whitespace-nowrap">属性</TableHead>
+                <TableHead className="whitespace-nowrap">状态</TableHead>
+                <TableHead className="whitespace-nowrap">创建时间</TableHead>
+                <TableHead className="whitespace-nowrap">备注</TableHead>
+                <TableHead className="whitespace-nowrap text-center">启用/禁用</TableHead>
+                <TableHead className="whitespace-nowrap">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {pagedImages.map((rom) => (
                 <TableRow key={rom.id}>
-                  <TableCell className="font-mono text-xs">{rom.id}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono text-xs whitespace-nowrap">{rom.id.slice(0, 8)}...</TableCell>
+                  <TableCell className="font-medium whitespace-nowrap">{rom.name}</TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Badge variant={rom.type === "cloud_engine" ? "default" : rom.type === "windows_vm" ? "secondary" : "outline"} className="text-[10px]">
                       {imageTypeLabel[rom.type]}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Badge variant={rom.visibility === "public" ? "outline" : "secondary"} className="text-[10px]">
+                  <TableCell className="whitespace-nowrap">
+                    <div className="flex gap-1">
+                      {rom.tags.map(tag => (
+                        <Badge key={tag} variant="outline" className="text-[10px]">{tag}</Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">{rom.architecture}</TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">
+                    <Badge variant="outline" className="text-[10px] font-mono">{rom.imageFormat}</Badge>
+                  </TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">{rom.osVersion}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {rom.buildScript ? (
+                      <div className="flex items-center gap-1">
+                        <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded max-w-[120px] truncate block">
+                          {rom.buildScript.split('\n')[0]}
+                        </code>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-5 w-5"
+                              onClick={() => copyToClipboard(rom.buildScript, `build-${rom.id}`)}
+                            >
+                              {copiedId === `build-${rom.id}` ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>{copiedId === `build-${rom.id}` ? "已复制" : "复制构建脚本"}</TooltipContent>
+                        </Tooltip>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">-</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">{rom.size}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {rom.preinstalledSoftware.length > 0 ? (
+                      <div className="flex gap-1 flex-wrap max-w-[150px]">
+                        {rom.preinstalledSoftware.slice(0, 2).map(sw => (
+                          <Badge key={sw} variant="secondary" className="text-[10px]">{sw}</Badge>
+                        ))}
+                        {rom.preinstalledSoftware.length > 2 && (
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Badge variant="secondary" className="text-[10px]">+{rom.preinstalledSoftware.length - 2}</Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>{rom.preinstalledSoftware.join(', ')}</TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">-</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <Badge variant={rom.visibility === "public" ? "outline" : rom.visibility === "private" ? "secondary" : "default"} className="text-[10px]">
                       {visibilityLabel[rom.visibility]}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-medium">{rom.name}</TableCell>
-                  <TableCell className="font-mono text-xs">{rom.version}</TableCell>
-                  <TableCell className="text-xs">{rom.architecture}</TableCell>
-                  <TableCell className="text-xs">{rom.os} {rom.osVersion}</TableCell>
-                  <TableCell className="text-xs">{rom.size}</TableCell>
-                  <TableCell>
-                    <Badge variant={imageStatusVariant[rom.imageStatus]} className="text-[10px]">
+                  <TableCell className="whitespace-nowrap">
+                    <Badge variant={imageStatusVariant[rom.imageStatus]} className="text-[10px] whitespace-nowrap">
                       {imageStatusLabel[rom.imageStatus]}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Badge variant={rom.trustStatus === "trusted" ? "default" : rom.trustStatus === "scanning" ? "outline" : "secondary"} className="text-[10px]">
-                      {trustStatusLabel[rom.trustStatus]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{rom.createdAt}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{rom.createdAt}</TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{rom.remark || "-"}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center whitespace-nowrap">
                     <div className="flex items-center justify-center gap-2">
                       <Switch
                         checked={rom.imageStatus === "normal"}
                         onCheckedChange={() => handleToggleStatus(rom)}
                       />
-                      <span className={`text-xs font-medium ${rom.imageStatus === "normal" ? "text-green-600" : "text-muted-foreground"}`}>
-                        {rom.imageStatus === "normal" ? "正常" : imageStatusLabel[rom.imageStatus]}
+                      <span className={`text-xs font-medium whitespace-nowrap ${rom.imageStatus === "normal" ? "text-green-600" : "text-muted-foreground"}`}>
+                        {imageStatusLabel[rom.imageStatus]}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="flex items-center gap-1">
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -330,15 +381,16 @@ export default function ImageLibrary() {
                   <SelectTrigger><SelectValue placeholder="选择属性" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="public">公有</SelectItem>
-                    <SelectItem value="custom">自定义</SelectItem>
+                    <SelectItem value="private">私有</SelectItem>
+                    <SelectItem value="shared">共享</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <div className="space-y-2"><Label>镜像名称</Label><Input placeholder="arm64-light-cloud机-v1.0" /></div>
+            <div className="space-y-2"><Label>模版名称</Label><Input placeholder="ARM64-Linux-Web" /></div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2"><Label>版本号（标签）</Label><Input placeholder="latest / 2.0" /></div>
-              <div className="space-y-2"><Label>描述</Label><Input placeholder="记录镜像用途、依赖、适用场景" /></div>
+              <div className="space-y-2"><Label>描述/备注</Label><Input placeholder="记录镜像用途、依赖、适用场景" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -352,6 +404,19 @@ export default function ImageLibrary() {
                 </Select>
               </div>
               <div className="space-y-2">
+                <Label><span className="text-destructive mr-0.5">*</span>镜像格式</Label>
+                <Select>
+                  <SelectTrigger><SelectValue placeholder="选择格式" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="qcow2">qcow2</SelectItem>
+                    <SelectItem value="raw">raw</SelectItem>
+                    <SelectItem value="Docker">Docker</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label><span className="text-destructive mr-0.5">*</span>操作系统</Label>
                 <Select>
                   <SelectTrigger><SelectValue placeholder="选择系统" /></SelectTrigger>
@@ -362,26 +427,13 @@ export default function ImageLibrary() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2"><Label>操作系统版本</Label><Input placeholder="CentOS 9 / Windows 11 / Ubuntu 22.04" /></div>
             </div>
+            <div className="space-y-2"><Label>构建脚本/配置</Label><Textarea placeholder="Dockerfile / 自动化构建脚本" className="min-h-[60px] resize-y font-mono text-xs" /></div>
+            <div className="space-y-2"><Label>磁盘大小/分区</Label><Input placeholder="ARM-Linux-40GB" /></div>
+            <div className="space-y-2"><Label>预置软件清单</Label><Input placeholder="Nginx, MySQL, Java（逗号分隔）" /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>系统版本</Label><Input placeholder="CentOS 7 / Windows Server 2019" /></div>
               <div className="space-y-2"><Label>所属项目/租户</Label><Input placeholder="默认项目" /></div>
-            </div>
-            <div className="space-y-2">
-              <Label>资源规格</Label>
-              <div className="grid grid-cols-3 gap-2">
-                <Input placeholder="CPU: 0.5核" />
-                <Input placeholder="内存: 1GB" />
-                <Input placeholder="磁盘: 20GB" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>启动命令</Label><Input placeholder="/start.sh" /></div>
-              <div className="space-y-2"><Label>暴露端口</Label><Input placeholder="5555,9222" /></div>
-            </div>
-            <div className="space-y-2"><Label>环境变量</Label><Textarea placeholder="API_URL=https://api.example.com&#10;PROXY_IP=auto" className="min-h-[60px] resize-y font-mono text-xs" /></div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>最大实例数</Label><Input type="number" placeholder="100" /></div>
               <div className="space-y-2">
                 <Label><span className="text-destructive">*</span> SoC类型</Label>
                 <Select value={uploadSocType} onValueChange={setUploadSocType}>
@@ -465,7 +517,7 @@ export default function ImageLibrary() {
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>编辑镜像模版</DialogTitle>
-            <DialogDescription>修改镜像模版 {editImage?.id} 的基本信息</DialogDescription>
+            <DialogDescription>修改镜像模版 {editImage?.id.slice(0, 8)}... 的基本信息</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
@@ -479,7 +531,7 @@ export default function ImageLibrary() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>镜像名称</Label>
+              <Label>模版名称</Label>
               <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -517,7 +569,7 @@ export default function ImageLibrary() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>系统版本</Label>
+                <Label>操作系统版本</Label>
                 <Input value={editForm.osVersion} onChange={e => setEditForm(f => ({ ...f, osVersion: e.target.value }))} />
               </div>
               <div className="space-y-2">
@@ -619,18 +671,18 @@ export default function ImageLibrary() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              确认{toggleConfirm?.imageStatus === "normal" ? "禁用" : "启用"}镜像模版？
+              确认{toggleConfirm?.imageStatus === "normal" ? "锁定" : "启用"}镜像模版？
             </AlertDialogTitle>
             <AlertDialogDescription>
               {toggleConfirm?.imageStatus === "normal"
-                ? `禁用后，镜像模版 ${toggleConfirm?.name} (${toggleConfirm?.version}) 将不可用于创建新实例。`
+                ? `锁定后，镜像模版 ${toggleConfirm?.name} (${toggleConfirm?.version}) 将不可用于创建新实例。`
                 : `启用后，镜像模版 ${toggleConfirm?.name} (${toggleConfirm?.version}) 将可用于创建新实例。`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction onClick={confirmToggleStatus}>
-              确认{toggleConfirm?.imageStatus === "normal" ? "禁用" : "启用"}
+              确认{toggleConfirm?.imageStatus === "normal" ? "锁定" : "启用"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
