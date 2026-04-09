@@ -109,7 +109,7 @@ export default function CloudDrive() {
   const handleEdit = () => {
     if (!editingDrive) return;
     setDrives(prev => prev.map(d => d.id === editingDrive.id
-      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, remark: formRemark }
+      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedTemplate: formLinkedTemplate || d.linkedTemplate, cacheDir: formCacheDir || d.cacheDir, accessUrl: formAccessUrl || d.accessUrl, remark: formRemark }
       : d
     ));
     setEditingDrive(null); resetForm();
