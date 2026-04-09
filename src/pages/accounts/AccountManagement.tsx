@@ -10,7 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { socialAccounts, virtualInstances, proxyItems, type SocialAccount, type Platform, type AccountStatus, type AccountType } from "@/data/mock-data";
+import { socialAccounts, proxyItems, type SocialAccount, type Platform, type AccountStatus, type AccountType } from "@/data/mock-data";
+import { initialDrives } from "@/pages/devices/CloudDrive";
 import { Plus, Search, CheckCircle, RefreshCw, Smartphone, Globe, ChevronLeft, ChevronRight, MonitorSmartphone } from "lucide-react";
 
 const platformLabel: Record<Platform, string> = { tiktok: "TikTok", facebook: "Facebook", twitter: "Twitter/X", instagram: "Instagram" };
@@ -59,7 +60,7 @@ export default function AccountManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">账号管理</h1>
-          <p className="text-sm text-muted-foreground mt-1">管理云机与Windows虚拟机的社交平台账号资产</p>
+          <p className="text-sm text-muted-foreground mt-1">管理云机与Windows的社交平台账号资产</p>
         </div>
         <Button size="sm" onClick={() => setShowAddDialog(true)}>
           <Plus className="h-4 w-4 mr-1" />新增账号
@@ -139,7 +140,7 @@ export default function AccountManagement() {
                 <TableHead>用户名</TableHead>
                 <TableHead className="text-right">权重</TableHead>
                 <TableHead className="text-center">状态</TableHead>
-                <TableHead>虚拟机</TableHead>
+                <TableHead>镜像实例</TableHead>
                 <TableHead>物理设备</TableHead>
                 <TableHead>绑定IP</TableHead>
                 <TableHead>最后检测</TableHead>
@@ -181,7 +182,7 @@ export default function AccountManagement() {
                       <TooltipContent>{statusConfig[acc.status].tooltip}</TooltipContent>
                     </Tooltip>
                   </TableCell>
-                  <TableCell className="font-mono text-xs">{acc.virtualDeviceId || "-"}</TableCell>
+                  <TableCell className="font-mono text-xs">{acc.cloudDriveId ? (initialDrives.find(d => d.id === acc.cloudDriveId)?.name || acc.cloudDriveId) : "-"}</TableCell>
                   <TableCell className="font-mono text-xs">{acc.physicalDeviceId || "-"}</TableCell>
                   <TableCell className="font-mono text-xs">{acc.proxyIp || "-"}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{acc.lastCheck}</TableCell>
@@ -227,7 +228,7 @@ export default function AccountManagement() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>新增社交账号</DialogTitle>
-            <DialogDescription>配置账号的三元组绑定关系（账号-虚拟机-IP）</DialogDescription>
+            <DialogDescription>配置账号的三元组绑定关系（账号-镜像实例-IP）</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
@@ -259,11 +260,11 @@ export default function AccountManagement() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>绑定虚拟机</Label>
-                <Select><SelectTrigger><SelectValue placeholder="选择虚拟机" /></SelectTrigger>
+                <Label>绑定镜像实例</Label>
+                <Select><SelectTrigger><SelectValue placeholder="选择镜像实例" /></SelectTrigger>
                   <SelectContent>
-                    {virtualInstances.map(i => (
-                      <SelectItem key={i.id} value={i.id}>{i.id} ({typeLabel[i.type]} · {i.model})</SelectItem>
+                    {initialDrives.map(d => (
+                      <SelectItem key={d.id} value={d.id}>{d.name} ({d.id})</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -301,7 +302,7 @@ export default function AccountManagement() {
                   ["类型", typeLabel[showDetail.type]],
                   ["权重", `${showDetail.weight}/100`],
                   ["状态", statusConfig[showDetail.status].label],
-                  ["虚拟机", showDetail.virtualDeviceId || "未绑定"],
+                  ["镜像实例", showDetail.cloudDriveId ? (initialDrives.find(d => d.id === showDetail.cloudDriveId)?.name || showDetail.cloudDriveId) : "未绑定"],
                   ["物理设备", showDetail.physicalDeviceId || "未绑定"],
                   ["代理IP", showDetail.proxyIp || "无"],
                   ["时区", showDetail.timezone],
@@ -321,7 +322,7 @@ export default function AccountManagement() {
                   <p>[04-02 10:00] 自动检活: 状态正常</p>
                   <p>[04-01 22:30] 执行任务: TikTok养号</p>
                   <p>[04-01 18:00] 更换代理IP: 旧IP → {showDetail.proxyIp}</p>
-                  <p>[03-30 14:00] 首次绑定虚拟机 {showDetail.virtualDeviceId}</p>
+                  <p>[03-30 14:00] 首次绑定镜像实例 {showDetail.cloudDriveId}</p>
                 </div>
               </div>
             </div>
@@ -344,7 +345,7 @@ export default function AccountManagement() {
               </Badge>
             </DialogTitle>
             <DialogDescription>
-              {showRemoteControl?.type === "cloud" ? "Android云机实时画面 (ADB)" : "Windows实时画面 (VNC)"} · 虚拟机: {showRemoteControl?.virtualDeviceId || "-"}
+              {showRemoteControl?.type === "cloud" ? "Android云机实时画面 (ADB)" : "Windows实时画面 (VNC)"} · 镜像实例: {showRemoteControl?.cloudDriveId ? (initialDrives.find(d => d.id === showRemoteControl.cloudDriveId)?.name || showRemoteControl.cloudDriveId) : "-"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -355,7 +356,7 @@ export default function AccountManagement() {
                   {showRemoteControl?.type === "cloud" ? "Android 实时画面" : "Windows桌面画面"}
                 </p>
                 <p className="text-xs mt-1">WebRTC 流连接中...</p>
-                <p className="text-xs mt-1 font-mono">{showRemoteControl?.virtualDeviceId} · {showRemoteControl?.proxyIp}</p>
+                <p className="text-xs mt-1 font-mono">{showRemoteControl?.cloudDriveId} · {showRemoteControl?.proxyIp}</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 flex-wrap">

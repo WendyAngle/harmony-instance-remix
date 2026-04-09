@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { proxyItems, socialAccounts, type ProxyStatus } from "@/data/mock-data";
+import { initialDrives } from "@/pages/devices/CloudDrive";
 import { Plus, Search, Upload, Activity, ShieldCheck, ShieldX, ShieldAlert, ChevronLeft, ChevronRight, Download, FileSpreadsheet } from "lucide-react";
 
 const statusConfig: Record<ProxyStatus, { label: string; colorClass: string; tooltip: string }> = {
@@ -124,8 +125,8 @@ export default function ProxyPool() {
                 <TableHead className="text-center">状态</TableHead>
                 <TableHead>
                   <Tooltip>
-                    <TooltipTrigger className="cursor-help border-b border-dashed border-muted-foreground">虚拟机</TooltipTrigger>
-                    <TooltipContent>IP绑定的所有虚拟机编号</TooltipContent>
+                    <TooltipTrigger className="cursor-help border-b border-dashed border-muted-foreground">镜像实例</TooltipTrigger>
+                    <TooltipContent>IP绑定的所有镜像实例</TooltipContent>
                   </Tooltip>
                 </TableHead>
                 <TableHead>绑定账号</TableHead>
@@ -167,7 +168,10 @@ export default function ProxyPool() {
                       </Tooltip>
                     </TableCell>
                     <TableCell className="font-mono text-xs">
-                      {proxy.virtualDeviceIds.length > 0 ? proxy.virtualDeviceIds.join(", ") : "-"}
+                      {proxy.cloudDriveIds.length > 0 ? proxy.cloudDriveIds.map(id => {
+                        const drive = initialDrives.find(d => d.id === id);
+                        return drive ? drive.name : id;
+                      }).join(", ") : "-"}
                     </TableCell>
                     <TableCell>
                       {accountNames.length > 0 ? (

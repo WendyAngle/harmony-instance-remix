@@ -102,7 +102,7 @@ export default function VirtualInstances() {
     return img ? img.name : "-";
   };
 
-  const getAvailableIps = () => proxyItems.filter(p => p.virtualDeviceIds.length === 0 && p.status === "available");
+  const getAvailableIps = () => proxyItems.filter(p => p.cloudDriveIds.length === 0 && p.status === "available");
 
   // Mock connection info
   const getConnectionInfo = (inst: VirtualInstance) => ({
