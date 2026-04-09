@@ -182,8 +182,8 @@ export default function CloudDrive() {
                 <TableHead className="whitespace-nowrap">容量</TableHead>
                 <TableHead className="whitespace-nowrap">已用</TableHead>
                 <TableHead className="whitespace-nowrap">关联镜像模版</TableHead>
-                <TableHead className="whitespace-nowrap">缓存目录</TableHead>
-                <TableHead className="whitespace-nowrap">访问URL</TableHead>
+                <TableHead className="whitespace-nowrap">关联代理IP</TableHead>
+                <TableHead className="whitespace-nowrap">服务器</TableHead>
                 <TableHead className="whitespace-nowrap">绑定账号</TableHead>
                 <TableHead className="whitespace-nowrap">创建时间</TableHead>
                 <TableHead className="whitespace-nowrap text-center">状态</TableHead>
@@ -208,10 +208,8 @@ export default function CloudDrive() {
                     </div>
                   </TableCell>
                   <TableCell className="text-xs whitespace-nowrap">{drive.linkedTemplate || <span className="text-muted-foreground">—</span>}</TableCell>
-                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.cacheDir}</TableCell>
-                  <TableCell className="text-xs whitespace-nowrap">
-                    <a href={drive.accessUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{drive.accessUrl}</a>
-                  </TableCell>
+                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.proxyIp || <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.serverIp || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="whitespace-nowrap">
                     {drive.boundAccounts.length > 0 ? (
                       <div className="flex flex-col gap-0.5">
