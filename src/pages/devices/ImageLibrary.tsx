@@ -120,6 +120,7 @@ export default function ImageLibrary() {
       architecture: rom.architecture, os: rom.os, osVersion: rom.osVersion,
       entrypoint: rom.entrypoint, ports: rom.ports, envVars: rom.envVars,
       tenant: rom.tenant, maxInstances: rom.maxInstances,
+      tags: [...rom.tags],
     });
     setEditImage(rom);
   };
