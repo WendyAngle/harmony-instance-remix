@@ -173,7 +173,6 @@ export default function ProxyPool() {
                         return drive ? drive.name : id;
                       }).join(", ") : "-"}
                     </TableCell>
-                    </TableCell>
                     <TableCell>
                       {accountNames.length > 0 ? (
                         <div className="flex flex-col gap-0.5">
