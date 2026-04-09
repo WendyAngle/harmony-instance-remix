@@ -30,8 +30,8 @@ const menuGroups = [
     label: "云资源中台",
     items: [
       { title: "虚拟机管理", url: "/devices/virtual", icon: Cpu },
-      { title: "镜像模版管理", url: "/devices/images", icon: HardDrive },
-      { title: "镜像实例管理", url: "/devices/clouddrive", icon: CloudCog },
+      { title: "镜像模版", url: "/devices/images", icon: HardDrive },
+      { title: "镜像实例", url: "/devices/clouddrive", icon: CloudCog },
       { title: "标签管理", url: "/devices/tags", icon: Tag },
     ],
   },
