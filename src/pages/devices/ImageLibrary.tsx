@@ -133,9 +133,17 @@ export default function ImageLibrary() {
 
   const saveEdit = () => {
     if (!editImage) return;
+    const { preinstalledSoftware, disk, buildScript, imageFormat, ...rest } = editForm;
     setImages(prev => prev.map(img =>
       img.id === editImage.id
-        ? { ...img, ...editForm, updatedAt: new Date().toISOString().slice(0, 10) }
+        ? {
+            ...img, ...rest,
+            imageFormat,
+            buildScript,
+            preinstalledSoftware: preinstalledSoftware.split(",").map(s => s.trim()).filter(Boolean),
+            resourceSpec: { ...img.resourceSpec, disk },
+            updatedAt: new Date().toISOString().slice(0, 10),
+          }
         : img
     ));
     setEditImage(null);
