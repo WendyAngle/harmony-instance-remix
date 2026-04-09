@@ -98,7 +98,7 @@ export default function CloudDrive() {
     const newDrive: CloudDriveItem = {
       id: `cd-${String(drives.length + 1).padStart(3, "0")}`,
       name: formName, capacity: Number(formCapacity) || 50, used: 0,
-      status: "available", linkedTemplate: formLinkedTemplate || null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: formAccessUrl || `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
+      status: "available", linkedTemplate: formLinkedTemplate && formLinkedTemplate !== "__none__" ? formLinkedTemplate : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: formAccessUrl || `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
       createdAt: new Date().toISOString().slice(0, 10), remark: formRemark,
       boundAccounts: [],
     };
