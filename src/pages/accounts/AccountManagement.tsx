@@ -302,7 +302,7 @@ export default function AccountManagement() {
                   ["类型", typeLabel[showDetail.type]],
                   ["权重", `${showDetail.weight}/100`],
                   ["状态", statusConfig[showDetail.status].label],
-                  ["镜像实例", acc.cloudDriveId ? (initialDrives.find(d => d.id === acc.cloudDriveId)?.name || acc.cloudDriveId) : "未绑定"],
+                  ["镜像实例", showDetail.cloudDriveId ? (initialDrives.find(d => d.id === showDetail.cloudDriveId)?.name || showDetail.cloudDriveId) : "未绑定"],
                   ["物理设备", showDetail.physicalDeviceId || "未绑定"],
                   ["代理IP", showDetail.proxyIp || "无"],
                   ["时区", showDetail.timezone],
@@ -345,7 +345,7 @@ export default function AccountManagement() {
               </Badge>
             </DialogTitle>
             <DialogDescription>
-              {showRemoteControl?.type === "cloud" ? "Android云机实时画面 (ADB)" : "Windows实时画面 (VNC)"} · 虚拟机: {showRemoteControl?.virtualDeviceId || "-"}
+              {showRemoteControl?.type === "cloud" ? "Android云机实时画面 (ADB)" : "Windows实时画面 (VNC)"} · 镜像实例: {showRemoteControl?.cloudDriveId ? (initialDrives.find(d => d.id === showRemoteControl.cloudDriveId)?.name || showRemoteControl.cloudDriveId) : "-"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -356,7 +356,7 @@ export default function AccountManagement() {
                   {showRemoteControl?.type === "cloud" ? "Android 实时画面" : "Windows桌面画面"}
                 </p>
                 <p className="text-xs mt-1">WebRTC 流连接中...</p>
-                <p className="text-xs mt-1 font-mono">{showRemoteControl?.virtualDeviceId} · {showRemoteControl?.proxyIp}</p>
+                <p className="text-xs mt-1 font-mono">{showRemoteControl?.cloudDriveId} · {showRemoteControl?.proxyIp}</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 flex-wrap">
