@@ -120,10 +120,10 @@ export default function CreateContainer() {
                 </Button>
                 <Button
                   type="button"
-                  variant={createImageVisibility === "custom" ? "default" : "outline"}
+                  variant={createImageVisibility === "private" ? "default" : "outline"}
                   className="rounded-l-none"
                   size="sm"
-                  onClick={() => { setCreateImageVisibility("custom"); setCreateImageId(""); }}
+                  onClick={() => { setCreateImageVisibility("private"); setCreateImageId(""); }}
                 >
                   私有镜像模版
                 </Button>
@@ -138,7 +138,7 @@ export default function CreateContainer() {
                   ))}
                 </SelectContent>
               </Select>
-              {createImageVisibility === "custom" && (
+              {createImageVisibility === "private" && (
                 <p className="text-xs text-muted-foreground">未同步的镜像模版无法使用，需先在自定义镜像模版列表将镜像同步至节点，镜像文件才可用</p>
               )}
             </div>
