@@ -98,7 +98,7 @@ export default function CloudDrive() {
     const newDrive: CloudDriveItem = {
       id: `cd-${String(drives.length + 1).padStart(3, "0")}`,
       name: formName, capacity: Number(formCapacity) || 50, used: 0,
-      status: "available", linkedTemplate: formLinkedTemplate || null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: formAccessUrl || `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
+      status: "available", linkedTemplate: formLinkedTemplate && formLinkedTemplate !== "__none__" ? formLinkedTemplate : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: formAccessUrl || `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
       createdAt: new Date().toISOString().slice(0, 10), remark: formRemark,
       boundAccounts: [],
     };
@@ -335,7 +335,7 @@ export default function CloudDrive() {
               <Select value={formLinkedTemplate} onValueChange={setFormLinkedTemplate}>
                 <SelectTrigger><SelectValue placeholder="请选择镜像模版" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">不关联</SelectItem>
+                  <SelectItem value="__none__">不关联</SelectItem>
                   {romImages.filter(img => img.imageStatus === "normal").map(img => (
                     <SelectItem key={img.id} value={img.name}>{img.name}</SelectItem>
                   ))}
@@ -380,7 +380,7 @@ export default function CloudDrive() {
               <Select value={formLinkedTemplate} onValueChange={setFormLinkedTemplate}>
                 <SelectTrigger><SelectValue placeholder="请选择镜像模版" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">不关联</SelectItem>
+                  <SelectItem value="__none__">不关联</SelectItem>
                   {romImages.filter(img => img.imageStatus === "normal").map(img => (
                     <SelectItem key={img.id} value={img.name}>{img.name}</SelectItem>
                   ))}
