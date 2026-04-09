@@ -60,6 +60,7 @@ export default function HostServers() {
   const [showDeleteAlert, setShowDeleteAlert] = useState<string | null>(null);
   const [showBatchDeleteAlert, setShowBatchDeleteAlert] = useState(false);
   const [showDetail, setShowDetail] = useState<HostServer | null>(null);
+  const [showBoardCards, setShowBoardCards] = useState<HostServer | null>(null);
 
   const filteredServers = useMemo(() => {
     let result = servers;
