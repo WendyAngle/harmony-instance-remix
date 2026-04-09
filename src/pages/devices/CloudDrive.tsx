@@ -67,7 +67,8 @@ export default function CloudDrive() {
   const [formType, setFormType] = useState<"SSD" | "HDD">("SSD");
   const [formLinkedTemplate, setFormLinkedTemplate] = useState("");
   const [formCacheDir, setFormCacheDir] = useState("");
-  const [formAccessUrl, setFormAccessUrl] = useState("");
+  const [formProxyIp, setFormProxyIp] = useState("");
+  const [formServerIp, setFormServerIp] = useState("");
   const [formRemark, setFormRemark] = useState("");
   const [mountTarget, setMountTarget] = useState("");
 
@@ -84,14 +85,14 @@ export default function CloudDrive() {
   const totalPages = Math.max(1, Math.ceil(filteredDrives.length / pageSize));
   const pagedDrives = filteredDrives.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedTemplate(""); setFormCacheDir(""); setFormAccessUrl(""); setFormRemark(""); };
+  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedTemplate(""); setFormCacheDir(""); setFormProxyIp(""); setFormServerIp(""); setFormRemark(""); };
 
   const openCreate = () => { resetForm(); setShowCreate(true); };
 
   const openEdit = (d: CloudDriveItem) => {
     setFormName(d.name); setFormCapacity(String(d.capacity)); setFormType(d.type);
-    setFormLinkedTemplate(d.linkedTemplate || "__none__"); setFormCacheDir(d.cacheDir || ""); setFormAccessUrl(d.accessUrl || "");
-    setFormRemark(d.remark);
+    setFormLinkedTemplate(d.linkedTemplate || "__none__"); setFormCacheDir(d.cacheDir || ""); setFormProxyIp(d.proxyIp || "");
+    setFormServerIp(d.serverIp || ""); setFormRemark(d.remark);
     setEditingDrive(d);
   };
 
@@ -99,7 +100,7 @@ export default function CloudDrive() {
     const newDrive: CloudDriveItem = {
       id: `cd-${String(drives.length + 1).padStart(3, "0")}`,
       name: formName, capacity: Number(formCapacity) || 50, used: 0,
-      status: "available", linkedTemplate: formLinkedTemplate && formLinkedTemplate !== "__none__" ? formLinkedTemplate : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: formAccessUrl || `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
+      status: "available", linkedTemplate: formLinkedTemplate && formLinkedTemplate !== "__none__" ? formLinkedTemplate : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, proxyIp: formProxyIp, serverIp: formServerIp, type: formType,
       createdAt: new Date().toISOString().slice(0, 10), remark: formRemark,
       boundAccounts: [],
     };
@@ -110,7 +111,7 @@ export default function CloudDrive() {
   const handleEdit = () => {
     if (!editingDrive) return;
     setDrives(prev => prev.map(d => d.id === editingDrive.id
-      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedTemplate: formLinkedTemplate || d.linkedTemplate, cacheDir: formCacheDir || d.cacheDir, accessUrl: formAccessUrl || d.accessUrl, remark: formRemark }
+      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedTemplate: formLinkedTemplate || d.linkedTemplate, cacheDir: formCacheDir || d.cacheDir, proxyIp: formProxyIp, serverIp: formServerIp, remark: formRemark }
       : d
     ));
     setEditingDrive(null); resetForm();
