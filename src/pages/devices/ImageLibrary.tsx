@@ -403,7 +403,30 @@ export default function ImageLibrary() {
             {/* 标签 */}
             <div className="space-y-2">
               <Label>标签</Label>
-              <Input placeholder="latest / v2.0（版本标签）" />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start font-normal h-10">
+                    {uploadTags.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {uploadTags.map(t => (
+                          <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">请选择标签</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-2" align="start">
+                  {mockTags.map(tag => (
+                    <div key={tag.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent cursor-pointer" onClick={() => setUploadTags(prev => prev.includes(tag.name) ? prev.filter(t => t !== tag.name) : [...prev, tag.name])}>
+                      <Checkbox checked={uploadTags.includes(tag.name)} />
+                      <span className="text-sm">{tag.name}</span>
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
+            </div>
             </div>
 
             {/* 架构 & 镜像格式 */}
@@ -619,6 +642,32 @@ export default function ImageLibrary() {
             <div className="space-y-2">
               <Label>环境变量</Label>
               <Textarea value={editForm.envVars} onChange={e => setEditForm(f => ({ ...f, envVars: e.target.value }))} placeholder="KEY=VALUE，每行一个" className="min-h-[60px] resize-y font-mono text-xs" />
+            </div>
+            <div className="space-y-2">
+              <Label>标签</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start font-normal h-10">
+                    {editForm.tags.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {editForm.tags.map(t => (
+                          <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">请选择标签</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-2" align="start">
+                  {mockTags.map(tag => (
+                    <div key={tag.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent cursor-pointer" onClick={() => setEditForm(f => ({ ...f, tags: f.tags.includes(tag.name) ? f.tags.filter(t => t !== tag.name) : [...f.tags, tag.name] }))}>
+                      <Checkbox checked={editForm.tags.includes(tag.name)} />
+                      <span className="text-sm">{tag.name}</span>
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <Label>最大实例数</Label>
