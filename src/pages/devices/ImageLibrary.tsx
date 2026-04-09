@@ -362,9 +362,16 @@ export default function ImageLibrary() {
             <DialogDescription>上传云机容器、Windows虚拟机、浏览器或插件镜像模版</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
+            {/* 模版名称 */}
+            <div className="space-y-2">
+              <Label><span className="text-destructive">*</span> 模版名称</Label>
+              <Input placeholder="ARM64-Linux-Web" />
+            </div>
+
+            {/* 类型 & 属性 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>镜像类型</Label>
+                <Label><span className="text-destructive">*</span> 类型</Label>
                 <Select>
                   <SelectTrigger><SelectValue placeholder="选择类型" /></SelectTrigger>
                   <SelectContent>
@@ -376,7 +383,7 @@ export default function ImageLibrary() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>镜像属性</Label>
+                <Label><span className="text-destructive">*</span> 属性</Label>
                 <Select>
                   <SelectTrigger><SelectValue placeholder="选择属性" /></SelectTrigger>
                   <SelectContent>
@@ -387,14 +394,17 @@ export default function ImageLibrary() {
                 </Select>
               </div>
             </div>
-            <div className="space-y-2"><Label>模版名称</Label><Input placeholder="ARM64-Linux-Web" /></div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>版本号（标签）</Label><Input placeholder="latest / 2.0" /></div>
-              <div className="space-y-2"><Label>描述/备注</Label><Input placeholder="记录镜像用途、依赖、适用场景" /></div>
+
+            {/* 标签 */}
+            <div className="space-y-2">
+              <Label>标签</Label>
+              <Input placeholder="latest / v2.0（版本标签）" />
             </div>
+
+            {/* 架构 & 镜像格式 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label><span className="text-destructive mr-0.5">*</span>架构</Label>
+                <Label><span className="text-destructive">*</span> 架构</Label>
                 <Select>
                   <SelectTrigger><SelectValue placeholder="选择架构" /></SelectTrigger>
                   <SelectContent>
@@ -404,7 +414,7 @@ export default function ImageLibrary() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label><span className="text-destructive mr-0.5">*</span>镜像格式</Label>
+                <Label><span className="text-destructive">*</span> 镜像格式</Label>
                 <Select>
                   <SelectTrigger><SelectValue placeholder="选择格式" /></SelectTrigger>
                   <SelectContent>
@@ -415,35 +425,43 @@ export default function ImageLibrary() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label><span className="text-destructive mr-0.5">*</span>操作系统</Label>
-                <Select>
-                  <SelectTrigger><SelectValue placeholder="选择系统" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Linux">Linux</SelectItem>
-                    <SelectItem value="Windows">Windows</SelectItem>
-                    <SelectItem value="Android">Android</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2"><Label>操作系统版本</Label><Input placeholder="CentOS 9 / Windows 11 / Ubuntu 22.04" /></div>
+
+            {/* 操作系统版本 */}
+            <div className="space-y-2">
+              <Label><span className="text-destructive">*</span> 操作系统版本</Label>
+              <Input placeholder="CentOS 9 / Windows 11 / Ubuntu 22.04 / Android 12" />
             </div>
-            <div className="space-y-2"><Label>构建脚本/配置</Label><Textarea placeholder="Dockerfile / 自动化构建脚本" className="min-h-[60px] resize-y font-mono text-xs" /></div>
-            <div className="space-y-2"><Label>磁盘大小/分区</Label><Input placeholder="ARM-Linux-40GB" /></div>
-            <div className="space-y-2"><Label>预置软件清单</Label><Input placeholder="Nginx, MySQL, Java（逗号分隔）" /></div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>所属项目/租户</Label><Input placeholder="默认项目" /></div>
-              <div className="space-y-2">
-                <Label><span className="text-destructive">*</span> SoC类型</Label>
-                <Select value={uploadSocType} onValueChange={setUploadSocType}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {SOC_TYPES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+
+            {/* 构建脚本/配置 */}
+            <div className="space-y-2">
+              <Label>构建脚本/配置</Label>
+              <Textarea placeholder="Dockerfile / 自动化构建脚本内容" className="min-h-[60px] resize-y font-mono text-xs" />
             </div>
+
+            {/* 磁盘大小 */}
+            <div className="space-y-2">
+              <Label><span className="text-destructive">*</span> 磁盘大小</Label>
+              <Input placeholder="如：40GB" />
+            </div>
+
+            {/* 预置软件清单 */}
+            <div className="space-y-2">
+              <Label>预置软件清单</Label>
+              <Input placeholder="Nginx, MySQL, Java（逗号分隔）" />
+            </div>
+
+            {/* SoC类型 */}
+            <div className="space-y-2">
+              <Label><span className="text-destructive">*</span> SoC类型</Label>
+              <Select value={uploadSocType} onValueChange={setUploadSocType}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {SOC_TYPES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* 上传方式 */}
             <div className="space-y-2">
               <Label>上传方式</Label>
               <RadioGroup value={uploadMethod} onValueChange={(v) => { setUploadMethod(v as "file" | "manual"); setUploadFileUrl(""); }} className="flex items-center gap-6">
@@ -457,6 +475,8 @@ export default function ImageLibrary() {
                 </div>
               </RadioGroup>
             </div>
+
+            {/* 镜像文件 */}
             <div className="space-y-2">
               <Label><span className="text-destructive">*</span> 镜像文件</Label>
               {uploadMethod === "file" ? (
@@ -468,6 +488,8 @@ export default function ImageLibrary() {
                 <Input placeholder="请输入正确的文件地址" value={uploadFileUrl} onChange={e => setUploadFileUrl(e.target.value)} />
               )}
             </div>
+
+            {/* 同步镜像 */}
             <div className="space-y-2">
               <Label>同步镜像</Label>
               <Select value="__trigger__" onValueChange={(v) => {
@@ -497,6 +519,8 @@ export default function ImageLibrary() {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* 备注 */}
             <div className="space-y-2">
               <Label>备注</Label>
               <div className="relative">
