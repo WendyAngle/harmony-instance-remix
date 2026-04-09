@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Search, Plus, ChevronLeft, ChevronRight, RotateCcw, MoreHorizontal, AlertTriangle, Copy, Tag, ArrowLeft, Minus, Network, Cpu } from "lucide-react";
 import { mockTags } from "@/pages/devices/TagManagement";
 import { toast } from "sonner";
@@ -88,7 +89,7 @@ export default function BoardCardManagement() {
   const [applyRomEnabled, setApplyRomEnabled] = useState(false);
   const [applyRomVersion, setApplyRomVersion] = useState("");
   const [applyCount, setApplyCount] = useState(1);
-  const [applyTag, setApplyTag] = useState("");
+  const [applyTags, setApplyTags] = useState<string[]>([]);
 
   // Flash dialog state
   const [flashRom, setFlashRom] = useState("否");
@@ -332,14 +333,29 @@ export default function BoardCardManagement() {
             {/* 标签 */}
             <div className="flex items-center gap-4">
               <Label className="w-24 text-right text-sm shrink-0">标签</Label>
-              <Select value={applyTag} onValueChange={setApplyTag}>
-                <SelectTrigger className="max-w-2xl"><SelectValue placeholder="请选择标签" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="production">生产</SelectItem>
-                  <SelectItem value="test">测试</SelectItem>
-                  <SelectItem value="dev">开发</SelectItem>
-                </SelectContent>
-              </Select>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="max-w-2xl w-full justify-start font-normal h-10">
+                    {applyTags.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {applyTags.map(t => (
+                          <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">请选择标签</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-2" align="start">
+                  {mockTags.map(tag => (
+                    <div key={tag.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent cursor-pointer" onClick={() => setApplyTags(prev => prev.includes(tag.name) ? prev.filter(t => t !== tag.name) : [...prev, tag.name])}>
+                      <Checkbox checked={applyTags.includes(tag.name)} />
+                      <span className="text-sm">{tag.name}</span>
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
             </div>
           </CardContent>
         </Card>

@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { romImages as initialImages, physicalDevices, type RomImage, type ImageType, type ImageVisibility, type ImageStatus, type ImageArchitecture, type ImageOS, type ImageTrustStatus, type ImageFormat } from "@/data/mock-data";
+import { mockTags } from "@/pages/devices/TagManagement";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Upload, RefreshCw, Search, ChevronLeft, ChevronRight, Pencil, Trash2, X, Copy, Check } from "lucide-react";
@@ -59,6 +61,7 @@ export default function ImageLibrary() {
   const [selectedDeviceIds, setSelectedDeviceIds] = useState<string[]>([]);
   const [toggleConfirm, setToggleConfirm] = useState<RomImage | null>(null);
   const [editImage, setEditImage] = useState<RomImage | null>(null);
+  const [uploadTags, setUploadTags] = useState<string[]>([]);
   const [editForm, setEditForm] = useState({
     name: "", version: "", description: "", remark: "",
     architecture: "ARM64" as ImageArchitecture,
@@ -66,6 +69,7 @@ export default function ImageLibrary() {
     osVersion: "",
     entrypoint: "", ports: "", envVars: "",
     tenant: "", maxInstances: 100,
+    tags: [] as string[],
   });
   const [uploadSocType, setUploadSocType] = useState("Orion865");
   const [uploadMethod, setUploadMethod] = useState<"file" | "manual">("file");
@@ -116,6 +120,7 @@ export default function ImageLibrary() {
       architecture: rom.architecture, os: rom.os, osVersion: rom.osVersion,
       entrypoint: rom.entrypoint, ports: rom.ports, envVars: rom.envVars,
       tenant: rom.tenant, maxInstances: rom.maxInstances,
+      tags: [...rom.tags],
     });
     setEditImage(rom);
   };
@@ -398,7 +403,29 @@ export default function ImageLibrary() {
             {/* 标签 */}
             <div className="space-y-2">
               <Label>标签</Label>
-              <Input placeholder="latest / v2.0（版本标签）" />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start font-normal h-10">
+                    {uploadTags.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {uploadTags.map(t => (
+                          <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">请选择标签</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-2" align="start">
+                  {mockTags.map(tag => (
+                    <div key={tag.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent cursor-pointer" onClick={() => setUploadTags(prev => prev.includes(tag.name) ? prev.filter(t => t !== tag.name) : [...prev, tag.name])}>
+                      <Checkbox checked={uploadTags.includes(tag.name)} />
+                      <span className="text-sm">{tag.name}</span>
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
             </div>
 
             {/* 架构 & 镜像格式 */}
@@ -614,6 +641,32 @@ export default function ImageLibrary() {
             <div className="space-y-2">
               <Label>环境变量</Label>
               <Textarea value={editForm.envVars} onChange={e => setEditForm(f => ({ ...f, envVars: e.target.value }))} placeholder="KEY=VALUE，每行一个" className="min-h-[60px] resize-y font-mono text-xs" />
+            </div>
+            <div className="space-y-2">
+              <Label>标签</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start font-normal h-10">
+                    {editForm.tags.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {editForm.tags.map(t => (
+                          <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">请选择标签</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-2" align="start">
+                  {mockTags.map(tag => (
+                    <div key={tag.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent cursor-pointer" onClick={() => setEditForm(f => ({ ...f, tags: f.tags.includes(tag.name) ? f.tags.filter(t => t !== tag.name) : [...f.tags, tag.name] }))}>
+                      <Checkbox checked={editForm.tags.includes(tag.name)} />
+                      <span className="text-sm">{tag.name}</span>
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <Label>最大实例数</Label>
