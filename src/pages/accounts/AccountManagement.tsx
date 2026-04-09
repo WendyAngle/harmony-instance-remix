@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { socialAccounts, proxyItems, type SocialAccount, type Platform, type AccountStatus, type AccountType } from "@/data/mock-data";
+import { socialAccounts, proxyItems, physicalDevices, type SocialAccount, type Platform, type AccountStatus, type AccountType } from "@/data/mock-data";
 import { initialDrives } from "@/pages/devices/CloudDrive";
 import { Plus, Search, CheckCircle, RefreshCw, Smartphone, Globe, ChevronLeft, ChevronRight, MonitorSmartphone } from "lucide-react";
 
@@ -233,7 +233,7 @@ export default function AccountManagement() {
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>账号类型</Label>
+                <Label>账号类型 <span className="text-destructive">*</span></Label>
                 <Select>
                   <SelectTrigger><SelectValue placeholder="选择类型" /></SelectTrigger>
                   <SelectContent>
@@ -243,7 +243,7 @@ export default function AccountManagement() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>平台</Label>
+                <Label>平台 <span className="text-destructive">*</span></Label>
                 <Select><SelectTrigger><SelectValue placeholder="选择平台" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="tiktok">TikTok</SelectItem>
@@ -255,12 +255,29 @@ export default function AccountManagement() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>昵称</Label><Input placeholder="账号昵称" /></div>
-              <div className="space-y-2"><Label>用户名</Label><Input placeholder="@username" /></div>
+              <div className="space-y-2"><Label>昵称 <span className="text-destructive">*</span></Label><Input placeholder="账号昵称" /></div>
+              <div className="space-y-2"><Label>用户名 <span className="text-destructive">*</span></Label><Input placeholder="@username" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>绑定镜像实例</Label>
+                <Label>权重</Label>
+                <Input type="number" placeholder="0-100" min={0} max={100} />
+              </div>
+              <div className="space-y-2">
+                <Label>状态 <span className="text-destructive">*</span></Label>
+                <Select>
+                  <SelectTrigger><SelectValue placeholder="选择状态" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="alive">存活</SelectItem>
+                    <SelectItem value="banned">封禁</SelectItem>
+                    <SelectItem value="limited">限流</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>镜像实例 <span className="text-destructive">*</span></Label>
                 <Select><SelectTrigger><SelectValue placeholder="选择镜像实例" /></SelectTrigger>
                   <SelectContent>
                     {initialDrives.map(d => (
@@ -270,7 +287,19 @@ export default function AccountManagement() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>绑定代理IP</Label>
+                <Label>物理设备</Label>
+                <Select><SelectTrigger><SelectValue placeholder="选择物理设备" /></SelectTrigger>
+                  <SelectContent>
+                    {physicalDevices.filter(d => d.status === "online").map(d => (
+                      <SelectItem key={d.id} value={d.id}>{d.name} ({d.id})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>绑定代理IP <span className="text-destructive">*</span></Label>
                 <Select><SelectTrigger><SelectValue placeholder="选择代理" /></SelectTrigger>
                   <SelectContent>
                     {proxyItems.filter(p => p.status === "available").map(p => (
@@ -279,6 +308,14 @@ export default function AccountManagement() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <Label>时区</Label>
+                <Input placeholder="如 America/New_York" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>语言</Label><Input placeholder="如 en-US" /></div>
+              <div className="space-y-2"><Label>地理坐标</Label><Input placeholder="如 40.7128,-74.0060" /></div>
             </div>
           </div>
           <DialogFooter>
