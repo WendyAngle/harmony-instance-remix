@@ -313,7 +313,7 @@ export default function ProxyPool() {
                 <Download className="h-4 w-4" />
                 下载模版文件（.xlsx）
               </Button>
-              <p className="text-xs text-muted-foreground">模版包含：IP、端口、协议、用户名、密码、地区、运营商</p>
+              <p className="text-xs text-muted-foreground">模版包含：IP地址<span className="text-destructive">*</span>、端口<span className="text-destructive">*</span>、协议<span className="text-destructive">*</span>、国家<span className="text-destructive">*</span>、地区<span className="text-destructive">*</span>、匿名度<span className="text-destructive">*</span>、状态<span className="text-destructive">*</span>、镜像实例、绑定账号、用户名、密码（<span className="text-destructive">*</span>为必填）</p>
             </div>
             <div className="space-y-2">
               <Label>2. 上传填写好的文件</Label>
