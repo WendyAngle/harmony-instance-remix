@@ -11,7 +11,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Search, Plus, ChevronLeft, ChevronRight, RotateCcw, MoreHorizontal, AlertTriangle, Copy, Pencil, Tag, ArrowLeft, Minus, Network, Cpu } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, RotateCcw, MoreHorizontal, AlertTriangle, Copy, Tag, ArrowLeft, Minus, Network, Cpu } from "lucide-react";
+import { mockTags } from "@/pages/devices/TagManagement";
 import { toast } from "sonner";
 
 // Mock board card data
