@@ -93,7 +93,7 @@ export default function CloudDrive() {
     const newDrive: CloudDriveItem = {
       id: `cd-${String(drives.length + 1).padStart(3, "0")}`,
       name: formName, capacity: Number(formCapacity) || 50, used: 0,
-      status: "available", mountedTo: null, type: formType,
+      status: "available", linkedTemplate: null, cacheDir: `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
       createdAt: new Date().toISOString().slice(0, 10), remark: formRemark,
       boundAccounts: [],
     };
@@ -119,7 +119,7 @@ export default function CloudDrive() {
   const handleMount = () => {
     if (!mountingDrive || !mountTarget.trim()) return;
     setDrives(prev => prev.map(d => d.id === mountingDrive.id
-      ? { ...d, status: "mounted" as CloudDriveStatus, mountedTo: mountTarget.trim() }
+      ? { ...d, status: "mounted" as CloudDriveStatus, linkedTemplate: mountTarget.trim() }
       : d
     ));
     setMountingDrive(null); setMountTarget("");
@@ -128,7 +128,7 @@ export default function CloudDrive() {
   const handleUnmount = () => {
     if (!unmountingDrive) return;
     setDrives(prev => prev.map(d => d.id === unmountingDrive.id
-      ? { ...d, status: "available" as CloudDriveStatus, mountedTo: null }
+      ? { ...d, status: "available" as CloudDriveStatus, linkedTemplate: null }
       : d
     ));
     setUnmountingDrive(null);
