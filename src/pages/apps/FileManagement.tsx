@@ -376,7 +376,7 @@ export default function FileManagement() {
                           {dev.status === "running" ? "运行中" : dev.status === "idle" ? "空闲" : dev.status === "warming" ? "预热" : dev.status === "error" ? "异常" : "离线"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{dev.deviceId}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{dev.hostServerId.slice(0,8)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
