@@ -22,7 +22,8 @@ export interface CloudDriveItem {
   status: CloudDriveStatus;
   linkedTemplate: string | null; // 关联镜像模版名称
   cacheDir: string; // 缓存目录
-  accessUrl: string; // 访问URL
+  proxyIp: string; // 关联代理IP
+  serverIp: string; // 服务器IP地址
   type: "SSD" | "HDD";
   createdAt: string;
   remark: string;
@@ -30,12 +31,12 @@ export interface CloudDriveItem {
 }
 
 export const initialDrives: CloudDriveItem[] = [
-  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", linkedTemplate: "ARM64-Linux-Web", cacheDir: "/mnt/cache/cd-001", accessUrl: "https://img.example.com/cd-001", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
-  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", linkedTemplate: "x86_64-Win-Server", cacheDir: "/mnt/cache/cd-002", accessUrl: "https://img.example.com/cd-002", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
-  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-003", accessUrl: "https://img.example.com/cd-003", type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
-  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", linkedTemplate: "ARM64-TikTok-Cloud", cacheDir: "/mnt/cache/cd-004", accessUrl: "https://img.example.com/cd-004", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
-  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-005", accessUrl: "https://img.example.com/cd-005", type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
-  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", linkedTemplate: "ARM64-Pro-Cloud", cacheDir: "/mnt/cache/cd-006", accessUrl: "https://img.example.com/cd-006", type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
+  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", linkedTemplate: "ARM64-Linux-Web", cacheDir: "/mnt/cache/cd-001", proxyIp: "103.21.50.10", serverIp: "172.31.20.1", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
+  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", linkedTemplate: "x86_64-Win-Server", cacheDir: "/mnt/cache/cd-002", proxyIp: "91.108.56.25", serverIp: "172.31.20.2", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
+  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-003", proxyIp: "", serverIp: "172.31.20.3", type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
+  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", linkedTemplate: "ARM64-TikTok-Cloud", cacheDir: "/mnt/cache/cd-004", proxyIp: "185.92.30.10", serverIp: "172.31.20.4", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
+  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-005", proxyIp: "", serverIp: "172.31.20.5", type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
+  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", linkedTemplate: "ARM64-Pro-Cloud", cacheDir: "/mnt/cache/cd-006", proxyIp: "103.21.50.35", serverIp: "172.31.20.6", type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
 ];
 
 const statusMap: Record<CloudDriveStatus, { label: string; color: string }> = {
@@ -66,7 +67,8 @@ export default function CloudDrive() {
   const [formType, setFormType] = useState<"SSD" | "HDD">("SSD");
   const [formLinkedTemplate, setFormLinkedTemplate] = useState("");
   const [formCacheDir, setFormCacheDir] = useState("");
-  const [formAccessUrl, setFormAccessUrl] = useState("");
+  const [formProxyIp, setFormProxyIp] = useState("");
+  const [formServerIp, setFormServerIp] = useState("");
   const [formRemark, setFormRemark] = useState("");
   const [mountTarget, setMountTarget] = useState("");
 
@@ -83,14 +85,14 @@ export default function CloudDrive() {
   const totalPages = Math.max(1, Math.ceil(filteredDrives.length / pageSize));
   const pagedDrives = filteredDrives.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedTemplate(""); setFormCacheDir(""); setFormAccessUrl(""); setFormRemark(""); };
+  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedTemplate(""); setFormCacheDir(""); setFormProxyIp(""); setFormServerIp(""); setFormRemark(""); };
 
   const openCreate = () => { resetForm(); setShowCreate(true); };
 
   const openEdit = (d: CloudDriveItem) => {
     setFormName(d.name); setFormCapacity(String(d.capacity)); setFormType(d.type);
-    setFormLinkedTemplate(d.linkedTemplate || "__none__"); setFormCacheDir(d.cacheDir || ""); setFormAccessUrl(d.accessUrl || "");
-    setFormRemark(d.remark);
+    setFormLinkedTemplate(d.linkedTemplate || "__none__"); setFormCacheDir(d.cacheDir || ""); setFormProxyIp(d.proxyIp || "");
+    setFormServerIp(d.serverIp || ""); setFormRemark(d.remark);
     setEditingDrive(d);
   };
 
@@ -98,7 +100,7 @@ export default function CloudDrive() {
     const newDrive: CloudDriveItem = {
       id: `cd-${String(drives.length + 1).padStart(3, "0")}`,
       name: formName, capacity: Number(formCapacity) || 50, used: 0,
-      status: "available", linkedTemplate: formLinkedTemplate && formLinkedTemplate !== "__none__" ? formLinkedTemplate : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, accessUrl: formAccessUrl || `https://img.example.com/cd-${String(drives.length + 1).padStart(3, "0")}`, type: formType,
+      status: "available", linkedTemplate: formLinkedTemplate && formLinkedTemplate !== "__none__" ? formLinkedTemplate : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, proxyIp: formProxyIp, serverIp: formServerIp, type: formType,
       createdAt: new Date().toISOString().slice(0, 10), remark: formRemark,
       boundAccounts: [],
     };
@@ -109,7 +111,7 @@ export default function CloudDrive() {
   const handleEdit = () => {
     if (!editingDrive) return;
     setDrives(prev => prev.map(d => d.id === editingDrive.id
-      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedTemplate: formLinkedTemplate || d.linkedTemplate, cacheDir: formCacheDir || d.cacheDir, accessUrl: formAccessUrl || d.accessUrl, remark: formRemark }
+      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedTemplate: formLinkedTemplate || d.linkedTemplate, cacheDir: formCacheDir || d.cacheDir, proxyIp: formProxyIp, serverIp: formServerIp, remark: formRemark }
       : d
     ));
     setEditingDrive(null); resetForm();
@@ -180,8 +182,8 @@ export default function CloudDrive() {
                 <TableHead className="whitespace-nowrap">容量</TableHead>
                 <TableHead className="whitespace-nowrap">已用</TableHead>
                 <TableHead className="whitespace-nowrap">关联镜像模版</TableHead>
-                <TableHead className="whitespace-nowrap">缓存目录</TableHead>
-                <TableHead className="whitespace-nowrap">访问URL</TableHead>
+                <TableHead className="whitespace-nowrap">关联代理IP</TableHead>
+                <TableHead className="whitespace-nowrap">服务器</TableHead>
                 <TableHead className="whitespace-nowrap">绑定账号</TableHead>
                 <TableHead className="whitespace-nowrap">创建时间</TableHead>
                 <TableHead className="whitespace-nowrap text-center">状态</TableHead>
@@ -206,10 +208,8 @@ export default function CloudDrive() {
                     </div>
                   </TableCell>
                   <TableCell className="text-xs whitespace-nowrap">{drive.linkedTemplate || <span className="text-muted-foreground">—</span>}</TableCell>
-                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.cacheDir}</TableCell>
-                  <TableCell className="text-xs whitespace-nowrap">
-                    <a href={drive.accessUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{drive.accessUrl}</a>
-                  </TableCell>
+                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.proxyIp || <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.serverIp || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="whitespace-nowrap">
                     {drive.boundAccounts.length > 0 ? (
                       <div className="flex flex-col gap-0.5">
@@ -343,7 +343,8 @@ export default function CloudDrive() {
               </Select>
             </div>
             <div className="space-y-2"><Label>缓存目录</Label><Input placeholder="/mnt/cache/cd-xxx" value={formCacheDir} onChange={e => setFormCacheDir(e.target.value)} /></div>
-            <div className="space-y-2"><Label>访问URL</Label><Input placeholder="https://img.example.com/cd-xxx" value={formAccessUrl} onChange={e => setFormAccessUrl(e.target.value)} /></div>
+            <div className="space-y-2"><Label>关联代理IP</Label><Input placeholder="例如 103.21.50.10" value={formProxyIp} onChange={e => setFormProxyIp(e.target.value)} /></div>
+            <div className="space-y-2"><Label>服务器</Label><Input placeholder="例如 172.31.20.1" value={formServerIp} onChange={e => setFormServerIp(e.target.value)} /></div>
             <div className="space-y-2"><Label>备注</Label><Input placeholder="可选备注信息" value={formRemark} onChange={e => setFormRemark(e.target.value)} /></div>
           </div>
           <DialogFooter>
@@ -388,7 +389,8 @@ export default function CloudDrive() {
               </Select>
             </div>
             <div className="space-y-2"><Label>缓存目录</Label><Input placeholder="/mnt/cache/cd-xxx" value={formCacheDir} onChange={e => setFormCacheDir(e.target.value)} /></div>
-            <div className="space-y-2"><Label>访问URL</Label><Input placeholder="https://img.example.com/cd-xxx" value={formAccessUrl} onChange={e => setFormAccessUrl(e.target.value)} /></div>
+            <div className="space-y-2"><Label>关联代理IP</Label><Input placeholder="例如 103.21.50.10" value={formProxyIp} onChange={e => setFormProxyIp(e.target.value)} /></div>
+            <div className="space-y-2"><Label>服务器</Label><Input placeholder="例如 172.31.20.1" value={formServerIp} onChange={e => setFormServerIp(e.target.value)} /></div>
             <div className="space-y-2"><Label>备注</Label><Input value={formRemark} onChange={e => setFormRemark(e.target.value)} /></div>
           </div>
           <DialogFooter>
