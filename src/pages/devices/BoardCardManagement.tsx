@@ -389,15 +389,7 @@ export default function BoardCardManagement() {
 
         {/* Toolbar */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Select value={serverFilter} onValueChange={setServerFilter}>
-            <SelectTrigger className="w-40 h-8 text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="yaan-test(24)">yaan-test(24)</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button size="sm" className="h-8" onClick={() => setShowApplyForm(true)}>
-            <Plus className="h-4 w-4 mr-1" />申请板卡
-          </Button>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8" disabled={selectedIds.size === 0}>更多操作</Button>
