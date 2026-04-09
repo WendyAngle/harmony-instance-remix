@@ -177,7 +177,35 @@ export default function TagManagement() {
                 {pagedTags.map(tag => (
                   <TableRow key={tag.id}>
                     <TableCell className="text-sm">{tag.name}</TableCell>
-                    <TableCell className="text-sm">{tag.count}</TableCell>
+                    <TableCell className="text-sm">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <span className="cursor-pointer text-primary underline decoration-dashed underline-offset-4">
+                            {getTagBreakdown(tag.name).total}
+                          </span>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <table className="text-sm">
+                            <thead>
+                              <tr className="border-b bg-muted/50">
+                                <th className="px-4 py-2 text-left font-medium text-muted-foreground">资源类型</th>
+                                <th className="px-4 py-2 text-left font-medium text-muted-foreground">已关联数量</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b">
+                                <td className="px-4 py-2">板卡</td>
+                                <td className="px-4 py-2">{getTagBreakdown(tag.name).boardCount}</td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-2">镜像模版</td>
+                                <td className="px-4 py-2">{getTagBreakdown(tag.name).imageCount}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </PopoverContent>
+                      </Popover>
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{tag.remark || "-"}</TableCell>
                     <TableCell className="text-sm">{tag.createdAt}</TableCell>
                     <TableCell>
