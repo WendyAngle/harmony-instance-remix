@@ -91,9 +91,7 @@ export default function CreateContainer() {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
-                {createType === "cloud" ? "云机部署在ARM服务器上" : "Windows虚拟机部署在X86服务器上"}
-              </p>
+              <p className="text-xs text-muted-foreground">云机部署在ARM服务器上</p>
             </div>
 
             {/* 镜像模版 */}
