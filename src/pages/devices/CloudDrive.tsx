@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Search, Plus, Pencil, Trash2, Link, Unlink, ChevronLeft, ChevronRight, HardDrive } from "lucide-react";
-import { type BoundAccount, romImages, virtualInstances } from "@/data/mock-data";
+import { type BoundAccount, virtualInstances } from "@/data/mock-data";
 
 export type CloudDriveStatus = "available" | "mounted" | "error";
 
@@ -20,7 +20,7 @@ export interface CloudDriveItem {
   capacity: number; // GB
   used: number; // GB
   status: CloudDriveStatus;
-  linkedTemplate: string | null; // 关联镜像模版名称
+  linkedVmId: string | null; // 关联虚拟机ID
   cacheDir: string; // 缓存目录
   proxyIp: string; // 关联代理IP
   serverIp: string; // 服务器IP地址
@@ -31,12 +31,12 @@ export interface CloudDriveItem {
 }
 
 export const initialDrives: CloudDriveItem[] = [
-  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", linkedTemplate: "ARM64-Linux-Web", cacheDir: "/mnt/cache/cd-001", proxyIp: "103.21.50.10", serverIp: "172.31.20.1", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
-  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", linkedTemplate: "x86_64-Win-Server", cacheDir: "/mnt/cache/cd-002", proxyIp: "91.108.56.25", serverIp: "172.31.20.2", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
-  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-003", proxyIp: "", serverIp: "172.31.20.3", type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
-  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", linkedTemplate: "ARM64-TikTok-Cloud", cacheDir: "/mnt/cache/cd-004", proxyIp: "185.92.30.10", serverIp: "172.31.20.4", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
-  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-005", proxyIp: "", serverIp: "172.31.20.5", type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
-  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", linkedTemplate: "ARM64-Pro-Cloud", cacheDir: "/mnt/cache/cd-006", proxyIp: "103.21.50.35", serverIp: "172.31.20.6", type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
+  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", linkedVmId: "f47ac10b-58cc-4372-a567-0e02b2c3d479", cacheDir: "/mnt/cache/cd-001", proxyIp: "103.21.50.10", serverIp: "172.31.20.1", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
+  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", linkedVmId: "6ba7b819-9dad-11d1-80b4-00c04fd430c8", cacheDir: "/mnt/cache/cd-002", proxyIp: "91.108.56.25", serverIp: "172.31.20.2", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
+  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", linkedVmId: null, cacheDir: "/mnt/cache/cd-003", proxyIp: "", serverIp: "172.31.20.3", type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
+  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", linkedVmId: "6ba7b812-9dad-11d1-80b4-00c04fd430c8", cacheDir: "/mnt/cache/cd-004", proxyIp: "185.92.30.10", serverIp: "172.31.20.4", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
+  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", linkedVmId: null, cacheDir: "/mnt/cache/cd-005", proxyIp: "", serverIp: "172.31.20.5", type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
+  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", linkedVmId: "6ba7b81a-9dad-11d1-80b4-00c04fd430c8", cacheDir: "/mnt/cache/cd-006", proxyIp: "103.21.50.35", serverIp: "172.31.20.6", type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
 ];
 
 const statusMap: Record<CloudDriveStatus, { label: string; color: string }> = {
@@ -44,6 +44,8 @@ const statusMap: Record<CloudDriveStatus, { label: string; color: string }> = {
   mounted: { label: "已挂载", color: "bg-blue-500" },
   error: { label: "异常", color: "bg-red-500" },
 };
+
+const vmStatusMap: Record<string, string> = { offline: "离线", idle: "空闲", warming: "预热中", running: "运行中", error: "异常" };
 
 const PAGE_SIZES = [10, 20, 50];
 
@@ -65,12 +67,18 @@ export default function CloudDrive() {
   const [formName, setFormName] = useState("");
   const [formCapacity, setFormCapacity] = useState("");
   const [formType, setFormType] = useState<"SSD" | "HDD">("SSD");
-  const [formLinkedTemplate, setFormLinkedTemplate] = useState("");
+  const [formLinkedVmId, setFormLinkedVmId] = useState("");
   const [formCacheDir, setFormCacheDir] = useState("");
   const [formProxyIp, setFormProxyIp] = useState("");
   const [formServerIp, setFormServerIp] = useState("");
   const [formRemark, setFormRemark] = useState("");
   const [mountTarget, setMountTarget] = useState("");
+
+  const getVmName = (vmId: string | null) => {
+    if (!vmId) return null;
+    const vm = virtualInstances.find(v => v.id === vmId);
+    return vm ? `${vm.name} (${vmStatusMap[vm.status] || vm.status})` : vmId;
+  };
 
   const filteredDrives = useMemo(() => {
     let result = drives;
@@ -85,13 +93,13 @@ export default function CloudDrive() {
   const totalPages = Math.max(1, Math.ceil(filteredDrives.length / pageSize));
   const pagedDrives = filteredDrives.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedTemplate(""); setFormCacheDir(""); setFormProxyIp(""); setFormServerIp(""); setFormRemark(""); };
+  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedVmId(""); setFormCacheDir(""); setFormProxyIp(""); setFormServerIp(""); setFormRemark(""); };
 
   const openCreate = () => { resetForm(); setShowCreate(true); };
 
   const openEdit = (d: CloudDriveItem) => {
     setFormName(d.name); setFormCapacity(String(d.capacity)); setFormType(d.type);
-    setFormLinkedTemplate(d.linkedTemplate || "__none__"); setFormCacheDir(d.cacheDir || ""); setFormProxyIp(d.proxyIp || "");
+    setFormLinkedVmId(d.linkedVmId || "__none__"); setFormCacheDir(d.cacheDir || ""); setFormProxyIp(d.proxyIp || "");
     setFormServerIp(d.serverIp || ""); setFormRemark(d.remark);
     setEditingDrive(d);
   };
@@ -100,7 +108,7 @@ export default function CloudDrive() {
     const newDrive: CloudDriveItem = {
       id: `cd-${String(drives.length + 1).padStart(3, "0")}`,
       name: formName, capacity: Number(formCapacity) || 50, used: 0,
-      status: "available", linkedTemplate: formLinkedTemplate && formLinkedTemplate !== "__none__" ? formLinkedTemplate : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, proxyIp: formProxyIp, serverIp: formServerIp, type: formType,
+      status: "available", linkedVmId: formLinkedVmId && formLinkedVmId !== "__none__" ? formLinkedVmId : null, cacheDir: formCacheDir || `/mnt/cache/cd-${String(drives.length + 1).padStart(3, "0")}`, proxyIp: formProxyIp, serverIp: formServerIp, type: formType,
       createdAt: new Date().toISOString().slice(0, 10), remark: formRemark,
       boundAccounts: [],
     };
@@ -111,7 +119,7 @@ export default function CloudDrive() {
   const handleEdit = () => {
     if (!editingDrive) return;
     setDrives(prev => prev.map(d => d.id === editingDrive.id
-      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedTemplate: formLinkedTemplate || d.linkedTemplate, cacheDir: formCacheDir || d.cacheDir, proxyIp: formProxyIp, serverIp: formServerIp, remark: formRemark }
+      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedVmId: formLinkedVmId && formLinkedVmId !== "__none__" ? formLinkedVmId : d.linkedVmId, cacheDir: formCacheDir || d.cacheDir, proxyIp: formProxyIp, serverIp: formServerIp, remark: formRemark }
       : d
     ));
     setEditingDrive(null); resetForm();
@@ -126,7 +134,7 @@ export default function CloudDrive() {
   const handleMount = () => {
     if (!mountingDrive || !mountTarget.trim()) return;
     setDrives(prev => prev.map(d => d.id === mountingDrive.id
-      ? { ...d, status: "mounted" as CloudDriveStatus, linkedTemplate: mountTarget.trim() }
+      ? { ...d, status: "mounted" as CloudDriveStatus, linkedVmId: mountTarget.trim() }
       : d
     ));
     setMountingDrive(null); setMountTarget("");
@@ -135,11 +143,13 @@ export default function CloudDrive() {
   const handleUnmount = () => {
     if (!unmountingDrive) return;
     setDrives(prev => prev.map(d => d.id === unmountingDrive.id
-      ? { ...d, status: "available" as CloudDriveStatus, linkedTemplate: null }
+      ? { ...d, status: "available" as CloudDriveStatus, linkedVmId: null }
       : d
     ));
     setUnmountingDrive(null);
   };
+
+  const vmSelectOptions = virtualInstances.filter(v => v.status !== "error");
 
   return (
     <div className="space-y-4">
@@ -181,7 +191,8 @@ export default function CloudDrive() {
                 <TableHead className="whitespace-nowrap">类型</TableHead>
                 <TableHead className="whitespace-nowrap">容量</TableHead>
                 <TableHead className="whitespace-nowrap">已用</TableHead>
-                <TableHead className="whitespace-nowrap">关联镜像模版</TableHead>
+                <TableHead className="whitespace-nowrap">虚拟机</TableHead>
+                <TableHead className="whitespace-nowrap">缓存目录</TableHead>
                 <TableHead className="whitespace-nowrap">关联代理IP</TableHead>
                 <TableHead className="whitespace-nowrap">服务器</TableHead>
                 <TableHead className="whitespace-nowrap">绑定账号</TableHead>
@@ -207,7 +218,8 @@ export default function CloudDrive() {
                       <span>{drive.used} GB</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-xs whitespace-nowrap">{drive.linkedTemplate || <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">{getVmName(drive.linkedVmId) || <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.cacheDir || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="text-xs font-mono whitespace-nowrap">{drive.proxyIp || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="text-xs font-mono whitespace-nowrap">{drive.serverIp || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="whitespace-nowrap">
@@ -272,7 +284,7 @@ export default function CloudDrive() {
               ))}
               {pagedDrives.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={13} className="text-center py-8 text-muted-foreground">
                     <HardDrive className="h-8 w-8 mx-auto mb-2 opacity-30" />
                     暂无镜像实例数据
                   </TableCell>
@@ -331,13 +343,13 @@ export default function CloudDrive() {
               <div className="space-y-2"><Label><span className="text-destructive">*</span> 容量 (GB)</Label><Input type="number" placeholder="100" value={formCapacity} onChange={e => setFormCapacity(e.target.value)} /></div>
             </div>
             <div className="space-y-2">
-              <Label>关联镜像模版</Label>
-              <Select value={formLinkedTemplate} onValueChange={setFormLinkedTemplate}>
-                <SelectTrigger><SelectValue placeholder="请选择镜像模版" /></SelectTrigger>
+              <Label>虚拟机</Label>
+              <Select value={formLinkedVmId} onValueChange={setFormLinkedVmId}>
+                <SelectTrigger><SelectValue placeholder="请选择虚拟机" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none__">不关联</SelectItem>
-                  {romImages.filter(img => img.imageStatus === "normal").map(img => (
-                    <SelectItem key={img.id} value={img.name}>{img.name}</SelectItem>
+                  {vmSelectOptions.map(v => (
+                    <SelectItem key={v.id} value={v.id}>{v.name} — {vmStatusMap[v.status] || v.status}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -377,13 +389,13 @@ export default function CloudDrive() {
               <div className="space-y-2"><Label><span className="text-destructive">*</span> 容量 (GB)</Label><Input type="number" value={formCapacity} onChange={e => setFormCapacity(e.target.value)} /></div>
             </div>
             <div className="space-y-2">
-              <Label>关联镜像模版</Label>
-              <Select value={formLinkedTemplate} onValueChange={setFormLinkedTemplate}>
-                <SelectTrigger><SelectValue placeholder="请选择镜像模版" /></SelectTrigger>
+              <Label>虚拟机</Label>
+              <Select value={formLinkedVmId} onValueChange={setFormLinkedVmId}>
+                <SelectTrigger><SelectValue placeholder="请选择虚拟机" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none__">不关联</SelectItem>
-                  {romImages.filter(img => img.imageStatus === "normal").map(img => (
-                    <SelectItem key={img.id} value={img.name}>{img.name}</SelectItem>
+                  {vmSelectOptions.map(v => (
+                    <SelectItem key={v.id} value={v.id}>{v.name} — {vmStatusMap[v.status] || v.status}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -413,14 +425,11 @@ export default function CloudDrive() {
               <Select value={mountTarget} onValueChange={setMountTarget}>
                 <SelectTrigger><SelectValue placeholder="请选择虚拟机" /></SelectTrigger>
                 <SelectContent>
-                  {virtualInstances.filter(v => v.status !== "error").map(v => {
-                    const statusMap: Record<string, string> = { offline: "离线", idle: "空闲", warming: "预热中", running: "运行中" };
-                    return (
-                      <SelectItem key={v.id} value={v.id}>
-                        {v.name} ({v.id.substring(0, 8)}...) — {statusMap[v.status] || v.status}
-                      </SelectItem>
-                    );
-                  })}
+                  {vmSelectOptions.map(v => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.name} ({v.id.substring(0, 8)}...) — {vmStatusMap[v.status] || v.status}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -438,7 +447,7 @@ export default function CloudDrive() {
           <AlertDialogHeader>
             <AlertDialogTitle>确认卸载镜像实例？</AlertDialogTitle>
             <AlertDialogDescription>
-              将从关联镜像模版 {unmountingDrive?.linkedTemplate} 卸载镜像实例 {unmountingDrive?.name}。卸载后数据仍保留，但将无法访问该镜像实例。
+              将从虚拟机 {unmountingDrive?.linkedVmId ? getVmName(unmountingDrive.linkedVmId) : ""} 卸载镜像实例 {unmountingDrive?.name}。卸载后数据仍保留，但将无法访问该镜像实例。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
