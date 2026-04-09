@@ -9,8 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Plus, Search, ChevronLeft, ChevronRight, AlertTriangle, Info } from "lucide-react";
 import { toast } from "sonner";
+import { romImages } from "@/data/mock-data";
 
 interface TagItem {
   id: string;
@@ -47,6 +49,33 @@ export default function TagManagement() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deletingTag, setDeletingTag] = useState<TagItem | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+
+  // Compute tag usage from board cards and image templates
+  const boardCardTagCounts = useMemo(() => {
+    // Simulate board card tag assignments (same logic as BoardCardManagement mock)
+    const tagNames = mockTags.map(t => t.name);
+    const counts: Record<string, number> = {};
+    tagNames.forEach(n => { counts[n] = 0; });
+    for (let i = 0; i < 24; i++) {
+      const assigned = i % 5 === 0 ? [mockTags[1]?.name, mockTags[3]?.name] : i % 3 === 0 ? [mockTags[4]?.name] : i % 2 === 0 ? [mockTags[0]?.name] : [mockTags[2]?.name];
+      assigned.filter(Boolean).forEach(n => { if (counts[n!] !== undefined) counts[n!]++; });
+    }
+    return counts;
+  }, []);
+
+  const imageTagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    romImages.forEach(img => {
+      img.tags.forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+    });
+    return counts;
+  }, []);
+
+  const getTagBreakdown = (tagName: string) => {
+    const boardCount = boardCardTagCounts[tagName] || 0;
+    const imageCount = imageTagCounts[tagName] || 0;
+    return { boardCount, imageCount, total: boardCount + imageCount };
+  };
 
   const filteredTags = useMemo(() => {
     if (!searchText.trim()) return tags;
@@ -148,7 +177,35 @@ export default function TagManagement() {
                 {pagedTags.map(tag => (
                   <TableRow key={tag.id}>
                     <TableCell className="text-sm">{tag.name}</TableCell>
-                    <TableCell className="text-sm">{tag.count}</TableCell>
+                    <TableCell className="text-sm">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <span className="cursor-pointer text-primary underline decoration-dashed underline-offset-4">
+                            {getTagBreakdown(tag.name).total}
+                          </span>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <table className="text-sm">
+                            <thead>
+                              <tr className="border-b bg-muted/50">
+                                <th className="px-4 py-2 text-left font-medium text-muted-foreground">资源类型</th>
+                                <th className="px-4 py-2 text-left font-medium text-muted-foreground">已关联数量</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b">
+                                <td className="px-4 py-2">板卡</td>
+                                <td className="px-4 py-2">{getTagBreakdown(tag.name).boardCount}</td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-2">镜像模版</td>
+                                <td className="px-4 py-2">{getTagBreakdown(tag.name).imageCount}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </PopoverContent>
+                      </Popover>
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{tag.remark || "-"}</TableCell>
                     <TableCell className="text-sm">{tag.createdAt}</TableCell>
                     <TableCell>
