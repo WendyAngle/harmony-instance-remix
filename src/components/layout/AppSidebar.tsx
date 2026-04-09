@@ -22,7 +22,7 @@ const menuGroups = [
     label: "设备资源中台",
     items: [
       { title: "主机服务器管理", url: "/devices/servers", icon: Database },
-      { title: "物理设备管理", url: "/devices/physical", icon: Server },
+      // { title: "物理设备管理", url: "/devices/physical", icon: Server },
       { title: "ARM板卡管理", url: "/devices/boardcards", icon: CircuitBoard },
     ],
   },
