@@ -21,7 +21,7 @@ interface EnvVariable {
 
 export default function CreateContainer() {
   const navigate = useNavigate();
-  const [createType, setCreateType] = useState<VirtualDeviceType>("cloud");
+  const createType = "cloud" as VirtualDeviceType;
   const [createImageVisibility, setCreateImageVisibility] = useState<"public" | "private">("public");
   const [createImageId, setCreateImageId] = useState("");
   const [autoRestart, setAutoRestart] = useState(false);
@@ -63,8 +63,8 @@ export default function CreateContainer() {
           返回
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">创建虚拟机</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">创建云机或 Windows 虚拟机实例</p>
+          <h1 className="text-2xl font-bold">创建云机</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">创建基于ARM服务器的云机实例</p>
         </div>
       </div>
 
