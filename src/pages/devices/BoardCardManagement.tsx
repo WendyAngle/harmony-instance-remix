@@ -476,7 +476,7 @@ export default function BoardCardManagement() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">
-                        {card.tags.length > 0 ? card.tags.join(", ") : <Pencil className="h-3 w-3 text-muted-foreground cursor-pointer" />}
+                        {card.tags.length > 0 ? card.tags.join(", ") : <span className="text-muted-foreground">—</span>}
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">{card.createdAt}</TableCell>
                       <TableCell>
