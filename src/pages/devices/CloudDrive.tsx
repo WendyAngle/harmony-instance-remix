@@ -83,7 +83,7 @@ export default function CloudDrive() {
   const totalPages = Math.max(1, Math.ceil(filteredDrives.length / pageSize));
   const pagedDrives = filteredDrives.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormRemark(""); };
+  const resetForm = () => { setFormName(""); setFormCapacity(""); setFormType("SSD"); setFormLinkedTemplate(""); setFormCacheDir(""); setFormAccessUrl(""); setFormRemark(""); };
 
   const openCreate = () => { resetForm(); setShowCreate(true); };
 
