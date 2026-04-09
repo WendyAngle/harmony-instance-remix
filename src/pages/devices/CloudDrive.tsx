@@ -22,7 +22,8 @@ export interface CloudDriveItem {
   status: CloudDriveStatus;
   linkedTemplate: string | null; // 关联镜像模版名称
   cacheDir: string; // 缓存目录
-  accessUrl: string; // 访问URL
+  proxyIp: string; // 关联代理IP
+  serverIp: string; // 服务器IP地址
   type: "SSD" | "HDD";
   createdAt: string;
   remark: string;
@@ -30,12 +31,12 @@ export interface CloudDriveItem {
 }
 
 export const initialDrives: CloudDriveItem[] = [
-  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", linkedTemplate: "ARM64-Linux-Web", cacheDir: "/mnt/cache/cd-001", accessUrl: "https://img.example.com/cd-001", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
-  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", linkedTemplate: "x86_64-Win-Server", cacheDir: "/mnt/cache/cd-002", accessUrl: "https://img.example.com/cd-002", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
-  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-003", accessUrl: "https://img.example.com/cd-003", type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
-  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", linkedTemplate: "ARM64-TikTok-Cloud", cacheDir: "/mnt/cache/cd-004", accessUrl: "https://img.example.com/cd-004", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
-  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-005", accessUrl: "https://img.example.com/cd-005", type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
-  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", linkedTemplate: "ARM64-Pro-Cloud", cacheDir: "/mnt/cache/cd-006", accessUrl: "https://img.example.com/cd-006", type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
+  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", linkedTemplate: "ARM64-Linux-Web", cacheDir: "/mnt/cache/cd-001", proxyIp: "103.21.50.10", serverIp: "172.31.20.1", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
+  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", linkedTemplate: "x86_64-Win-Server", cacheDir: "/mnt/cache/cd-002", proxyIp: "91.108.56.25", serverIp: "172.31.20.2", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
+  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-003", proxyIp: "", serverIp: "172.31.20.3", type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
+  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", linkedTemplate: "ARM64-TikTok-Cloud", cacheDir: "/mnt/cache/cd-004", proxyIp: "185.92.30.10", serverIp: "172.31.20.4", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
+  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-005", proxyIp: "", serverIp: "172.31.20.5", type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
+  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", linkedTemplate: "ARM64-Pro-Cloud", cacheDir: "/mnt/cache/cd-006", proxyIp: "103.21.50.35", serverIp: "172.31.20.6", type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
 ];
 
 const statusMap: Record<CloudDriveStatus, { label: string; color: string }> = {
