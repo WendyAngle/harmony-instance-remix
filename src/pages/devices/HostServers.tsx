@@ -271,7 +271,7 @@ export default function HostServers() {
                       <TableCell className="text-center">
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-white ${statusConfig[server.status].colorClass}`}>
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-white whitespace-nowrap ${statusConfig[server.status].colorClass}`}>
                               {statusConfig[server.status].label}
                             </span>
                           </TooltipTrigger>
