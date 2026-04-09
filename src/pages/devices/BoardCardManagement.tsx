@@ -416,65 +416,65 @@ export default function BoardCardManagement() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-blue-50/50">
+                  <TableRow>
                     <TableHead className="w-10"><Checkbox checked={allPageSelected} onCheckedChange={toggleSelectAll} /></TableHead>
-                    <TableHead className="text-xs">UUID</TableHead>
-                    <TableHead className="text-xs">名称</TableHead>
-                    <TableHead className="text-xs">SN</TableHead>
-                    <TableHead className="text-xs">类型 ▼</TableHead>
-                    <TableHead className="text-xs">规格 ▼</TableHead>
-                    <TableHead className="text-xs">操作系统</TableHead>
-                    <TableHead className="text-xs">运行状态 ▼</TableHead>
-                    <TableHead className="text-xs">任务状态</TableHead>
-                    <TableHead className="text-xs">虚拟机规格</TableHead>
-                    <TableHead className="text-xs">虚拟机数量</TableHead>
-                    <TableHead className="text-xs">超额 ▼</TableHead>
-                    <TableHead className="text-xs">限速(Mbps)</TableHead>
-                    <TableHead className="text-xs">IP地址</TableHead>
-                    <TableHead className="text-xs">CPU型号 ▼</TableHead>
-                    <TableHead className="text-xs">Release状态 ▼</TableHead>
-                    <TableHead className="text-xs">标签</TableHead>
-                    <TableHead className="text-xs">创建时间 ▼</TableHead>
-                    <TableHead className="text-xs">操作</TableHead>
+                    <TableHead className="whitespace-nowrap">UUID</TableHead>
+                    <TableHead className="whitespace-nowrap">名称</TableHead>
+                    <TableHead className="whitespace-nowrap">SN</TableHead>
+                    <TableHead className="whitespace-nowrap">类型</TableHead>
+                    <TableHead className="whitespace-nowrap">规格</TableHead>
+                    <TableHead className="whitespace-nowrap">操作系统</TableHead>
+                    <TableHead className="whitespace-nowrap">运行状态</TableHead>
+                    <TableHead className="whitespace-nowrap">任务状态</TableHead>
+                    <TableHead className="whitespace-nowrap">虚拟机规格</TableHead>
+                    <TableHead className="whitespace-nowrap">虚拟机数量</TableHead>
+                    <TableHead className="whitespace-nowrap">超额</TableHead>
+                    <TableHead className="whitespace-nowrap">限速(Mbps)</TableHead>
+                    <TableHead className="whitespace-nowrap">IP地址</TableHead>
+                    <TableHead className="whitespace-nowrap">CPU型号</TableHead>
+                    <TableHead className="whitespace-nowrap">Release状态</TableHead>
+                    <TableHead className="whitespace-nowrap">标签</TableHead>
+                    <TableHead className="whitespace-nowrap">创建时间</TableHead>
+                    <TableHead className="whitespace-nowrap">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {pagedCards.map(card => (
                     <TableRow key={card.id}>
                       <TableCell><Checkbox checked={selectedIds.has(card.id)} onCheckedChange={() => toggleSelect(card.id)} /></TableCell>
-                      <TableCell className="text-xs font-mono max-w-[120px] truncate">{card.uuid}</TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="font-mono text-xs whitespace-nowrap" title={card.uuid}>{card.uuid}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
                         <span className="text-primary cursor-pointer hover:underline">{card.name}</span>
                       </TableCell>
-                      <TableCell className="text-xs font-mono max-w-[120px] truncate">{card.sn}</TableCell>
-                      <TableCell className="text-xs"><Badge variant="outline" className="text-[10px]">{card.type}</Badge></TableCell>
-                      <TableCell className="text-xs max-w-[180px] truncate">{card.spec}</TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{card.sn}</TableCell>
+                      <TableCell className="whitespace-nowrap"><Badge variant="outline" className="text-[10px]">{card.type}</Badge></TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">{card.spec}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
                         <span className="inline-flex items-center gap-1">🤖 {card.os}</span>
                       </TableCell>
-                      <TableCell className="text-xs">
-                        <Badge className="bg-green-500/10 text-green-600 border-green-200 text-[10px]">正常</Badge>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        <Badge className="bg-green-500/10 text-green-600 border-green-200 text-[10px] whitespace-nowrap">正常</Badge>
                       </TableCell>
-                      <TableCell className="text-xs">
-                        <Badge variant="outline" className="bg-green-50 text-green-600 text-[10px]">空闲</Badge>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        <Badge variant="outline" className="bg-green-50 text-green-600 text-[10px] whitespace-nowrap">空闲</Badge>
                       </TableCell>
-                      <TableCell className="text-xs max-w-[180px] truncate">{card.containerSpec || "-"}</TableCell>
-                      <TableCell className="text-xs text-center">{card.containerCount}</TableCell>
-                      <TableCell className="text-xs text-center">{card.overQuota ? "是" : "否"}</TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="text-xs whitespace-nowrap">{card.containerSpec || "-"}</TableCell>
+                      <TableCell className="text-xs text-center whitespace-nowrap">{card.containerCount}</TableCell>
+                      <TableCell className="text-xs text-center whitespace-nowrap">{card.overQuota ? "是" : "否"}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
                         <div className="text-[10px] leading-tight">
                           <div>上行</div>
                           <div>下行</div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-xs font-mono">{card.ip}</TableCell>
-                      <TableCell className="text-xs">{card.cpuModel}</TableCell>
-                      <TableCell className="text-xs">
-                        <Badge variant={card.releaseStatus === "Ready" ? "default" : "secondary"} className={`text-[10px] ${card.releaseStatus === "Ready" ? "bg-green-500" : ""}`}>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{card.ip}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">{card.cpuModel}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        <Badge variant={card.releaseStatus === "Ready" ? "default" : "secondary"} className={`text-[10px] whitespace-nowrap ${card.releaseStatus === "Ready" ? "bg-green-500" : ""}`}>
                           {card.releaseStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="text-xs whitespace-nowrap">
                         {card.tags.length > 0 ? card.tags.join(", ") : <Pencil className="h-3 w-3 text-muted-foreground cursor-pointer" />}
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">{card.createdAt}</TableCell>
