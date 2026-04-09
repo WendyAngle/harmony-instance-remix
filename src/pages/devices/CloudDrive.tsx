@@ -88,7 +88,9 @@ export default function CloudDrive() {
   const openCreate = () => { resetForm(); setShowCreate(true); };
 
   const openEdit = (d: CloudDriveItem) => {
-    setFormName(d.name); setFormCapacity(String(d.capacity)); setFormType(d.type); setFormRemark(d.remark);
+    setFormName(d.name); setFormCapacity(String(d.capacity)); setFormType(d.type);
+    setFormLinkedTemplate(d.linkedTemplate || ""); setFormCacheDir(d.cacheDir || ""); setFormAccessUrl(d.accessUrl || "");
+    setFormRemark(d.remark);
     setEditingDrive(d);
   };
 
@@ -107,7 +109,7 @@ export default function CloudDrive() {
   const handleEdit = () => {
     if (!editingDrive) return;
     setDrives(prev => prev.map(d => d.id === editingDrive.id
-      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, remark: formRemark }
+      ? { ...d, name: formName, capacity: Number(formCapacity) || d.capacity, type: formType, linkedTemplate: formLinkedTemplate || d.linkedTemplate, cacheDir: formCacheDir || d.cacheDir, accessUrl: formAccessUrl || d.accessUrl, remark: formRemark }
       : d
     ));
     setEditingDrive(null); resetForm();
@@ -348,11 +350,10 @@ export default function CloudDrive() {
             <DialogDescription>修改镜像实例 {editingDrive?.id} 的信息</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            <div className="space-y-2"><Label>镜像实例名称</Label><Input value={formName} onChange={e => setFormName(e.target.value)} /></div>
+            <div className="space-y-2"><Label><span className="text-destructive">*</span> 镜像实例名称</Label><Input value={formName} onChange={e => setFormName(e.target.value)} /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>容量 (GB)</Label><Input type="number" value={formCapacity} onChange={e => setFormCapacity(e.target.value)} /></div>
               <div className="space-y-2">
-                <Label>磁盘类型</Label>
+                <Label><span className="text-destructive">*</span> 类型</Label>
                 <Select value={formType} onValueChange={v => setFormType(v as "SSD" | "HDD")}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -361,12 +362,16 @@ export default function CloudDrive() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2"><Label><span className="text-destructive">*</span> 容量 (GB)</Label><Input type="number" value={formCapacity} onChange={e => setFormCapacity(e.target.value)} /></div>
             </div>
+            <div className="space-y-2"><Label>关联镜像模版</Label><Input placeholder="如：ARM64-Android12-Base" value={formLinkedTemplate} onChange={e => setFormLinkedTemplate(e.target.value)} /></div>
+            <div className="space-y-2"><Label>缓存目录</Label><Input placeholder="/mnt/cache/cd-xxx" value={formCacheDir} onChange={e => setFormCacheDir(e.target.value)} /></div>
+            <div className="space-y-2"><Label>访问URL</Label><Input placeholder="https://img.example.com/cd-xxx" value={formAccessUrl} onChange={e => setFormAccessUrl(e.target.value)} /></div>
             <div className="space-y-2"><Label>备注</Label><Input value={formRemark} onChange={e => setFormRemark(e.target.value)} /></div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => { setEditingDrive(null); resetForm(); }}>取消</Button>
-            <Button onClick={handleEdit} disabled={!formName.trim()}>保存</Button>
+            <Button onClick={handleEdit} disabled={!formName.trim() || !formCapacity.trim()}>保存</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
