@@ -181,20 +181,6 @@ export default function CreateContainer() {
               </>
             )}
 
-            {/* 代理IP */}
-            <div className="space-y-2">
-              <Label>代理IP</Label>
-              <Select>
-                <SelectTrigger><SelectValue placeholder="选择代理IP或留空" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">不绑定</SelectItem>
-                  {getAvailableIps().map(p => (
-                    <SelectItem key={p.id} value={p.id}>{p.ip}:{p.port} ({p.protocol}) · {p.country}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             {/* 自动重启开关 */}
             <div className="flex items-center justify-between">
               <Label>自动重启开关</Label>
