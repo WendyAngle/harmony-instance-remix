@@ -11,7 +11,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Search, Plus, ChevronLeft, ChevronRight, RotateCcw, MoreHorizontal, AlertTriangle, Copy, Pencil, Tag, ArrowLeft, Minus, Network, Cpu } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, RotateCcw, MoreHorizontal, AlertTriangle, Copy, Tag, ArrowLeft, Minus, Network, Cpu } from "lucide-react";
+import { mockTags } from "@/pages/devices/TagManagement";
 import { toast } from "sonner";
 
 // Mock board card data
@@ -54,7 +55,7 @@ const mockBoardCards: BoardCard[] = Array.from({ length: 24 }, (_, i) => ({
   ip: `172.31.20.${24 - i}`,
   cpuModel: `865(XR2-0)`,
   releaseStatus: i <= 3 ? "Ready" : "Not Ready",
-  tags: [],
+  tags: i % 5 === 0 ? [mockTags[1].name, mockTags[3].name] : i % 3 === 0 ? [mockTags[4].name] : i % 2 === 0 ? [mockTags[0].name] : [mockTags[2].name],
   createdAt: i <= 3 ? `2026-04-${String(7 - Math.floor(i / 2)).padStart(2, "0")} ${10 + i}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}` : `2026-03-19 14:39:38`,
   romVersion: `OR65L10CDA_V2.2.55_20250715_1708`,
 }));
@@ -475,7 +476,7 @@ export default function BoardCardManagement() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">
-                        {card.tags.length > 0 ? card.tags.join(", ") : <Pencil className="h-3 w-3 text-muted-foreground cursor-pointer" />}
+                        {card.tags.length > 0 ? card.tags.join(", ") : <span className="text-muted-foreground">—</span>}
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">{card.createdAt}</TableCell>
                       <TableCell>

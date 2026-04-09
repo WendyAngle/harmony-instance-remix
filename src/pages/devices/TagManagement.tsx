@@ -20,8 +20,13 @@ interface TagItem {
   createdAt: string;
 }
 
-const mockTags: TagItem[] = [
+export const mockTags: TagItem[] = [
   { id: "tag-1", name: "开发", count: 8, remark: "", createdAt: "2026-04-03 03:49:34" },
+  { id: "tag-2", name: "生产", count: 12, remark: "生产环境资源", createdAt: "2026-03-15 10:00:00" },
+  { id: "tag-3", name: "测试", count: 5, remark: "测试环境资源", createdAt: "2026-03-18 14:20:00" },
+  { id: "tag-4", name: "ARM专用", count: 6, remark: "ARM架构专用", createdAt: "2026-03-20 09:30:00" },
+  { id: "tag-5", name: "TikTok", count: 4, remark: "TikTok业务", createdAt: "2026-03-22 16:00:00" },
+  { id: "tag-6", name: "高性能", count: 3, remark: "高性能配置", createdAt: "2026-03-25 11:15:00" },
 ];
 
 const PAGE_SIZES = [10, 20, 50];
