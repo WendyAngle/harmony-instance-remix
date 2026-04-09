@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Search, Plus, Pencil, Trash2, Link, Unlink, ChevronLeft, ChevronRight, HardDrive } from "lucide-react";
-import { type BoundAccount } from "@/data/mock-data";
+import { type BoundAccount, romImages } from "@/data/mock-data";
 
 export type CloudDriveStatus = "available" | "mounted" | "error";
 
