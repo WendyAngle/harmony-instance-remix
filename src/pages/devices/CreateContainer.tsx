@@ -35,7 +35,7 @@ export default function CreateContainer() {
   const armServers = hostServers.filter(s => s.type === "arm");
   const x86Servers = hostServers.filter(s => s.type === "x86");
 
-  const getAvailableIps = () => proxyItems.filter(p => p.virtualDeviceIds.length === 0 && p.status === "available");
+  const getAvailableIps = () => proxyItems.filter(p => p.cloudDriveIds.length === 0 && p.status === "available");
 
   const addEnvVar = () => {
     setEnvVars(prev => [...prev, { id: String(Date.now()), name: "", value: "", nameError: "" }]);
