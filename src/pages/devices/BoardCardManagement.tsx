@@ -416,26 +416,26 @@ export default function BoardCardManagement() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-blue-50/50">
+                  <TableRow>
                     <TableHead className="w-10"><Checkbox checked={allPageSelected} onCheckedChange={toggleSelectAll} /></TableHead>
-                    <TableHead className="text-xs">UUID</TableHead>
-                    <TableHead className="text-xs">名称</TableHead>
-                    <TableHead className="text-xs">SN</TableHead>
-                    <TableHead className="text-xs">类型 ▼</TableHead>
-                    <TableHead className="text-xs">规格 ▼</TableHead>
-                    <TableHead className="text-xs">操作系统</TableHead>
-                    <TableHead className="text-xs">运行状态 ▼</TableHead>
-                    <TableHead className="text-xs">任务状态</TableHead>
-                    <TableHead className="text-xs">虚拟机规格</TableHead>
-                    <TableHead className="text-xs">虚拟机数量</TableHead>
-                    <TableHead className="text-xs">超额 ▼</TableHead>
-                    <TableHead className="text-xs">限速(Mbps)</TableHead>
-                    <TableHead className="text-xs">IP地址</TableHead>
-                    <TableHead className="text-xs">CPU型号 ▼</TableHead>
-                    <TableHead className="text-xs">Release状态 ▼</TableHead>
-                    <TableHead className="text-xs">标签</TableHead>
-                    <TableHead className="text-xs">创建时间 ▼</TableHead>
-                    <TableHead className="text-xs">操作</TableHead>
+                    <TableHead className="whitespace-nowrap">UUID</TableHead>
+                    <TableHead className="whitespace-nowrap">名称</TableHead>
+                    <TableHead className="whitespace-nowrap">SN</TableHead>
+                    <TableHead className="whitespace-nowrap">类型</TableHead>
+                    <TableHead className="whitespace-nowrap">规格</TableHead>
+                    <TableHead className="whitespace-nowrap">操作系统</TableHead>
+                    <TableHead className="whitespace-nowrap">运行状态</TableHead>
+                    <TableHead className="whitespace-nowrap">任务状态</TableHead>
+                    <TableHead className="whitespace-nowrap">虚拟机规格</TableHead>
+                    <TableHead className="whitespace-nowrap">虚拟机数量</TableHead>
+                    <TableHead className="whitespace-nowrap">超额</TableHead>
+                    <TableHead className="whitespace-nowrap">限速(Mbps)</TableHead>
+                    <TableHead className="whitespace-nowrap">IP地址</TableHead>
+                    <TableHead className="whitespace-nowrap">CPU型号</TableHead>
+                    <TableHead className="whitespace-nowrap">Release状态</TableHead>
+                    <TableHead className="whitespace-nowrap">标签</TableHead>
+                    <TableHead className="whitespace-nowrap">创建时间</TableHead>
+                    <TableHead className="whitespace-nowrap">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
