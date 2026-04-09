@@ -497,6 +497,72 @@ export default function HostServers() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* 查看关联ARM板卡 */}
+      <Dialog open={!!showBoardCards} onOpenChange={() => setShowBoardCards(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>关联ARM板卡 - {showBoardCards?.name}</DialogTitle>
+            <DialogDescription>服务器 {showBoardCards?.ip} 下关联的ARM板卡信息</DialogDescription>
+          </DialogHeader>
+          {showBoardCards && (() => {
+            // Mock: generate associated board cards based on server
+            const mockAssociatedCards = Array.from({ length: showBoardCards.ip === "10.0.1.10" ? 6 : showBoardCards.ip === "10.0.1.11" ? 4 : showBoardCards.ip === "10.0.1.12" ? 3 : 2 }, (_, i) => ({
+              id: `bc-${showBoardCards.id.substring(0, 8)}-${i + 1}`,
+              name: `板卡-${showBoardCards.name.replace("ARM", "").replace("服务器", "").trim()}-${String(i + 1).padStart(2, "0")}`,
+              sn: `OR65M2X${String(Math.floor(Math.random() * 900) + 100)}S${String(i + 1).padStart(2, "0")}`,
+              spec: "Orion865 | 8 vCPU | 12GB内存 | 256G存储",
+              os: "Android10",
+              runStatus: i === 0 && showBoardCards.status === "error" ? "异常" as const : "正常" as const,
+              taskStatus: i % 3 === 0 ? "运行中" as const : "空闲" as const,
+              containerCount: i % 2 === 0 ? 2 : 4,
+              ip: `172.31.${showBoardCards.ip.split(".")[2]}.${10 + i}`,
+              romVersion: "OR65L10CDA_V2.2.55_20250715_1708",
+            }));
+            return (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="whitespace-nowrap">板卡名称</TableHead>
+                    <TableHead className="whitespace-nowrap">SN码</TableHead>
+                    <TableHead className="whitespace-nowrap">规格</TableHead>
+                    <TableHead className="whitespace-nowrap">操作系统</TableHead>
+                    <TableHead className="whitespace-nowrap text-center">运行状态</TableHead>
+                    <TableHead className="whitespace-nowrap text-center">任务状态</TableHead>
+                    <TableHead className="whitespace-nowrap text-right">容器数</TableHead>
+                    <TableHead className="whitespace-nowrap">IP地址</TableHead>
+                    <TableHead className="whitespace-nowrap">ROM版本</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockAssociatedCards.map(card => (
+                    <TableRow key={card.id}>
+                      <TableCell className="text-xs font-medium whitespace-nowrap">{card.name}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{card.sn}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">{card.spec}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">{card.os}</TableCell>
+                      <TableCell className="text-center whitespace-nowrap">
+                        <Badge variant={card.runStatus === "正常" ? "default" : "destructive"} className="text-[10px]">{card.runStatus}</Badge>
+                      </TableCell>
+                      <TableCell className="text-center whitespace-nowrap">
+                        <Badge variant="outline" className="text-[10px]">{card.taskStatus}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right text-xs font-mono whitespace-nowrap">{card.containerCount}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{card.ip}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{card.romVersion}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            );
+          })()}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => navigate("/devices/board-cards")}>
+              <ExternalLink className="h-3.5 w-3.5 mr-1" />前往ARM板卡管理
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
