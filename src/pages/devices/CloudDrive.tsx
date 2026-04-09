@@ -343,7 +343,8 @@ export default function CloudDrive() {
               </Select>
             </div>
             <div className="space-y-2"><Label>缓存目录</Label><Input placeholder="/mnt/cache/cd-xxx" value={formCacheDir} onChange={e => setFormCacheDir(e.target.value)} /></div>
-            <div className="space-y-2"><Label>访问URL</Label><Input placeholder="https://img.example.com/cd-xxx" value={formAccessUrl} onChange={e => setFormAccessUrl(e.target.value)} /></div>
+            <div className="space-y-2"><Label>关联代理IP</Label><Input placeholder="例如 103.21.50.10" value={formProxyIp} onChange={e => setFormProxyIp(e.target.value)} /></div>
+            <div className="space-y-2"><Label>服务器</Label><Input placeholder="例如 172.31.20.1" value={formServerIp} onChange={e => setFormServerIp(e.target.value)} /></div>
             <div className="space-y-2"><Label>备注</Label><Input placeholder="可选备注信息" value={formRemark} onChange={e => setFormRemark(e.target.value)} /></div>
           </div>
           <DialogFooter>
@@ -388,7 +389,8 @@ export default function CloudDrive() {
               </Select>
             </div>
             <div className="space-y-2"><Label>缓存目录</Label><Input placeholder="/mnt/cache/cd-xxx" value={formCacheDir} onChange={e => setFormCacheDir(e.target.value)} /></div>
-            <div className="space-y-2"><Label>访问URL</Label><Input placeholder="https://img.example.com/cd-xxx" value={formAccessUrl} onChange={e => setFormAccessUrl(e.target.value)} /></div>
+            <div className="space-y-2"><Label>关联代理IP</Label><Input placeholder="例如 103.21.50.10" value={formProxyIp} onChange={e => setFormProxyIp(e.target.value)} /></div>
+            <div className="space-y-2"><Label>服务器</Label><Input placeholder="例如 172.31.20.1" value={formServerIp} onChange={e => setFormServerIp(e.target.value)} /></div>
             <div className="space-y-2"><Label>备注</Label><Input value={formRemark} onChange={e => setFormRemark(e.target.value)} /></div>
           </div>
           <DialogFooter>
