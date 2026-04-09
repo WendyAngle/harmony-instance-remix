@@ -305,7 +305,7 @@ export default function PhysicalDevices() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {pagedDevices.map((device) => {
-              const devInstances = virtualInstances.filter(i => i.deviceId === device.id);
+              const devInstances = virtualInstances.filter(i => i.hostServerId === device.id);
               const activeInstances = devInstances.filter(i => i.status === "running" || i.status === "warming");
               return (
                 <Card key={device.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowDetail(device)}>
@@ -484,10 +484,10 @@ export default function PhysicalDevices() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold mb-2">
-                    {showDetail.type === "board" ? "镜像模版概览" : "虚拟机概览"} ({virtualInstances.filter(i => i.deviceId === showDetail.id).length}个)
+                     {showDetail.type === "board" ? "镜像模版概览" : "虚拟机概览"} ({virtualInstances.filter(i => i.hostServerId === showDetail.id).length}个)
                   </h4>
                   <div className="grid grid-cols-4 gap-2">
-                    {virtualInstances.filter(i => i.deviceId === showDetail.id).map((inst) => (
+                    {virtualInstances.filter(i => i.hostServerId === showDetail.id).map((inst) => (
                       <div key={inst.id} className="p-2 rounded-lg border text-center text-xs">
                         <HardDrive className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
                         <p className="font-mono">{inst.id}</p>

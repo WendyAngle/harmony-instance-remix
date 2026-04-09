@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { virtualInstances, physicalDevices, romImages, proxyItems, type VirtualInstance, type InstanceStatus, type VirtualDeviceType } from "@/data/mock-data";
+import { virtualInstances, physicalDevices, romImages, proxyItems, hostServers, type VirtualInstance, type InstanceStatus, type VirtualDeviceType } from "@/data/mock-data";
 import { initialDrives as cloudDriveData } from "@/pages/devices/CloudDrive";
 import { LayoutGrid, List, Play, Square, MonitorSmartphone, RotateCcw, RefreshCw, Smartphone, Globe, Plus, Search, ChevronLeft, ChevronRight, HardDrive, AlertTriangle, MoreHorizontal, Pencil, Info, ArrowUpCircle, Link2, ChevronDown, Copy, Trash2, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -37,7 +37,7 @@ const statusConfig: Record<InstanceStatus, { colorClass: string; tooltip: string
   running: { colorClass: "bg-status-online", tooltip: "正在运行" },
   error: { colorClass: "bg-destructive", tooltip: "运行异常" },
 };
-const typeLabel: Record<VirtualDeviceType, string> = { cloud: "云机", windows: "Windows" };
+const typeLabel: Record<VirtualDeviceType, string> = { cloud: "云机", windows: "Windows", linux: "Linux" };
 
 const PAGE_SIZES = [10, 20, 50];
 
@@ -82,7 +82,7 @@ export default function VirtualInstances() {
       if (filterStatus !== "all" && i.status !== filterStatus) return false;
       if (searchText.trim()) {
         const q = searchText.trim().toLowerCase();
-        if (!i.id.toLowerCase().includes(q) && !i.model.toLowerCase().includes(q) && !i.deviceId.toLowerCase().includes(q)) return false;
+        if (!i.id.toLowerCase().includes(q) && !i.name.toLowerCase().includes(q) && !i.model.toLowerCase().includes(q) && !i.hostServerId.toLowerCase().includes(q)) return false;
       }
       return true;
     });
@@ -91,15 +91,9 @@ export default function VirtualInstances() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const pagedInstances = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const getDeviceName = (inst: VirtualInstance) => {
-    const dev = physicalDevices.find(d => d.id === inst.deviceId);
-    return dev ? `${inst.deviceId} (${dev.type === "board" ? "主板" : "Win主机"})` : inst.deviceId;
-  };
-
-  const getBoardCardName = (inst: VirtualInstance) => {
-    if (!inst.boardCardId) return "-";
-    const dev = physicalDevices.find(d => d.id === inst.boardCardId);
-    return dev ? `${dev.name} (${dev.ip})` : inst.boardCardId;
+  const getHostServerName = (inst: VirtualInstance) => {
+    const srv = hostServers.find(s => s.id === inst.hostServerId);
+    return srv ? `${srv.name}` : inst.hostServerId.slice(0, 8);
   };
 
   const getImageName = (inst: VirtualInstance) => {
@@ -203,14 +197,15 @@ export default function VirtualInstances() {
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px] max-w-xs">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input className="pl-8 h-8 text-xs" placeholder="搜索实例ID/机型/设备ID..." value={searchText} onChange={e => { setSearchText(e.target.value); setCurrentPage(1); }} />
+          <Input className="pl-8 h-8 text-xs" placeholder="搜索虚拟机ID/名称/主机ID..." value={searchText} onChange={e => { setSearchText(e.target.value); setCurrentPage(1); }} />
         </div>
         <Select value={filterType} onValueChange={v => { setFilterType(v); setCurrentPage(1); }}>
-          <SelectTrigger className="w-36 h-8 text-xs"><SelectValue placeholder="设备类型" /></SelectTrigger>
+          <SelectTrigger className="w-36 h-8 text-xs"><SelectValue placeholder="虚拟机类型" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">全部类型</SelectItem>
             <SelectItem value="cloud">云机</SelectItem>
             <SelectItem value="windows">Windows</SelectItem>
+            <SelectItem value="linux">Linux</SelectItem>
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={v => { setFilterStatus(v); setCurrentPage(1); }}>
@@ -233,46 +228,58 @@ export default function VirtualInstances() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>实例ID</TableHead>
-                  <TableHead>类型</TableHead>
-                  <TableHead>所属板卡</TableHead>
-                  <TableHead>镜像</TableHead>
-                  <TableHead>所属设备</TableHead>
-                  <TableHead>机型/内核</TableHead>
-                  <TableHead>版本</TableHead>
-                  <TableHead>代理IP</TableHead>
-                  <TableHead className="text-center">状态</TableHead>
-                  <TableHead>最后活跃</TableHead>
-                  <TableHead>操作</TableHead>
+                  <TableHead className="whitespace-nowrap">虚拟机ID</TableHead>
+                  <TableHead className="whitespace-nowrap">虚拟机名称</TableHead>
+                  <TableHead className="whitespace-nowrap">虚拟机类型</TableHead>
+                  <TableHead className="whitespace-nowrap">所属主机ID</TableHead>
+                  <TableHead className="whitespace-nowrap">镜像模版</TableHead>
+                  <TableHead className="whitespace-nowrap">部署时间</TableHead>
+                  <TableHead className="whitespace-nowrap">CPU核数</TableHead>
+                  <TableHead className="whitespace-nowrap">CPU (%)</TableHead>
+                  <TableHead className="whitespace-nowrap">内存 (GB)</TableHead>
+                  <TableHead className="whitespace-nowrap">磁盘 (TB)</TableHead>
+                  <TableHead className="whitespace-nowrap">操作系统版本</TableHead>
+                  <TableHead className="whitespace-nowrap">代理IP</TableHead>
+                  <TableHead className="whitespace-nowrap text-center">状态</TableHead>
+                  <TableHead className="whitespace-nowrap">运行时长</TableHead>
+                  <TableHead className="whitespace-nowrap">自动重启</TableHead>
+                  <TableHead className="whitespace-nowrap">备注</TableHead>
+                  <TableHead className="whitespace-nowrap">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pagedInstances.map((inst) => (
                   <TableRow key={inst.id}>
-                    <TableCell className="font-mono font-medium text-xs">{inst.id}</TableCell>
-                    <TableCell>
-                      <Badge variant={inst.type === "cloud" ? "default" : "secondary"} className="text-[10px] gap-1">
+                    <TableCell className="font-mono font-medium text-xs whitespace-nowrap">{inst.id.slice(0, 8)}...</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{inst.name}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <Badge variant={inst.type === "cloud" ? "default" : inst.type === "linux" ? "outline" : "secondary"} className="text-[10px] gap-1">
                         {inst.type === "cloud" ? <Smartphone className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
                         {typeLabel[inst.type]}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-mono text-xs">{getBoardCardName(inst)}</TableCell>
-                    <TableCell className="text-xs">{getImageName(inst)}</TableCell>
-                    <TableCell className="font-mono text-xs">{getDeviceName(inst)}</TableCell>
-                    <TableCell className="text-xs">{inst.model}</TableCell>
-                    <TableCell className="font-mono text-xs">{inst.romVersion}</TableCell>
-                    <TableCell className="font-mono text-xs">{inst.proxyIp || "-"}</TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="font-mono text-xs whitespace-nowrap">{inst.hostServerId.slice(0, 8)}...</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{getImageName(inst)}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{inst.deployedAt}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap text-center">{inst.cpuCores}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{inst.cpuUsage}%</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{inst.memoryUsed}/{inst.memoryTotal}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{inst.diskUsed}/{inst.diskTotal}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{inst.osVersion}</TableCell>
+                    <TableCell className="font-mono text-xs whitespace-nowrap">{inst.proxyIp || "-"}</TableCell>
+                    <TableCell className="text-center whitespace-nowrap">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-white ${statusConfig[inst.status].colorClass}`}>
+                          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium text-white whitespace-nowrap ${statusConfig[inst.status].colorClass}`}>
                             {statusLabel[inst.status]}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>{statusConfig[inst.status].tooltip}</TooltipContent>
                       </Tooltip>
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{inst.lastActive}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">{inst.uptime}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap text-center">{inst.autoRestart ? "是" : "否"}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap max-w-[120px] truncate">{inst.remark || "-"}</TableCell>
                     <TableCell>
                       <div className="flex gap-0.5 items-center">
                         <Tooltip>
@@ -367,10 +374,10 @@ export default function VirtualInstances() {
                 </div>
                 <Badge variant={inst.type === "cloud" ? "default" : "secondary"} className="text-[9px] mb-2">{typeLabel[inst.type]}</Badge>
                 <div className="space-y-1 text-xs text-muted-foreground">
-                  <p>板卡: {getBoardCardName(inst)}</p>
-                  <p>镜像: {getImageName(inst)}</p>
-                  <p>设备: {inst.deviceId}</p>
-                  <p>机型: {inst.model}</p>
+                  <p>名称: {inst.name}</p>
+                  <p>镜像模版: {getImageName(inst)}</p>
+                  <p>主机: {getHostServerName(inst)}</p>
+                  <p>OS: {inst.osVersion}</p>
                   <p>代理: {inst.proxyIp || "无"}</p>
                 </div>
                 <div className="flex gap-1 mt-3">
@@ -440,9 +447,9 @@ export default function VirtualInstances() {
                   <CollapsibleContent className="pt-3">
                     <div className="grid grid-cols-3 gap-x-8 gap-y-3 text-sm">
                       <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">虚拟机ID</span><span className="font-mono text-xs">{showDetail.id}</span></div>
-                      <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">名称</span><span>{showDetail.id}</span></div>
-                      <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">所属板卡</span><span>{getBoardCardName(showDetail)}</span></div>
-                      <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">镜像</span><span>{getImageName(showDetail)}</span></div>
+                      <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">虚拟机名称</span><span>{showDetail.name}</span></div>
+                      <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">所属主机</span><span>{getHostServerName(showDetail)}</span></div>
+                      <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">镜像模版</span><span>{getImageName(showDetail)}</span></div>
                       <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">板卡规格</span><span>Orion865 | 8vCPU | 12G内存 | 256G存储</span></div>
                       <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">操作系统</span><span>Android10</span></div>
                       <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">状态</span><Badge variant={showDetail.status === "running" ? "default" : "secondary"}>{statusLabel[showDetail.status]}</Badge></div>
@@ -492,7 +499,7 @@ export default function VirtualInstances() {
                       <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">所属板卡SN</span><span className="font-mono text-primary">OR65M62X02S243000253</span></div>
                       <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">所属区域</span><span className="text-primary">西南</span></div>
                       <div className="flex gap-2"><span className="text-muted-foreground min-w-[70px]">所属节点</span><span className="text-primary">yaan-test</span></div>
-                      <div className="flex gap-2 col-span-3"><span className="text-muted-foreground min-w-[70px]">所属服务器</span><span className="font-mono text-primary text-xs">{showDetail.deviceId}</span></div>
+                      <div className="flex gap-2 col-span-3"><span className="text-muted-foreground min-w-[70px]">所属服务器</span><span className="font-mono text-primary text-xs">{showDetail.hostServerId}</span></div>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
@@ -834,10 +841,10 @@ export default function VirtualInstances() {
             <div className="grid grid-cols-2 gap-3 text-sm">
               {[
                 ["类型", typeLabel[showFingerprint.type]],
-                ["所属设备", getDeviceName(showFingerprint)],
+                ["所属主机", getHostServerName(showFingerprint)],
                 ...(showFingerprint.type === "cloud" ? [["IMEI", showFingerprint.imei], ["Android ID", showFingerprint.androidId]] : []),
                 ["机型/内核", showFingerprint.model],
-                ["版本", showFingerprint.romVersion],
+                ["操作系统版本", showFingerprint.osVersion],
                 ["代理IP", showFingerprint.proxyIp || "无"],
                 ["最后活跃", showFingerprint.lastActive],
               ].map(([label, value]) => (
