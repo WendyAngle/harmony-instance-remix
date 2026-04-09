@@ -15,7 +15,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { hostServers, type HostServer, type HostServerType, type HostServerStatus } from "@/data/mock-data";
-import { Plus, Trash2, Eye, Server, Monitor, Upload, RotateCcw, Search, ChevronLeft, ChevronRight, Power, ExternalLink, ServerCrash, Download, FileSpreadsheet } from "lucide-react";
+import { Plus, Trash2, Eye, Server, Monitor, Upload, RotateCcw, Search, ChevronLeft, ChevronRight, Power, ExternalLink, ServerCrash, Download, FileSpreadsheet, Layers } from "lucide-react";
 
 const serverTypeLabel: Record<HostServerType, string> = { arm: "ARM服务器", x86: "X86服务器" };
 
