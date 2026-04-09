@@ -61,6 +61,17 @@ export default function HostServers() {
   const [showBatchDeleteAlert, setShowBatchDeleteAlert] = useState(false);
   const [showDetail, setShowDetail] = useState<HostServer | null>(null);
   const [showBoardCards, setShowBoardCards] = useState<HostServer | null>(null);
+  const [addFormType, setAddFormType] = useState("");
+  const [selectedBoardCards, setSelectedBoardCards] = useState<string[]>([]);
+
+  // Mock: unassociated ARM board cards available for linking
+  const availableBoardCards = useMemo(() => [
+    { id: "ubc-1", name: "板卡-空闲-01", sn: "OR65M2X101S01", spec: "Orion865 | 8 vCPU | 12GB", ip: "172.31.30.1", runStatus: "正常" as const },
+    { id: "ubc-2", name: "板卡-空闲-02", sn: "OR65M2X102S02", spec: "Orion865 | 8 vCPU | 12GB", ip: "172.31.30.2", runStatus: "正常" as const },
+    { id: "ubc-3", name: "板卡-空闲-03", sn: "OR65M2X103S03", spec: "Orion865 | 8 vCPU | 12GB", ip: "172.31.30.3", runStatus: "异常" as const },
+    { id: "ubc-4", name: "板卡-空闲-04", sn: "OR65M2X104S04", spec: "Orion865 | 8 vCPU | 12GB", ip: "172.31.30.4", runStatus: "正常" as const },
+    { id: "ubc-5", name: "板卡-空闲-05", sn: "OR65M2X105S05", spec: "Orion865 | 8 vCPU | 12GB", ip: "172.31.30.5", runStatus: "正常" as const },
+  ], []);
 
   const filteredServers = useMemo(() => {
     let result = servers;
