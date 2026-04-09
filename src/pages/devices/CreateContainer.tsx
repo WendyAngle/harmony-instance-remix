@@ -71,6 +71,11 @@ export default function CreateContainer() {
 
   // 网络
   const [networkMode, setNetworkMode] = useState("none");
+  const [businessNetwork, setBusinessNetwork] = useState("");
+  const [subnet, setSubnet] = useState("");
+
+  // 指定板卡SN
+  const [boardSn, setBoardSn] = useState("");
 
   // 数量
   const [quantity, setQuantity] = useState(1);
@@ -167,6 +172,19 @@ export default function CreateContainer() {
                 </div>
               </RadioGroup>
             </div>
+
+            {/* 指定板卡 - 当策略为指定板卡时显示 */}
+            {strategy === "assign" && (
+              <div className="space-y-2">
+                <Label>{req} 指定板卡</Label>
+                <Textarea
+                  placeholder="输入板卡SN，多个请以","或者"|"分隔。最多输入1000个"
+                  value={boardSn}
+                  onChange={e => setBoardSn(e.target.value)}
+                  className="min-h-[80px]"
+                />
+              </div>
+            )}
 
             {/* 板卡容器数量超额 */}
             <div className="space-y-2">
@@ -324,7 +342,7 @@ export default function CreateContainer() {
                   </TooltipContent>
                 </Tooltip>
               </div>
-              <RadioGroup value={networkMode} onValueChange={setNetworkMode} className="flex items-center gap-6">
+              <RadioGroup value={networkMode} onValueChange={(v) => { setNetworkMode(v); setBusinessNetwork(""); setSubnet(""); }} className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="none" id="net-none" />
                   <Label htmlFor="net-none" className="font-normal cursor-pointer">不指定</Label>
@@ -338,9 +356,44 @@ export default function CreateContainer() {
                   <Label htmlFor="net-subnet" className="font-normal cursor-pointer">指定子网</Label>
                 </div>
               </RadioGroup>
-              <p className="text-xs text-muted-foreground">
-                可用IP总和: 205，默认从已分配的业务网络中选择未被使用的IP
-              </p>
+              {networkMode === "business" && (
+                <div className="flex items-center gap-3">
+                  <Select value={businessNetwork} onValueChange={setBusinessNetwork}>
+                    <SelectTrigger className="flex-1"><SelectValue placeholder="请选择业务网络" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="net1">容器业务网络50 | DNAT | 172.31.50.0/24</SelectItem>
+                      <SelectItem value="net2">容器业务网络51 | DNAT | 172.31.51.0/24</SelectItem>
+                      <SelectItem value="net3">容器业务网络52 | NAT | 172.31.52.0/24</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">可用IP总和: 203</span>
+                </div>
+              )}
+              {networkMode === "subnet" && (
+                <div className="flex items-center gap-3">
+                  <Select value={businessNetwork} onValueChange={(v) => { setBusinessNetwork(v); setSubnet(""); }}>
+                    <SelectTrigger className="flex-1"><SelectValue placeholder="请选择业务网络" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="net1">容器业务网络50 | DNAT | 172.31.50.0/24</SelectItem>
+                      <SelectItem value="net2">容器业务网络51 | DNAT | 172.31.51.0/24</SelectItem>
+                      <SelectItem value="net3">容器业务网络52 | NAT | 172.31.52.0/24</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={subnet} onValueChange={setSubnet}>
+                    <SelectTrigger className="flex-1"><SelectValue placeholder="请选择子网" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sub1">50 | 172.31.50.0/24 (可用IP: 203)</SelectItem>
+                      <SelectItem value="sub2">51 | 172.31.51.0/24 (可用IP: 150)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">可用IP总和: 203</span>
+                </div>
+              )}
+              {networkMode === "none" && (
+                <p className="text-xs text-muted-foreground">
+                  可用IP总和: 205，默认从已分配的业务网络中选择未被使用的IP
+                </p>
+              )}
             </div>
 
             {/* 数量 */}
