@@ -429,7 +429,6 @@ export default function HostServers() {
               <div className="space-y-2"><Label>机架</Label><Input placeholder="A区-01机架" /></div>
               <div className="space-y-2"><Label>负责人</Label><Input placeholder="张伟" /></div>
             </div>
-            )}
 
             <div className="space-y-2"><Label>备注</Label><Input placeholder="选填" /></div>
           </div>
