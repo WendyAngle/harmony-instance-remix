@@ -171,25 +171,25 @@ export default function HostServers() {
                   <TableHead className="w-10">
                     <Checkbox checked={allPageSelected} onCheckedChange={toggleSelectAll} />
                   </TableHead>
-                  <TableHead>服务器ID</TableHead>
-                  <TableHead>服务器名称</TableHead>
-                  <TableHead>类型</TableHead>
-                  <TableHead>所属集群/阵列ID</TableHead>
-                  <TableHead>IP地址</TableHead>
-                  <TableHead>MAC</TableHead>
-                  <TableHead>SN码</TableHead>
-                  <TableHead>CPU型号</TableHead>
-                  <TableHead className="text-right">CPU核数</TableHead>
-                  <TableHead className="text-right">CPU (%)</TableHead>
-                  <TableHead className="text-right">内存 (GB)</TableHead>
-                  <TableHead className="text-right">磁盘 (TB)</TableHead>
-                  <TableHead className="text-right">温度 (°C)</TableHead>
-                  <TableHead>网络带宽占用</TableHead>
-                  <TableHead className="text-right">关联虚拟机</TableHead>
-                  <TableHead>最后心跳时间</TableHead>
-                  <TableHead>上架时间</TableHead>
-                  <TableHead className="text-center">状态</TableHead>
-                  <TableHead>操作</TableHead>
+                  <TableHead className="whitespace-nowrap">服务器ID</TableHead>
+                  <TableHead className="whitespace-nowrap">服务器名称</TableHead>
+                  <TableHead className="whitespace-nowrap">类型</TableHead>
+                  <TableHead className="whitespace-nowrap">所属集群/阵列ID</TableHead>
+                  <TableHead className="whitespace-nowrap">IP地址</TableHead>
+                  <TableHead className="whitespace-nowrap">MAC</TableHead>
+                  <TableHead className="whitespace-nowrap">SN码</TableHead>
+                  <TableHead className="whitespace-nowrap">CPU型号</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">CPU核数</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">CPU (%)</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">内存 (GB)</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">磁盘 (TB)</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">温度 (°C)</TableHead>
+                  <TableHead className="whitespace-nowrap">网络带宽占用</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">关联虚拟机</TableHead>
+                  <TableHead className="whitespace-nowrap">最后心跳时间</TableHead>
+                  <TableHead className="whitespace-nowrap">上架时间</TableHead>
+                  <TableHead className="text-center whitespace-nowrap">状态</TableHead>
+                  <TableHead className="whitespace-nowrap">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -204,21 +204,21 @@ export default function HostServers() {
                       <TableCell>
                         <Checkbox checked={selectedIds.has(server.id)} onCheckedChange={() => toggleSelect(server.id)} />
                       </TableCell>
-                      <TableCell className="font-mono text-xs max-w-[120px] truncate" title={server.id}>{server.id.substring(0, 8)}...</TableCell>
-                      <TableCell className="text-xs font-medium">{server.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-[10px] gap-1">
+                      <TableCell className="font-mono text-xs whitespace-nowrap" title={server.id}>{server.id.substring(0, 8)}...</TableCell>
+                      <TableCell className="text-xs font-medium whitespace-nowrap">{server.name}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <Badge variant="outline" className="text-[10px] gap-1 whitespace-nowrap">
                           {server.type === "arm" ? <Server className="h-3 w-3" /> : <Monitor className="h-3 w-3" />}
                           {serverTypeLabel[server.type]}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-mono text-xs">{server.clusterId}</TableCell>
-                      <TableCell className="font-mono text-xs">{server.ip}</TableCell>
-                      <TableCell className="font-mono text-xs">{server.mac}</TableCell>
-                      <TableCell className="font-mono text-xs">{server.sn || "-"}</TableCell>
-                      <TableCell className="text-xs">{server.cpuModel}</TableCell>
-                      <TableCell className="text-right text-xs font-mono">{server.cpuCores}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{server.clusterId}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{server.ip}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{server.mac}</TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{server.sn || "-"}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">{server.cpuModel}</TableCell>
+                      <TableCell className="text-right text-xs font-mono whitespace-nowrap">{server.cpuCores}</TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
                         {metricOrDash(server, (
                           <div className="flex items-center justify-end gap-2">
                             <Progress value={server.cpu} className="w-12 h-1.5" />
@@ -226,7 +226,7 @@ export default function HostServers() {
                           </div>
                         ))}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         {metricOrDash(server, (
                           <div className="flex items-center justify-end gap-2">
                             <Progress value={server.memory} className="w-12 h-1.5" />
@@ -234,7 +234,7 @@ export default function HostServers() {
                           </div>
                         ))}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         {metricOrDash(server, (
                           <div className="flex items-center justify-end gap-2">
                             <Progress value={server.disk} className="w-12 h-1.5" />
@@ -242,22 +242,22 @@ export default function HostServers() {
                           </div>
                         ))}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         {metricOrDash(server, (
                           <span className={`text-xs font-mono ${server.temperature >= 60 ? "text-threshold-danger font-bold" : server.temperature >= 45 ? "text-warning" : ""}`}>
                             {server.temperature}°C
                           </span>
                         ))}
                       </TableCell>
-                      <TableCell className="text-xs font-mono">
+                      <TableCell className="text-xs font-mono whitespace-nowrap">
                         {metricOrDash(server, server.networkBandwidth)}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         {vmCount > 0 ? (
                           <Button
                             variant="link"
                             size="sm"
-                            className="h-auto p-0 text-xs font-mono text-primary"
+                            className="h-auto p-0 text-xs font-mono text-primary whitespace-nowrap"
                             onClick={() => navigate(`/devices/virtual?server=${server.ip}`)}
                           >
                             {vmCount} 台
@@ -278,7 +278,7 @@ export default function HostServers() {
                           <TooltipContent>{statusConfig[server.status].tooltip}</TooltipContent>
                         </Tooltip>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <div className="flex items-center gap-0.5">
                           <Tooltip><TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowDetail(server)}><Eye className="h-3.5 w-3.5" /></Button>
