@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { virtualInstances, physicalDevices, romImages, proxyItems, type VirtualInstance, type InstanceStatus, type VirtualDeviceType } from "@/data/mock-data";
+import { virtualInstances, physicalDevices, romImages, proxyItems, hostServers, type VirtualInstance, type InstanceStatus, type VirtualDeviceType } from "@/data/mock-data";
 import { initialDrives as cloudDriveData } from "@/pages/devices/CloudDrive";
 import { LayoutGrid, List, Play, Square, MonitorSmartphone, RotateCcw, RefreshCw, Smartphone, Globe, Plus, Search, ChevronLeft, ChevronRight, HardDrive, AlertTriangle, MoreHorizontal, Pencil, Info, ArrowUpCircle, Link2, ChevronDown, Copy, Trash2, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
