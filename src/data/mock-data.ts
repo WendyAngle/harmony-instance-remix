@@ -127,7 +127,7 @@ export const romImages: RomImage[] = [
 
 // ============ 虚拟设备 ============
 export type InstanceStatus = "offline" | "idle" | "warming" | "running" | "error";
-export type VirtualDeviceType = "cloud" | "windows";
+export type VirtualDeviceType = "cloud" | "windows" | "linux";
 
 export interface BoundAccount {
   platform: Platform;
@@ -136,35 +136,45 @@ export interface BoundAccount {
 }
 
 export interface VirtualInstance {
-  id: string;
+  id: string; // UUID
+  name: string;
   type: VirtualDeviceType;
-  deviceId: string; // 云机→主板ID, Windows→Windows主机ID(即某Windows主机下的VM)
-  boardCardId: string; // 所属板卡ID
-  imageId: string; // 镜像ID
+  hostServerId: string; // 所属主机ID
+  imageId: string; // 镜像模版ID
   status: InstanceStatus;
   imei: string;
   androidId: string;
   model: string;
-  romVersion: string;
+  osVersion: string; // 操作系统版本
   lastActive: string;
   proxyIp: string | null;
+  deployedAt: string; // 部署时间，精确到秒
+  cpuCores: number;
+  cpuUsage: number; // CPU使用率 %
+  memoryTotal: number; // GB
+  memoryUsed: number; // GB
+  diskTotal: number; // TB
+  diskUsed: number; // TB
+  uptime: string; // 运行时长
+  autoRestart: boolean; // 自动重启开关
+  remark: string;
 }
 
 export const virtualInstances: VirtualInstance[] = [
-  { id: "VM-001", type: "cloud", deviceId: "DEV-001", boardCardId: "DEV-001", imageId: "IMG-001", status: "running", imei: "861234567890001", androidId: "a1b2c3d4e5f6", model: "Pixel 6", romVersion: "3.2.1", lastActive: "2026-04-02 10:30", proxyIp: "45.32.100.1" },
-  { id: "VM-002", type: "cloud", deviceId: "DEV-001", boardCardId: "DEV-001", imageId: "IMG-002", status: "running", imei: "861234567890002", androidId: "b2c3d4e5f6g7", model: "Samsung S22", romVersion: "3.2.1", lastActive: "2026-04-02 10:28", proxyIp: "45.32.100.2" },
-  { id: "VM-003", type: "cloud", deviceId: "DEV-001", boardCardId: "DEV-001", imageId: "IMG-001", status: "idle", imei: "861234567890003", androidId: "c3d4e5f6g7h8", model: "Pixel 6", romVersion: "3.2.1-tt", lastActive: "2026-04-01 22:15", proxyIp: null },
-  { id: "VM-004", type: "cloud", deviceId: "DEV-002", boardCardId: "DEV-002", imageId: "IMG-004", status: "running", imei: "861234567890004", androidId: "d4e5f6g7h8i9", model: "OnePlus 10", romVersion: "3.2.1", lastActive: "2026-04-02 10:32", proxyIp: "103.21.50.8" },
-  { id: "VM-005", type: "cloud", deviceId: "DEV-002", boardCardId: "DEV-002", imageId: "IMG-002", status: "warming", imei: "861234567890005", androidId: "e5f6g7h8i9j0", model: "Xiaomi 12", romVersion: "3.2.1-tt", lastActive: "2026-04-02 10:25", proxyIp: "103.21.50.9" },
-  { id: "VM-006", type: "cloud", deviceId: "DEV-002", boardCardId: "DEV-002", imageId: "IMG-001", status: "running", imei: "861234567890006", androidId: "f6g7h8i9j0k1", model: "Pixel 7", romVersion: "3.2.1", lastActive: "2026-04-02 10:31", proxyIp: "103.21.50.10" },
-  { id: "VM-007", type: "cloud", deviceId: "DEV-002", boardCardId: "DEV-002", imageId: "IMG-004", status: "running", imei: "861234567890007", androidId: "g7h8i9j0k1l2", model: "Samsung S23", romVersion: "3.2.1", lastActive: "2026-04-02 10:29", proxyIp: "103.21.50.11" },
-  { id: "VM-008", type: "cloud", deviceId: "DEV-003", boardCardId: "DEV-003", imageId: "IMG-001", status: "running", imei: "861234567890008", androidId: "h8i9j0k1l2m3", model: "Pixel 6", romVersion: "2.8.0", lastActive: "2026-04-02 09:50", proxyIp: "185.92.30.5" },
-  { id: "VM-009", type: "cloud", deviceId: "DEV-005", boardCardId: "DEV-005", imageId: "IMG-002", status: "error", imei: "861234567890009", androidId: "i9j0k1l2m3n4", model: "OnePlus 9", romVersion: "3.2.1", lastActive: "2026-04-01 15:20", proxyIp: null },
-  { id: "VM-010", type: "cloud", deviceId: "DEV-005", boardCardId: "DEV-005", imageId: "IMG-004", status: "running", imei: "861234567890010", androidId: "j0k1l2m3n4o5", model: "Xiaomi 11", romVersion: "3.2.1-tt", lastActive: "2026-04-02 10:20", proxyIp: "185.92.30.6" },
-  { id: "VM-011", type: "windows", deviceId: "DEV-007", boardCardId: "", imageId: "IMG-006", status: "running", imei: "-", androidId: "-", model: "Chrome/122", romVersion: "2.1.0", lastActive: "2026-04-02 10:33", proxyIp: "45.32.100.15" },
-  { id: "VM-012", type: "windows", deviceId: "DEV-007", boardCardId: "", imageId: "IMG-006", status: "running", imei: "-", androidId: "-", model: "Chrome/122", romVersion: "2.1.0", lastActive: "2026-04-02 10:30", proxyIp: "91.108.56.25" },
-  { id: "VM-013", type: "windows", deviceId: "DEV-007", boardCardId: "", imageId: "IMG-005", status: "idle", imei: "-", androidId: "-", model: "Chrome/120", romVersion: "2.0.0", lastActive: "2026-04-01 18:00", proxyIp: null },
-  { id: "VM-014", type: "windows", deviceId: "DEV-008", boardCardId: "", imageId: "IMG-006", status: "running", imei: "-", androidId: "-", model: "Chrome/122", romVersion: "2.1.0", lastActive: "2026-04-02 10:28", proxyIp: "103.21.50.30" },
+  { id: "f47ac10b-58cc-4372-a567-0e02b2c3d479", name: "ARM-Linux-Cloud-01", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567801", imageId: "IMG-001", status: "running", imei: "861234567890001", androidId: "a1b2c3d4e5f6", model: "Pixel 6", osVersion: "Android 12", lastActive: "2026-04-02 10:30", proxyIp: "45.32.100.1", deployedAt: "2026-01-15 09:30:00", cpuCores: 4, cpuUsage: 45, memoryTotal: 8, memoryUsed: 5.2, diskTotal: 0.128, diskUsed: 0.065, uptime: "78天3小时", autoRestart: true, remark: "" },
+  { id: "6ba7b810-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-02", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567801", imageId: "IMG-002", status: "running", imei: "861234567890002", androidId: "b2c3d4e5f6g7", model: "Samsung S22", osVersion: "Android 13", lastActive: "2026-04-02 10:28", proxyIp: "45.32.100.2", deployedAt: "2026-01-20 14:15:30", cpuCores: 4, cpuUsage: 62, memoryTotal: 8, memoryUsed: 6.1, diskTotal: 0.128, diskUsed: 0.072, uptime: "73天20小时", autoRestart: true, remark: "" },
+  { id: "6ba7b811-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-03", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567801", imageId: "IMG-001", status: "idle", imei: "861234567890003", androidId: "c3d4e5f6g7h8", model: "Pixel 6", osVersion: "Android 12", lastActive: "2026-04-01 22:15", proxyIp: null, deployedAt: "2026-02-05 08:00:00", cpuCores: 2, cpuUsage: 3, memoryTotal: 4, memoryUsed: 1.2, diskTotal: 0.064, diskUsed: 0.022, uptime: "57天2小时", autoRestart: false, remark: "" },
+  { id: "6ba7b812-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-04", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567802", imageId: "IMG-004", status: "running", imei: "861234567890004", androidId: "d4e5f6g7h8i9", model: "OnePlus 10", osVersion: "Android 13", lastActive: "2026-04-02 10:32", proxyIp: "103.21.50.8", deployedAt: "2026-02-10 11:20:45", cpuCores: 4, cpuUsage: 55, memoryTotal: 8, memoryUsed: 5.8, diskTotal: 0.128, diskUsed: 0.080, uptime: "52天23小时", autoRestart: true, remark: "" },
+  { id: "6ba7b813-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-05", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567802", imageId: "IMG-002", status: "warming", imei: "861234567890005", androidId: "e5f6g7h8i9j0", model: "Xiaomi 12", osVersion: "Android 12", lastActive: "2026-04-02 10:25", proxyIp: "103.21.50.9", deployedAt: "2026-03-01 16:45:10", cpuCores: 2, cpuUsage: 78, memoryTotal: 4, memoryUsed: 3.5, diskTotal: 0.064, diskUsed: 0.035, uptime: "33天18小时", autoRestart: false, remark: "预热测试中" },
+  { id: "6ba7b814-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-06", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567802", imageId: "IMG-001", status: "running", imei: "861234567890006", androidId: "f6g7h8i9j0k1", model: "Pixel 7", osVersion: "Android 14", lastActive: "2026-04-02 10:31", proxyIp: "103.21.50.10", deployedAt: "2026-01-25 09:00:00", cpuCores: 4, cpuUsage: 38, memoryTotal: 8, memoryUsed: 4.0, diskTotal: 0.128, diskUsed: 0.055, uptime: "68天1小时", autoRestart: true, remark: "" },
+  { id: "6ba7b815-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-07", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567802", imageId: "IMG-004", status: "running", imei: "861234567890007", androidId: "g7h8i9j0k1l2", model: "Samsung S23", osVersion: "Android 14", lastActive: "2026-04-02 10:29", proxyIp: "103.21.50.11", deployedAt: "2026-02-18 13:30:00", cpuCores: 8, cpuUsage: 42, memoryTotal: 16, memoryUsed: 9.5, diskTotal: 0.128, diskUsed: 0.070, uptime: "44天21小时", autoRestart: true, remark: "" },
+  { id: "6ba7b816-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-08", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567805", imageId: "IMG-001", status: "running", imei: "861234567890008", androidId: "h8i9j0k1l2m3", model: "Pixel 6", osVersion: "Android 12", lastActive: "2026-04-02 09:50", proxyIp: "185.92.30.5", deployedAt: "2026-03-10 07:15:00", cpuCores: 2, cpuUsage: 30, memoryTotal: 4, memoryUsed: 2.8, diskTotal: 0.064, diskUsed: 0.028, uptime: "24天3小时", autoRestart: false, remark: "" },
+  { id: "6ba7b817-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-09", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567805", imageId: "IMG-002", status: "error", imei: "861234567890009", androidId: "i9j0k1l2m3n4", model: "OnePlus 9", osVersion: "Android 12", lastActive: "2026-04-01 15:20", proxyIp: null, deployedAt: "2026-02-28 10:00:00", cpuCores: 4, cpuUsage: 0, memoryTotal: 8, memoryUsed: 0, diskTotal: 0.128, diskUsed: 0.045, uptime: "-", autoRestart: true, remark: "资源不足导致崩溃" },
+  { id: "6ba7b818-9dad-11d1-80b4-00c04fd430c8", name: "ARM-Linux-Cloud-10", type: "cloud", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567805", imageId: "IMG-004", status: "running", imei: "861234567890010", androidId: "j0k1l2m3n4o5", model: "Xiaomi 11", osVersion: "Android 11", lastActive: "2026-04-02 10:20", proxyIp: "185.92.30.6", deployedAt: "2026-03-05 15:30:00", cpuCores: 4, cpuUsage: 50, memoryTotal: 8, memoryUsed: 5.0, diskTotal: 0.128, diskUsed: 0.060, uptime: "29天19小时", autoRestart: true, remark: "" },
+  { id: "6ba7b819-9dad-11d1-80b4-00c04fd430c8", name: "x86-Win-VM-01", type: "windows", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567803", imageId: "IMG-006", status: "running", imei: "-", androidId: "-", model: "Chrome/122", osVersion: "Windows Server 2019", lastActive: "2026-04-02 10:33", proxyIp: "45.32.100.15", deployedAt: "2026-01-18 10:00:00", cpuCores: 8, cpuUsage: 35, memoryTotal: 32, memoryUsed: 18.5, diskTotal: 0.512, diskUsed: 0.180, uptime: "75天0小时", autoRestart: true, remark: "" },
+  { id: "6ba7b81a-9dad-11d1-80b4-00c04fd430c8", name: "x86-Win-VM-02", type: "windows", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567803", imageId: "IMG-006", status: "running", imei: "-", androidId: "-", model: "Chrome/122", osVersion: "Windows Server 2019", lastActive: "2026-04-02 10:30", proxyIp: "91.108.56.25", deployedAt: "2026-01-20 11:30:00", cpuCores: 8, cpuUsage: 48, memoryTotal: 32, memoryUsed: 22.0, diskTotal: 0.512, diskUsed: 0.210, uptime: "73天13小时", autoRestart: true, remark: "" },
+  { id: "6ba7b81b-9dad-11d1-80b4-00c04fd430c8", name: "x86-Win-VM-03", type: "windows", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567803", imageId: "IMG-005", status: "idle", imei: "-", androidId: "-", model: "Chrome/120", osVersion: "Windows 10", lastActive: "2026-04-01 18:00", proxyIp: null, deployedAt: "2026-02-15 09:00:00", cpuCores: 4, cpuUsage: 5, memoryTotal: 16, memoryUsed: 4.2, diskTotal: 0.256, diskUsed: 0.085, uptime: "47天9小时", autoRestart: false, remark: "" },
+  { id: "6ba7b81c-9dad-11d1-80b4-00c04fd430c8", name: "x86-Linux-VM-01", type: "linux", hostServerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567807", imageId: "IMG-006", status: "running", imei: "-", androidId: "-", model: "-", osVersion: "Ubuntu 22.04 LTS", lastActive: "2026-04-02 10:28", proxyIp: "103.21.50.30", deployedAt: "2026-03-01 08:45:00", cpuCores: 16, cpuUsage: 28, memoryTotal: 64, memoryUsed: 35.0, diskTotal: 0.512, diskUsed: 0.150, uptime: "33天2小时", autoRestart: true, remark: "高性能Linux虚拟机" },
 ];
 
 // ============ 社交账号 ============
