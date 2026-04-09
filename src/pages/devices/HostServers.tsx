@@ -449,11 +449,17 @@ export default function HostServers() {
           <div className="grid gap-4 py-2">
             <div className="space-y-2">
               <Label>1. 下载导入模版</Label>
-              <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+              <Button variant="outline" size="sm" className="w-full justify-start gap-2" onClick={() => {
+                const headers = ["服务器类型(必填)", "服务器名称(必填)", "所属集群/阵列ID(必填)", "IP地址(必填)", "MAC地址(必填)", "SN码", "CPU型号(必填)", "CPU核数(必填)", "总内存GB(必填)", "总磁盘TB(必填)", "网络带宽", "操作系统(必填)", "机架", "负责人", "备注"];
+                const csvContent = "\uFEFF" + headers.join(",") + "\n";
+                const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a"); a.href = url; a.download = "服务器导入模版.csv"; a.click(); URL.revokeObjectURL(url);
+              }}>
                 <Download className="h-4 w-4" />
-                下载模版文件（.xlsx）
+                下载模版文件（.csv）
               </Button>
-              <p className="text-xs text-muted-foreground">模版包含：服务器名称、类型、所属集群/阵列ID、IP、MAC、SN码、CPU型号、CPU核数、网络、机架、操作系统、负责人、总内存(GB)、总磁盘(TB)</p>
+              <p className="text-xs text-muted-foreground">模版包含：服务器类型(必填)、服务器名称(必填)、所属集群/阵列ID(必填)、IP地址(必填)、MAC地址(必填)、SN码、CPU型号(必填)、CPU核数(必填)、总内存GB(必填)、总磁盘TB(必填)、网络带宽、操作系统(必填)、机架、负责人、备注</p>
             </div>
             <div className="space-y-2">
               <Label>2. 上传填写好的文件</Label>
