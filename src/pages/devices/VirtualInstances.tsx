@@ -239,7 +239,6 @@ export default function VirtualInstances() {
                   <TableHead className="whitespace-nowrap">内存 (GB)</TableHead>
                   <TableHead className="whitespace-nowrap">磁盘 (TB)</TableHead>
                   <TableHead className="whitespace-nowrap">操作系统版本</TableHead>
-                  <TableHead className="whitespace-nowrap">代理IP</TableHead>
                   <TableHead className="whitespace-nowrap text-center">状态</TableHead>
                   <TableHead className="whitespace-nowrap">运行时长</TableHead>
                   <TableHead className="whitespace-nowrap">自动重启</TableHead>
@@ -281,7 +280,6 @@ export default function VirtualInstances() {
                       </div>
                     </TableCell>
                     <TableCell className="text-xs whitespace-nowrap">{inst.osVersion}</TableCell>
-                    <TableCell className="font-mono text-xs whitespace-nowrap">{inst.proxyIp || "-"}</TableCell>
                     <TableCell className="text-center whitespace-nowrap">
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -320,14 +318,6 @@ export default function VirtualInstances() {
                             <TooltipContent>停止</TooltipContent>
                           </Tooltip>
                         ) : null}
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowChangeIp(inst)}>
-                              <RefreshCw className="h-3.5 w-3.5" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>换绑IP</TooltipContent>
-                        </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setMountDriveId(""); setMountAutoStart(true); setShowMountDrive(inst); }}>
@@ -393,7 +383,7 @@ export default function VirtualInstances() {
                   <p>镜像模版: {getImageName(inst)}</p>
                   <p>主机: {getHostServerName(inst)}</p>
                   <p>OS: {inst.osVersion}</p>
-                  <p>代理: {inst.proxyIp || "无"}</p>
+                  
                 </div>
                 <div className="flex gap-1 mt-3">
                   <Button variant="outline" size="sm" className="h-6 text-[10px] flex-1" onClick={(e) => { e.stopPropagation(); setShowRemoteControl(inst); }} disabled={inst.status !== "running"}>
@@ -860,7 +850,7 @@ export default function VirtualInstances() {
                 ...(showFingerprint.type === "cloud" ? [["IMEI", showFingerprint.imei], ["Android ID", showFingerprint.androidId]] : []),
                 ["机型/内核", showFingerprint.model],
                 ["操作系统版本", showFingerprint.osVersion],
-                ["代理IP", showFingerprint.proxyIp || "无"],
+                
                 ["最后活跃", showFingerprint.lastActive],
               ].map(([label, value]) => (
                 <div key={label as string} className="space-y-1">
@@ -925,32 +915,6 @@ export default function VirtualInstances() {
         </DialogContent>
       </Dialog>
 
-      {/* 换绑IP弹窗 */}
-      <Dialog open={!!showChangeIp} onOpenChange={() => setShowChangeIp(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>换绑IP - {showChangeIp?.id}</DialogTitle>
-            <DialogDescription>当前IP: {showChangeIp?.proxyIp || "无"}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <p className="text-sm font-medium">选择新的代理IP</p>
-              <Select>
-                <SelectTrigger><SelectValue placeholder="选择可用代理" /></SelectTrigger>
-                <SelectContent>
-                  {getAvailableIps().map(p => (
-                    <SelectItem key={p.id} value={p.id}>{p.ip}:{p.port} ({p.protocol}) · {p.country}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowChangeIp(null)}>取消</Button>
-              <Button onClick={() => setShowChangeIp(null)}>确认换绑</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* 挂载镜像实例弹窗 */}
       <Dialog open={!!showMountDrive} onOpenChange={() => setShowMountDrive(null)}>

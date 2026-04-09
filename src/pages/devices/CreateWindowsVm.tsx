@@ -124,7 +124,7 @@ export default function CreateWindowsVm() {
         { key: "MAC地址", value: netMacAddress },
         { key: "防火墙", value: netFirewall ? "是" : "否" },
       ] : []),
-      { key: "代理IP", value: proxyIp === "none" ? "不绑定" : proxyIp },
+      
       { key: "自动重启", value: autoRestart ? "是" : "否" },
       { key: "备注", value: remark || "-" },
     ];
@@ -510,18 +510,6 @@ export default function CreateWindowsVm() {
                 </div>
               </>
             )}
-            <div className="space-y-2">
-              <Label>代理IP</Label>
-              <Select value={proxyIp} onValueChange={setProxyIp}>
-                <SelectTrigger><SelectValue placeholder="选择代理IP或留空" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">不绑定</SelectItem>
-                  {availableIps.map(p => (
-                    <SelectItem key={p.id} value={p.id}>{p.ip}:{p.port} ({p.protocol}) · {p.country}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         );
 
