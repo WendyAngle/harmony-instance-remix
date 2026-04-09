@@ -20,7 +20,7 @@ interface EnvVariable {
 export default function CreateContainer() {
   const navigate = useNavigate();
   const [createType, setCreateType] = useState<VirtualDeviceType>("cloud");
-  const [createImageVisibility, setCreateImageVisibility] = useState<"public" | "custom">("public");
+  const [createImageVisibility, setCreateImageVisibility] = useState<"public" | "private">("public");
   const [createImageId, setCreateImageId] = useState("");
   const [envVars, setEnvVars] = useState<EnvVariable[]>([]);
 
