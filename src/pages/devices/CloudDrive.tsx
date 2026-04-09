@@ -89,7 +89,7 @@ export default function CloudDrive() {
 
   const openEdit = (d: CloudDriveItem) => {
     setFormName(d.name); setFormCapacity(String(d.capacity)); setFormType(d.type);
-    setFormLinkedTemplate(d.linkedTemplate || ""); setFormCacheDir(d.cacheDir || ""); setFormAccessUrl(d.accessUrl || "");
+    setFormLinkedTemplate(d.linkedTemplate || "__none__"); setFormCacheDir(d.cacheDir || ""); setFormAccessUrl(d.accessUrl || "");
     setFormRemark(d.remark);
     setEditingDrive(d);
   };
