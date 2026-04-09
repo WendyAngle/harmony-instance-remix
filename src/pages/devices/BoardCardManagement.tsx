@@ -442,39 +442,39 @@ export default function BoardCardManagement() {
                   {pagedCards.map(card => (
                     <TableRow key={card.id}>
                       <TableCell><Checkbox checked={selectedIds.has(card.id)} onCheckedChange={() => toggleSelect(card.id)} /></TableCell>
-                      <TableCell className="text-xs font-mono max-w-[120px] truncate">{card.uuid}</TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="font-mono text-xs whitespace-nowrap" title={card.uuid}>{card.uuid}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
                         <span className="text-primary cursor-pointer hover:underline">{card.name}</span>
                       </TableCell>
-                      <TableCell className="text-xs font-mono max-w-[120px] truncate">{card.sn}</TableCell>
-                      <TableCell className="text-xs"><Badge variant="outline" className="text-[10px]">{card.type}</Badge></TableCell>
-                      <TableCell className="text-xs max-w-[180px] truncate">{card.spec}</TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{card.sn}</TableCell>
+                      <TableCell className="whitespace-nowrap"><Badge variant="outline" className="text-[10px]">{card.type}</Badge></TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">{card.spec}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
                         <span className="inline-flex items-center gap-1">🤖 {card.os}</span>
                       </TableCell>
-                      <TableCell className="text-xs">
-                        <Badge className="bg-green-500/10 text-green-600 border-green-200 text-[10px]">正常</Badge>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        <Badge className="bg-green-500/10 text-green-600 border-green-200 text-[10px] whitespace-nowrap">正常</Badge>
                       </TableCell>
-                      <TableCell className="text-xs">
-                        <Badge variant="outline" className="bg-green-50 text-green-600 text-[10px]">空闲</Badge>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        <Badge variant="outline" className="bg-green-50 text-green-600 text-[10px] whitespace-nowrap">空闲</Badge>
                       </TableCell>
-                      <TableCell className="text-xs max-w-[180px] truncate">{card.containerSpec || "-"}</TableCell>
-                      <TableCell className="text-xs text-center">{card.containerCount}</TableCell>
-                      <TableCell className="text-xs text-center">{card.overQuota ? "是" : "否"}</TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="text-xs whitespace-nowrap">{card.containerSpec || "-"}</TableCell>
+                      <TableCell className="text-xs text-center whitespace-nowrap">{card.containerCount}</TableCell>
+                      <TableCell className="text-xs text-center whitespace-nowrap">{card.overQuota ? "是" : "否"}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
                         <div className="text-[10px] leading-tight">
                           <div>上行</div>
                           <div>下行</div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-xs font-mono">{card.ip}</TableCell>
-                      <TableCell className="text-xs">{card.cpuModel}</TableCell>
-                      <TableCell className="text-xs">
-                        <Badge variant={card.releaseStatus === "Ready" ? "default" : "secondary"} className={`text-[10px] ${card.releaseStatus === "Ready" ? "bg-green-500" : ""}`}>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">{card.ip}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">{card.cpuModel}</TableCell>
+                      <TableCell className="text-xs whitespace-nowrap">
+                        <Badge variant={card.releaseStatus === "Ready" ? "default" : "secondary"} className={`text-[10px] whitespace-nowrap ${card.releaseStatus === "Ready" ? "bg-green-500" : ""}`}>
                           {card.releaseStatus}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-xs">
+                      <TableCell className="text-xs whitespace-nowrap">
                         {card.tags.length > 0 ? card.tags.join(", ") : <Pencil className="h-3 w-3 text-muted-foreground cursor-pointer" />}
                       </TableCell>
                       <TableCell className="text-xs whitespace-nowrap">{card.createdAt}</TableCell>
