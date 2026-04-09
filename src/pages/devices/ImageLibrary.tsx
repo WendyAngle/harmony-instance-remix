@@ -584,78 +584,24 @@ export default function ImageLibrary() {
             <DialogTitle>编辑镜像模版</DialogTitle>
             <DialogDescription>修改镜像模版 {editImage?.id.slice(0, 8)}... 的基本信息</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-2">
+           <div className="grid gap-4 py-2">
+            {/* 模版名称 */}
+            <div className="space-y-2">
+              <Label><span className="text-destructive">*</span> 模版名称</Label>
+              <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} />
+            </div>
+            {/* 类型 & 属性 (readonly) */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>镜像类型</Label>
+                <Label><span className="text-destructive">*</span> 类型</Label>
                 <Input value={editImage ? imageTypeLabel[editImage.type] : ""} disabled />
               </div>
               <div className="space-y-2">
-                <Label>镜像属性</Label>
+                <Label><span className="text-destructive">*</span> 属性</Label>
                 <Input value={editImage ? visibilityLabel[editImage.visibility] : ""} disabled />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>模版名称</Label>
-              <Input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>版本号（标签）</Label>
-                <Input value={editForm.version} onChange={e => setEditForm(f => ({ ...f, version: e.target.value }))} />
-              </div>
-              <div className="space-y-2">
-                <Label>描述</Label>
-                <Input value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>架构</Label>
-                <Select value={editForm.architecture} onValueChange={v => setEditForm(f => ({ ...f, architecture: v as ImageArchitecture }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ARM64">ARM64 (aarch64)</SelectItem>
-                    <SelectItem value="x86_64">x86_64</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>操作系统</Label>
-                <Select value={editForm.os} onValueChange={v => setEditForm(f => ({ ...f, os: v as ImageOS }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Linux">Linux</SelectItem>
-                    <SelectItem value="Windows">Windows</SelectItem>
-                    <SelectItem value="Android">Android</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>操作系统版本</Label>
-                <Input value={editForm.osVersion} onChange={e => setEditForm(f => ({ ...f, osVersion: e.target.value }))} />
-              </div>
-              <div className="space-y-2">
-                <Label>所属项目/租户</Label>
-                <Input value={editForm.tenant} onChange={e => setEditForm(f => ({ ...f, tenant: e.target.value }))} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>启动命令</Label>
-                <Input value={editForm.entrypoint} onChange={e => setEditForm(f => ({ ...f, entrypoint: e.target.value }))} />
-              </div>
-              <div className="space-y-2">
-                <Label>暴露端口</Label>
-                <Input value={editForm.ports} onChange={e => setEditForm(f => ({ ...f, ports: e.target.value }))} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>环境变量</Label>
-              <Textarea value={editForm.envVars} onChange={e => setEditForm(f => ({ ...f, envVars: e.target.value }))} placeholder="KEY=VALUE，每行一个" className="min-h-[60px] resize-y font-mono text-xs" />
-            </div>
+            {/* 标签 */}
             <div className="space-y-2">
               <Label>标签</Label>
               <Popover>
@@ -682,10 +628,102 @@ export default function ImageLibrary() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="space-y-2">
-              <Label>最大实例数</Label>
-              <Input type="number" value={editForm.maxInstances} onChange={e => setEditForm(f => ({ ...f, maxInstances: Number(e.target.value) }))} />
+            {/* 架构 & 镜像格式 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label><span className="text-destructive">*</span> 架构</Label>
+                <Select value={editForm.architecture} onValueChange={v => setEditForm(f => ({ ...f, architecture: v as ImageArchitecture }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ARM64">ARM64 (aarch64)</SelectItem>
+                    <SelectItem value="x86_64">x86_64</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label><span className="text-destructive">*</span> 镜像格式</Label>
+                <Select value={editForm.imageFormat} onValueChange={v => setEditForm(f => ({ ...f, imageFormat: v as ImageFormat }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Docker">Docker</SelectItem>
+                    <SelectItem value="qcow2">qcow2</SelectItem>
+                    <SelectItem value="raw">raw</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+            {/* 操作系统 & 操作系统版本 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label><span className="text-destructive">*</span> 操作系统</Label>
+                <Select value={editForm.os} onValueChange={v => setEditForm(f => ({ ...f, os: v as ImageOS }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Linux">Linux</SelectItem>
+                    <SelectItem value="Windows">Windows</SelectItem>
+                    <SelectItem value="Android">Android</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label><span className="text-destructive">*</span> 操作系统版本</Label>
+                <Input value={editForm.osVersion} onChange={e => setEditForm(f => ({ ...f, osVersion: e.target.value }))} />
+              </div>
+            </div>
+            {/* 构建脚本/配置 */}
+            <div className="space-y-2">
+              <Label>构建脚本/配置</Label>
+              <Textarea value={editForm.buildScript} onChange={e => setEditForm(f => ({ ...f, buildScript: e.target.value }))} placeholder="FROM ubuntu:22.04..." className="min-h-[60px] resize-y font-mono text-xs" />
+            </div>
+            {/* 磁盘大小 & 最大实例数 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label><span className="text-destructive">*</span> 磁盘大小</Label>
+                <Input value={editForm.disk} onChange={e => setEditForm(f => ({ ...f, disk: e.target.value }))} placeholder="例: 20GB" />
+              </div>
+              <div className="space-y-2">
+                <Label>最大实例数</Label>
+                <Input type="number" value={editForm.maxInstances} onChange={e => setEditForm(f => ({ ...f, maxInstances: Number(e.target.value) }))} />
+              </div>
+            </div>
+            {/* 预置软件清单 */}
+            <div className="space-y-2">
+              <Label>预置软件清单</Label>
+              <Input value={editForm.preinstalledSoftware} onChange={e => setEditForm(f => ({ ...f, preinstalledSoftware: e.target.value }))} placeholder="多个软件用逗号分隔，例: Nginx, MySQL, Redis" />
+            </div>
+            {/* 版本号 & 描述 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>版本号</Label>
+                <Input value={editForm.version} onChange={e => setEditForm(f => ({ ...f, version: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>描述</Label>
+                <Input value={editForm.description} onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))} />
+              </div>
+            </div>
+            {/* 启动命令 & 暴露端口 */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>启动命令</Label>
+                <Input value={editForm.entrypoint} onChange={e => setEditForm(f => ({ ...f, entrypoint: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>暴露端口</Label>
+                <Input value={editForm.ports} onChange={e => setEditForm(f => ({ ...f, ports: e.target.value }))} />
+              </div>
+            </div>
+            {/* 环境变量 */}
+            <div className="space-y-2">
+              <Label>环境变量</Label>
+              <Textarea value={editForm.envVars} onChange={e => setEditForm(f => ({ ...f, envVars: e.target.value }))} placeholder="KEY=VALUE，每行一个" className="min-h-[60px] resize-y font-mono text-xs" />
+            </div>
+            {/* 所属项目/租户 */}
+            <div className="space-y-2">
+              <Label>所属项目/租户</Label>
+              <Input value={editForm.tenant} onChange={e => setEditForm(f => ({ ...f, tenant: e.target.value }))} />
+            </div>
+            {/* 备注 */}
             <div className="space-y-2">
               <Label>备注</Label>
               <div className="relative">
