@@ -50,6 +50,33 @@ export default function TagManagement() {
   const [deletingTag, setDeletingTag] = useState<TagItem | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
+  // Compute tag usage from board cards and image templates
+  const boardCardTagCounts = useMemo(() => {
+    // Simulate board card tag assignments (same logic as BoardCardManagement mock)
+    const tagNames = mockTags.map(t => t.name);
+    const counts: Record<string, number> = {};
+    tagNames.forEach(n => { counts[n] = 0; });
+    for (let i = 0; i < 24; i++) {
+      const assigned = i % 5 === 0 ? [mockTags[1]?.name, mockTags[3]?.name] : i % 3 === 0 ? [mockTags[4]?.name] : i % 2 === 0 ? [mockTags[0]?.name] : [mockTags[2]?.name];
+      assigned.filter(Boolean).forEach(n => { if (counts[n!] !== undefined) counts[n!]++; });
+    }
+    return counts;
+  }, []);
+
+  const imageTagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    romImages.forEach(img => {
+      img.tags.forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+    });
+    return counts;
+  }, []);
+
+  const getTagBreakdown = (tagName: string) => {
+    const boardCount = boardCardTagCounts[tagName] || 0;
+    const imageCount = imageTagCounts[tagName] || 0;
+    return { boardCount, imageCount, total: boardCount + imageCount };
+  };
+
   const filteredTags = useMemo(() => {
     if (!searchText.trim()) return tags;
     const q = searchText.toLowerCase();
