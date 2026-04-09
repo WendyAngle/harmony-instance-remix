@@ -604,7 +604,7 @@ export default function HostServers() {
             );
           })()}
           <DialogFooter>
-            <Button variant="outline" onClick={() => navigate("/devices/board-cards")}>
+            <Button variant="outline" onClick={() => navigate("/devices/boardcards")}>
               <ExternalLink className="h-3.5 w-3.5 mr-1" />前往ARM板卡管理
             </Button>
           </DialogFooter>
