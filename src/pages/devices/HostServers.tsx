@@ -370,32 +370,8 @@ export default function HostServers() {
               </div>
               <div className="space-y-2"><Label>服务器名称 <span className="text-destructive">*</span></Label><Input placeholder="ARM生产服务器-01" /></div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>所属集群/阵列ID <span className="text-destructive">*</span></Label><Input placeholder="CLU-ARM-001" /></div>
-              <div className="space-y-2"><Label>IP地址 <span className="text-destructive">*</span></Label><Input placeholder="10.0.1.12" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>MAC地址 <span className="text-destructive">*</span></Label><Input placeholder="00:1A:2B:3C:4D:05" /></div>
-              <div className="space-y-2"><Label>SN码</Label><Input placeholder="SN2026XXXXXX" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>CPU型号 <span className="text-destructive">*</span></Label><Input placeholder={addFormType === "x86" ? "Xeon E5-2690 v4" : "RK3588"} /></div>
-              <div className="space-y-2"><Label>CPU核数 <span className="text-destructive">*</span></Label><Input type="number" placeholder="8" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>总内存 (GB) <span className="text-destructive">*</span></Label><Input type="number" placeholder="64" /></div>
-              <div className="space-y-2"><Label>总磁盘 (TB) <span className="text-destructive">*</span></Label><Input type="number" placeholder="2" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>网络带宽</Label><Input placeholder="1Gbps" /></div>
-              <div className="space-y-2"><Label>操作系统 <span className="text-destructive">*</span></Label><Input placeholder={addFormType === "x86" ? "Ubuntu 22.04 LTS" : "Armbian 23.11"} /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>机架</Label><Input placeholder="A区-01机架" /></div>
-              <div className="space-y-2"><Label>负责人</Label><Input placeholder="张伟" /></div>
-            </div>
 
-            {/* ARM服务器显示关联资源 */}
+            {/* ARM服务器显示关联资源 - 紧挨服务器类型 */}
             {addFormType === "arm" && (
               <div className="space-y-2">
                 <Label>关联资源（ARM板卡）</Label>
@@ -428,6 +404,7 @@ export default function HostServers() {
                   <p className="text-xs text-muted-foreground">已选择 {selectedBoardCards.length} 块板卡</p>
                 )}
               </div>
+            )}
             )}
 
             <div className="space-y-2"><Label>备注</Label><Input placeholder="选填" /></div>
