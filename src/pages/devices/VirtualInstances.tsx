@@ -206,7 +206,6 @@ export default function VirtualInstances() {
             <SelectItem value="all">全部类型</SelectItem>
             <SelectItem value="cloud">云机</SelectItem>
             <SelectItem value="windows">Windows</SelectItem>
-            <SelectItem value="linux">Linux</SelectItem>
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={v => { setFilterStatus(v); setCurrentPage(1); }}>
@@ -232,7 +231,7 @@ export default function VirtualInstances() {
                   <TableHead className="whitespace-nowrap">虚拟机ID</TableHead>
                   <TableHead className="whitespace-nowrap">虚拟机名称</TableHead>
                   <TableHead className="whitespace-nowrap">虚拟机类型</TableHead>
-                  <TableHead className="whitespace-nowrap">所属主机ID</TableHead>
+                  <TableHead className="whitespace-nowrap">所属主机</TableHead>
                   <TableHead className="whitespace-nowrap">镜像模版</TableHead>
                   <TableHead className="whitespace-nowrap">部署时间</TableHead>
                   <TableHead className="whitespace-nowrap">CPU核数</TableHead>
@@ -254,7 +253,7 @@ export default function VirtualInstances() {
                     <TableCell className="font-mono font-medium text-xs whitespace-nowrap">{inst.id.slice(0, 8)}...</TableCell>
                     <TableCell className="text-xs whitespace-nowrap">{inst.name}</TableCell>
                     <TableCell className="whitespace-nowrap">
-                      <Badge variant={inst.type === "cloud" ? "default" : inst.type === "linux" ? "outline" : "secondary"} className="text-[10px] gap-1">
+                      <Badge variant={inst.type === "cloud" ? "default" : "secondary"} className="text-[10px] gap-1">
                         {inst.type === "cloud" ? <Smartphone className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
                         {typeLabel[inst.type]}
                       </Badge>
