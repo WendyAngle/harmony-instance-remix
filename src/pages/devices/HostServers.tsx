@@ -284,6 +284,11 @@ export default function HostServers() {
                           <Tooltip><TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowDetail(server)}><Eye className="h-3.5 w-3.5" /></Button>
                           </TooltipTrigger><TooltipContent>详情</TooltipContent></Tooltip>
+                          {server.type === "arm" && (
+                            <Tooltip><TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowBoardCards(server)}><Layers className="h-3.5 w-3.5" /></Button>
+                            </TooltipTrigger><TooltipContent>查看关联资源</TooltipContent></Tooltip>
+                          )}
                           {active && (
                             <>
                               <Tooltip><TooltipTrigger asChild>
