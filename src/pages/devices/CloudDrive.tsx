@@ -20,7 +20,9 @@ export interface CloudDriveItem {
   capacity: number; // GB
   used: number; // GB
   status: CloudDriveStatus;
-  mountedTo: string | null; // device id or name
+  linkedTemplate: string | null; // 关联镜像模版名称
+  cacheDir: string; // 缓存目录
+  accessUrl: string; // 访问URL
   type: "SSD" | "HDD";
   createdAt: string;
   remark: string;
@@ -28,12 +30,12 @@ export interface CloudDriveItem {
 }
 
 export const initialDrives: CloudDriveItem[] = [
-  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", mountedTo: "DEV-ARM-001", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
-  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", mountedTo: "DEV-ARM-003", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
-  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", mountedTo: null, type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
-  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", mountedTo: "DEV-WIN-002", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
-  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", mountedTo: null, type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
-  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", mountedTo: null, type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
+  { id: "cd-001", name: "数据盘-A", capacity: 100, used: 45, status: "mounted", linkedTemplate: "Android 12 云机标准版", cacheDir: "/mnt/cache/cd-001", accessUrl: "https://img.example.com/cd-001", type: "SSD", createdAt: "2025-03-10", remark: "主数据存储", boundAccounts: [{ platform: "tiktok", username: "@techvibes_01", accountId: "ACC-001" }, { platform: "facebook", username: "globalnews.page", accountId: "ACC-003" }] },
+  { id: "cd-002", name: "备份盘-B", capacity: 200, used: 120, status: "mounted", linkedTemplate: "Windows Server 2022 标准版", cacheDir: "/mnt/cache/cd-002", accessUrl: "https://img.example.com/cd-002", type: "HDD", createdAt: "2025-02-15", remark: "定期备份", boundAccounts: [{ platform: "tiktok", username: "@dancequeen_x", accountId: "ACC-002" }] },
+  { id: "cd-003", name: "测试盘-C", capacity: 50, used: 0, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-003", accessUrl: "https://img.example.com/cd-003", type: "SSD", createdAt: "2025-04-01", remark: "测试用途", boundAccounts: [] },
+  { id: "cd-004", name: "日志盘-D", capacity: 500, used: 310, status: "mounted", linkedTemplate: "Ubuntu 22.04 LTS 基础版", cacheDir: "/mnt/cache/cd-004", accessUrl: "https://img.example.com/cd-004", type: "HDD", createdAt: "2025-01-20", remark: "日志收集", boundAccounts: [{ platform: "instagram", username: "@foodielife_sg", accountId: "ACC-005" }] },
+  { id: "cd-005", name: "临时盘-E", capacity: 30, used: 5, status: "available", linkedTemplate: null, cacheDir: "/mnt/cache/cd-005", accessUrl: "https://img.example.com/cd-005", type: "SSD", createdAt: "2025-03-28", remark: "", boundAccounts: [] },
+  { id: "cd-006", name: "异常盘-F", capacity: 100, used: 0, status: "error", linkedTemplate: "Android 13 高性能版", cacheDir: "/mnt/cache/cd-006", accessUrl: "https://img.example.com/cd-006", type: "HDD", createdAt: "2025-02-01", remark: "IO错误", boundAccounts: [] },
 ];
 
 const statusMap: Record<CloudDriveStatus, { label: string; color: string }> = {
@@ -167,28 +169,30 @@ export default function CloudDrive() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>镜像实例ID</TableHead>
-                <TableHead>名称</TableHead>
-                <TableHead>类型</TableHead>
-                <TableHead>容量</TableHead>
-                <TableHead>已用</TableHead>
-                <TableHead>挂载设备</TableHead>
-                <TableHead>绑定账号</TableHead>
-                <TableHead>创建时间</TableHead>
-                <TableHead className="text-center">状态</TableHead>
-                <TableHead>操作</TableHead>
+                <TableHead className="whitespace-nowrap">镜像实例ID</TableHead>
+                <TableHead className="whitespace-nowrap">镜像实例名称</TableHead>
+                <TableHead className="whitespace-nowrap">类型</TableHead>
+                <TableHead className="whitespace-nowrap">容量</TableHead>
+                <TableHead className="whitespace-nowrap">已用</TableHead>
+                <TableHead className="whitespace-nowrap">关联镜像模版</TableHead>
+                <TableHead className="whitespace-nowrap">缓存目录</TableHead>
+                <TableHead className="whitespace-nowrap">访问URL</TableHead>
+                <TableHead className="whitespace-nowrap">绑定账号</TableHead>
+                <TableHead className="whitespace-nowrap">创建时间</TableHead>
+                <TableHead className="whitespace-nowrap text-center">状态</TableHead>
+                <TableHead className="whitespace-nowrap">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {pagedDrives.map((drive) => (
                 <TableRow key={drive.id}>
-                  <TableCell className="font-mono text-xs">{drive.id}</TableCell>
-                  <TableCell className="font-medium">{drive.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono text-xs whitespace-nowrap">{drive.id}</TableCell>
+                  <TableCell className="font-medium whitespace-nowrap">{drive.name}</TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <Badge variant={drive.type === "SSD" ? "default" : "secondary"} className="text-[10px]">{drive.type}</Badge>
                   </TableCell>
-                  <TableCell className="text-xs">{drive.capacity} GB</TableCell>
-                  <TableCell className="text-xs">
+                  <TableCell className="text-xs whitespace-nowrap">{drive.capacity} GB</TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-primary rounded-full" style={{ width: `${drive.capacity > 0 ? (drive.used / drive.capacity) * 100 : 0}%` }} />
@@ -196,8 +200,12 @@ export default function CloudDrive() {
                       <span>{drive.used} GB</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-xs font-mono">{drive.mountedTo || <span className="text-muted-foreground">—</span>}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">{drive.linkedTemplate || <span className="text-muted-foreground">—</span>}</TableCell>
+                  <TableCell className="text-xs font-mono whitespace-nowrap">{drive.cacheDir}</TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">
+                    <a href={drive.accessUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{drive.accessUrl}</a>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
                     {drive.boundAccounts.length > 0 ? (
                       <div className="flex flex-col gap-0.5">
                         {drive.boundAccounts.map((ba, i) => (
@@ -209,13 +217,13 @@ export default function CloudDrive() {
                       </div>
                     ) : <span className="text-xs text-muted-foreground">未绑定</span>}
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{drive.createdAt}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{drive.createdAt}</TableCell>
+                  <TableCell className="text-center whitespace-nowrap">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium text-white ${statusMap[drive.status].color}`}>
                       {statusMap[drive.status].label}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <div className="flex items-center gap-1">
                       <Tooltip>
                         <TooltipTrigger asChild>
