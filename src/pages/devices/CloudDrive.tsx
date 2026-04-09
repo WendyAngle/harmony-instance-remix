@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Search, Plus, Pencil, Trash2, Link, Unlink, ChevronLeft, ChevronRight, HardDrive } from "lucide-react";
-import { type BoundAccount, romImages } from "@/data/mock-data";
+import { type BoundAccount, romImages, virtualInstances } from "@/data/mock-data";
 
 export type CloudDriveStatus = "available" | "mounted" | "error";
 
@@ -407,13 +407,25 @@ export default function CloudDrive() {
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="space-y-2">
-              <Label>目标设备ID</Label>
-              <Input placeholder="例如 DEV-ARM-001" value={mountTarget} onChange={e => setMountTarget(e.target.value)} />
+              <Label><span className="text-destructive">*</span> 目标设备</Label>
+              <Select value={mountTarget} onValueChange={setMountTarget}>
+                <SelectTrigger><SelectValue placeholder="请选择虚拟机" /></SelectTrigger>
+                <SelectContent>
+                  {virtualInstances.filter(v => v.status !== "error").map(v => {
+                    const statusMap: Record<string, string> = { offline: "离线", idle: "空闲", warming: "预热中", running: "运行中" };
+                    return (
+                      <SelectItem key={v.id} value={v.id}>
+                        {v.name} ({v.id.substring(0, 8)}...) — {statusMap[v.status] || v.status}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setMountingDrive(null)}>取消</Button>
-            <Button onClick={handleMount} disabled={!mountTarget.trim()}>挂载</Button>
+            <Button onClick={handleMount} disabled={!mountTarget}>挂载</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
