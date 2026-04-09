@@ -178,7 +178,7 @@ export default function CreateContainer() {
               <div className="space-y-2">
                 <Label>{req} 指定板卡</Label>
                 <Textarea
-                  placeholder="输入板卡SN，多个请以","或者"|"分隔。最多输入1000个"
+                  placeholder={'输入板卡SN，多个请以","或者"|"分隔。最多输入1000个'}
                   value={boardSn}
                   onChange={e => setBoardSn(e.target.value)}
                   className="min-h-[80px]"
