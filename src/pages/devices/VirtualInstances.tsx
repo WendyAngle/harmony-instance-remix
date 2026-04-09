@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -262,9 +263,24 @@ export default function VirtualInstances() {
                     <TableCell className="text-xs whitespace-nowrap">{getImageName(inst)}</TableCell>
                     <TableCell className="text-xs whitespace-nowrap">{inst.deployedAt}</TableCell>
                     <TableCell className="text-xs whitespace-nowrap text-center">{inst.cpuCores}</TableCell>
-                    <TableCell className="text-xs whitespace-nowrap">{inst.cpuUsage}%</TableCell>
-                    <TableCell className="text-xs whitespace-nowrap">{inst.memoryUsed}/{inst.memoryTotal}</TableCell>
-                    <TableCell className="text-xs whitespace-nowrap">{inst.diskUsed}/{inst.diskTotal}</TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">
+                      <div className="flex items-center gap-1.5">
+                        <Progress value={inst.cpuUsage} className="w-12 h-1.5" />
+                        <span className={`text-xs font-mono ${inst.cpuUsage >= 80 ? "text-threshold-danger font-bold" : ""}`}>{inst.cpuUsage}%</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">
+                      <div className="flex items-center gap-1.5">
+                        <Progress value={inst.memoryTotal > 0 ? (inst.memoryUsed / inst.memoryTotal) * 100 : 0} className="w-12 h-1.5" />
+                        <span className={`text-xs font-mono ${inst.memoryTotal > 0 && (inst.memoryUsed / inst.memoryTotal) * 100 >= 90 ? "text-threshold-danger font-bold" : ""}`}>{inst.memoryUsed}/{inst.memoryTotal}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">
+                      <div className="flex items-center gap-1.5">
+                        <Progress value={inst.diskTotal > 0 ? (inst.diskUsed / inst.diskTotal) * 100 : 0} className="w-12 h-1.5" />
+                        <span className={`text-xs font-mono ${inst.diskTotal > 0 && (inst.diskUsed / inst.diskTotal) * 100 >= 85 ? "text-threshold-danger font-bold" : ""}`}>{inst.diskUsed}/{inst.diskTotal}</span>
+                      </div>
+                    </TableCell>
                     <TableCell className="text-xs whitespace-nowrap">{inst.osVersion}</TableCell>
                     <TableCell className="font-mono text-xs whitespace-nowrap">{inst.proxyIp || "-"}</TableCell>
                     <TableCell className="text-center whitespace-nowrap">
