@@ -37,7 +37,7 @@ const statusConfig: Record<InstanceStatus, { colorClass: string; tooltip: string
   running: { colorClass: "bg-status-online", tooltip: "正在运行" },
   error: { colorClass: "bg-destructive", tooltip: "运行异常" },
 };
-const typeLabel: Record<VirtualDeviceType, string> = { cloud: "云机", windows: "Windows" };
+const typeLabel: Record<VirtualDeviceType, string> = { cloud: "云机", windows: "Windows", linux: "Linux" };
 
 const PAGE_SIZES = [10, 20, 50];
 
@@ -82,7 +82,7 @@ export default function VirtualInstances() {
       if (filterStatus !== "all" && i.status !== filterStatus) return false;
       if (searchText.trim()) {
         const q = searchText.trim().toLowerCase();
-        if (!i.id.toLowerCase().includes(q) && !i.model.toLowerCase().includes(q) && !i.deviceId.toLowerCase().includes(q)) return false;
+        if (!i.id.toLowerCase().includes(q) && !i.name.toLowerCase().includes(q) && !i.model.toLowerCase().includes(q) && !i.hostServerId.toLowerCase().includes(q)) return false;
       }
       return true;
     });
@@ -91,15 +91,9 @@ export default function VirtualInstances() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const pagedInstances = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const getDeviceName = (inst: VirtualInstance) => {
-    const dev = physicalDevices.find(d => d.id === inst.deviceId);
-    return dev ? `${inst.deviceId} (${dev.type === "board" ? "主板" : "Win主机"})` : inst.deviceId;
-  };
-
-  const getBoardCardName = (inst: VirtualInstance) => {
-    if (!inst.boardCardId) return "-";
-    const dev = physicalDevices.find(d => d.id === inst.boardCardId);
-    return dev ? `${dev.name} (${dev.ip})` : inst.boardCardId;
+  const getHostServerName = (inst: VirtualInstance) => {
+    const srv = hostServers.find(s => s.id === inst.hostServerId);
+    return srv ? `${srv.name}` : inst.hostServerId.slice(0, 8);
   };
 
   const getImageName = (inst: VirtualInstance) => {
