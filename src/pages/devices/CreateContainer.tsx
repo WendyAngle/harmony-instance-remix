@@ -64,7 +64,7 @@ export default function CreateContainer() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold">创建虚拟机</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">创建云机、Windows 或 Linux 虚拟机实例</p>
+          <p className="text-sm text-muted-foreground mt-0.5">创建云机或 Windows 虚拟机实例</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ export default function CreateContainer() {
                 <SelectContent>
                   <SelectItem value="cloud">云机</SelectItem>
                   <SelectItem value="windows">Windows</SelectItem>
-                  <SelectItem value="linux">Linux</SelectItem>
+                  
                 </SelectContent>
               </Select>
             </div>
@@ -104,7 +104,7 @@ export default function CreateContainer() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
-                {createType === "cloud" ? "云机部署在ARM服务器上" : createType === "windows" ? "Windows虚拟机部署在X86服务器上" : "Linux虚拟机部署在X86服务器上"}
+                {createType === "cloud" ? "云机部署在ARM服务器上" : "Windows虚拟机部署在X86服务器上"}
               </p>
             </div>
 
