@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { romImages as initialImages, physicalDevices, type RomImage, type ImageType, type ImageVisibility, type ImageStatus, type ImageArchitecture, type ImageOS, type ImageTrustStatus, type ImageFormat } from "@/data/mock-data";
+import { mockTags } from "@/pages/devices/TagManagement";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Upload, RefreshCw, Search, ChevronLeft, ChevronRight, Pencil, Trash2, X, Copy, Check } from "lucide-react";
@@ -59,6 +61,7 @@ export default function ImageLibrary() {
   const [selectedDeviceIds, setSelectedDeviceIds] = useState<string[]>([]);
   const [toggleConfirm, setToggleConfirm] = useState<RomImage | null>(null);
   const [editImage, setEditImage] = useState<RomImage | null>(null);
+  const [uploadTags, setUploadTags] = useState<string[]>([]);
   const [editForm, setEditForm] = useState({
     name: "", version: "", description: "", remark: "",
     architecture: "ARM64" as ImageArchitecture,
@@ -66,6 +69,7 @@ export default function ImageLibrary() {
     osVersion: "",
     entrypoint: "", ports: "", envVars: "",
     tenant: "", maxInstances: 100,
+    tags: [] as string[],
   });
   const [uploadSocType, setUploadSocType] = useState("Orion865");
   const [uploadMethod, setUploadMethod] = useState<"file" | "manual">("file");
