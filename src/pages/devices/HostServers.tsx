@@ -405,7 +405,6 @@ export default function HostServers() {
                 )}
               </div>
             )}
-            )}
 
             <div className="space-y-2"><Label>备注</Label><Input placeholder="选填" /></div>
           </div>
