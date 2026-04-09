@@ -339,8 +339,8 @@ export default function HostServers() {
       </div>
 
       {/* 新增服务器弹窗 */}
-      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent>
+      <Dialog open={showAddDialog} onOpenChange={(open) => { setShowAddDialog(open); if (!open) { setAddFormType(""); setSelectedBoardCards([]); } }}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>新增服务器</DialogTitle>
             <DialogDescription>登记新的ARM服务器或X86服务器信息</DialogDescription>
@@ -348,8 +348,8 @@ export default function HostServers() {
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>服务器类型</Label>
-                <Select>
+                <Label>服务器类型 <span className="text-destructive">*</span></Label>
+                <Select value={addFormType} onValueChange={v => { setAddFormType(v); setSelectedBoardCards([]); }}>
                   <SelectTrigger><SelectValue placeholder="选择类型" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="arm">ARM服务器</SelectItem>
@@ -357,37 +357,73 @@ export default function HostServers() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2"><Label>服务器名称</Label><Input placeholder="ARM生产服务器-01" /></div>
+              <div className="space-y-2"><Label>服务器名称 <span className="text-destructive">*</span></Label><Input placeholder="ARM生产服务器-01" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>所属集群/阵列ID</Label><Input placeholder="CLU-ARM-001" /></div>
-              <div className="space-y-2"><Label>IP地址</Label><Input placeholder="10.0.1.12" /></div>
+              <div className="space-y-2"><Label>所属集群/阵列ID <span className="text-destructive">*</span></Label><Input placeholder="CLU-ARM-001" /></div>
+              <div className="space-y-2"><Label>IP地址 <span className="text-destructive">*</span></Label><Input placeholder="10.0.1.12" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>MAC地址</Label><Input placeholder="00:1A:2B:3C:4D:05" /></div>
+              <div className="space-y-2"><Label>MAC地址 <span className="text-destructive">*</span></Label><Input placeholder="00:1A:2B:3C:4D:05" /></div>
               <div className="space-y-2"><Label>SN码</Label><Input placeholder="SN2026XXXXXX" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>CPU型号</Label><Input placeholder="RK3588 / Xeon E5-2690 v4" /></div>
-              <div className="space-y-2"><Label>CPU核数</Label><Input type="number" placeholder="8" /></div>
+              <div className="space-y-2"><Label>CPU型号 <span className="text-destructive">*</span></Label><Input placeholder={addFormType === "x86" ? "Xeon E5-2690 v4" : "RK3588"} /></div>
+              <div className="space-y-2"><Label>CPU核数 <span className="text-destructive">*</span></Label><Input type="number" placeholder="8" /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>网络</Label><Input placeholder="内网A区" /></div>
+              <div className="space-y-2"><Label>总内存 (GB) <span className="text-destructive">*</span></Label><Input type="number" placeholder="64" /></div>
+              <div className="space-y-2"><Label>总磁盘 (TB) <span className="text-destructive">*</span></Label><Input type="number" placeholder="2" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>网络带宽</Label><Input placeholder="1Gbps" /></div>
+              <div className="space-y-2"><Label>操作系统 <span className="text-destructive">*</span></Label><Input placeholder={addFormType === "x86" ? "Ubuntu 22.04 LTS" : "Armbian 23.11"} /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2"><Label>机架</Label><Input placeholder="A区-01机架" /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>操作系统</Label><Input placeholder="Ubuntu 22.04 LTS" /></div>
               <div className="space-y-2"><Label>负责人</Label><Input placeholder="张伟" /></div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>总内存 (GB)</Label><Input type="number" placeholder="128" /></div>
-              <div className="space-y-2"><Label>总磁盘 (TB)</Label><Input type="number" placeholder="4" /></div>
-            </div>
+
+            {/* ARM服务器显示关联资源 */}
+            {addFormType === "arm" && (
+              <div className="space-y-2">
+                <Label>关联资源（ARM板卡）</Label>
+                <div className="border rounded-md p-3 space-y-2 max-h-48 overflow-y-auto">
+                  {availableBoardCards.length === 0 ? (
+                    <p className="text-xs text-muted-foreground text-center py-2">暂无可关联的ARM板卡</p>
+                  ) : (
+                    availableBoardCards.map(card => (
+                      <div key={card.id} className="flex items-center gap-2 py-1">
+                        <Checkbox
+                          checked={selectedBoardCards.includes(card.id)}
+                          onCheckedChange={(checked) => {
+                            setSelectedBoardCards(prev =>
+                              checked ? [...prev, card.id] : prev.filter(id => id !== card.id)
+                            );
+                          }}
+                        />
+                        <div className="flex-1 text-xs">
+                          <span className="font-medium">{card.name}</span>
+                          <span className="text-muted-foreground ml-2">SN: {card.sn}</span>
+                          <span className="text-muted-foreground ml-2">IP: {card.ip}</span>
+                          <span className="text-muted-foreground ml-2">{card.spec}</span>
+                        </div>
+                        <Badge variant={card.runStatus === "正常" ? "default" : "destructive"} className="text-[10px]">{card.runStatus}</Badge>
+                      </div>
+                    ))
+                  )}
+                </div>
+                {selectedBoardCards.length > 0 && (
+                  <p className="text-xs text-muted-foreground">已选择 {selectedBoardCards.length} 块板卡</p>
+                )}
+              </div>
+            )}
+
             <div className="space-y-2"><Label>备注</Label><Input placeholder="选填" /></div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddDialog(false)}>取消</Button>
-            <Button onClick={() => setShowAddDialog(false)}>确认添加</Button>
+            <Button variant="outline" onClick={() => { setShowAddDialog(false); setAddFormType(""); setSelectedBoardCards([]); }}>取消</Button>
+            <Button onClick={() => { setShowAddDialog(false); setAddFormType(""); setSelectedBoardCards([]); }}>确认添加</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
