@@ -21,9 +21,9 @@ const menuGroups = [
   {
     label: "设备资源中台",
     items: [
-      { title: "主机服务器管理", url: "/devices/servers", icon: Database },
+      { title: "主机管理", url: "/devices/servers", icon: Database },
       // { title: "物理设备管理", url: "/devices/physical", icon: Server },
-      { title: "ARM板卡管理", url: "/devices/boardcards", icon: CircuitBoard },
+      { title: "ARM板卡", url: "/devices/boardcards", icon: CircuitBoard },
     ],
   },
   {
@@ -53,14 +53,14 @@ const menuGroups = [
       { title: "应用管理", url: "/apps/manage", icon: Package },
       { title: "文件上传", url: "/apps/files", icon: FileUp },
       { title: "脚本仓库", url: "/scripts/hub", icon: Code },
-      { title: "任务编排", url: "/scripts/tasks", icon: Play },
+      // { title: "任务编排", url: "/scripts/tasks", icon: Play },
     ],
   },
   {
     label: "运维管理",
     items: [
       { title: "任务管理", url: "/ops/tasks", icon: ClipboardList },
-      { title: "节点管理", url: "/ops/nodes", icon: Network },
+      // { title: "节点管理", url: "/ops/nodes", icon: Network },
     ],
   },
 ];
