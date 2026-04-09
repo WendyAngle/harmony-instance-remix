@@ -391,7 +391,7 @@ export default function CloudDrive() {
           <AlertDialogHeader>
             <AlertDialogTitle>确认卸载镜像实例？</AlertDialogTitle>
             <AlertDialogDescription>
-              将从设备 {unmountingDrive?.mountedTo} 卸载镜像实例 {unmountingDrive?.name}。卸载后数据仍保留，但设备将无法访问该镜像实例。
+              将从关联镜像模版 {unmountingDrive?.linkedTemplate} 卸载镜像实例 {unmountingDrive?.name}。卸载后数据仍保留，但将无法访问该镜像实例。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
