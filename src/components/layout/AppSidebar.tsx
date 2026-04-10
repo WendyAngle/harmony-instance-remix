@@ -30,9 +30,7 @@ const menuGroups = [
     label: "云资源中台",
     items: [
       { title: "虚拟机管理", url: "/devices/virtual", icon: Cpu },
-      { title: "镜像文件", url: "/devices/images", icon: HardDrive },
       { title: "镜像实例", url: "/devices/clouddrive", icon: CloudCog },
-      { title: "标签管理", url: "/devices/tags", icon: Tag },
     ],
   },
   {
@@ -53,7 +51,8 @@ const menuGroups = [
       { title: "应用管理", url: "/apps/manage", icon: Package },
       { title: "文件上传", url: "/apps/files", icon: FileUp },
       { title: "脚本仓库", url: "/scripts/hub", icon: Code },
-      // { title: "任务编排", url: "/scripts/tasks", icon: Play },
+      { title: "镜像文件", url: "/devices/images", icon: HardDrive },
+      { title: "标签管理", url: "/devices/tags", icon: Tag },
     ],
   },
   {
