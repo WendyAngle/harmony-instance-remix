@@ -10,9 +10,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { socialAccounts, proxyItems, physicalDevices, type SocialAccount, type Platform, type AccountStatus, type AccountType } from "@/data/mock-data";
+import { socialAccounts, proxyItems, type SocialAccount, type Platform, type AccountStatus, type AccountType } from "@/data/mock-data";
 import { initialDrives } from "@/pages/devices/CloudDrive";
-import { Plus, Search, CheckCircle, RefreshCw, Smartphone, Globe, ChevronLeft, ChevronRight, MonitorSmartphone } from "lucide-react";
+import { Plus, Search, CheckCircle, RefreshCw, Smartphone, Globe, ChevronLeft, ChevronRight, MonitorSmartphone, Activity, ShieldCheck, ShieldAlert, ShieldX } from "lucide-react";
 
 const platformLabel: Record<Platform, string> = { tiktok: "TikTok", facebook: "Facebook", twitter: "Twitter/X", instagram: "Instagram" };
 const platformColor: Record<Platform, string> = { tiktok: "bg-foreground text-background", facebook: "bg-primary", twitter: "bg-foreground text-background", instagram: "bg-destructive" };
@@ -55,6 +55,13 @@ export default function AccountManagement() {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
+  const accountStats = {
+    total: accounts.length,
+    alive: accounts.filter(a => a.status === "alive").length,
+    limited: accounts.filter(a => a.status === "limited").length,
+    banned: accounts.filter(a => a.status === "banned").length,
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -65,6 +72,26 @@ export default function AccountManagement() {
         <Button size="sm" onClick={() => setShowAddDialog(true)}>
           <Plus className="h-4 w-4 mr-1" />新增账号
         </Button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: "总计", value: accountStats.total, icon: Activity },
+          { label: "存活", value: accountStats.alive, icon: ShieldCheck },
+          { label: "限流", value: accountStats.limited, icon: ShieldAlert },
+          { label: "封禁", value: accountStats.banned, icon: ShieldX },
+        ].map(s => (
+          <Card key={s.label}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <s.icon className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <p className="text-2xl font-bold">{s.value}</p>
+                <p className="text-xs text-muted-foreground">{s.label}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Filters */}
