@@ -159,8 +159,8 @@ export default function ImageLibrary() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">镜像模版管理</h1>
-          <p className="text-sm text-muted-foreground mt-1">管理云机容器、Windows虚拟机、浏览器及插件镜像模版</p>
+          <h1 className="text-2xl font-bold">镜像文件管理</h1>
+          <p className="text-sm text-muted-foreground mt-1">管理云机容器、Windows虚拟机、浏览器及插件镜像文件</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => { setBatchUpdateType("cloud_engine"); setSelectedDeviceIds([]); setShowBatchUpdate(true); }}>
