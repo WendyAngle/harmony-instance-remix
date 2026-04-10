@@ -699,6 +699,11 @@ export default function ImageLibrary() {
               <Label>预置软件清单</Label>
               <Input value={editForm.preinstalledSoftware} onChange={e => setEditForm(f => ({ ...f, preinstalledSoftware: e.target.value }))} placeholder="多个软件用逗号分隔，例: Nginx, MySQL, Redis" />
             </div>
+            {/* 镜像文件版本 */}
+            <div className="space-y-2">
+              <Label>镜像文件版本</Label>
+              <Input value={editForm.imageFileVersion} onChange={e => setEditForm(f => ({ ...f, imageFileVersion: e.target.value }))} placeholder="如：v1.0.0" />
+            </div>
             {/* 版本号 & 描述 */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
