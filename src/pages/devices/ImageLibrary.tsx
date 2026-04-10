@@ -475,6 +475,12 @@ export default function ImageLibrary() {
               <Input placeholder="CentOS 9 / Windows 11 / Ubuntu 22.04 / Android 12" />
             </div>
 
+            {/* 镜像文件版本 */}
+            <div className="space-y-2">
+              <Label>镜像文件版本</Label>
+              <Input placeholder="如：v1.0.0" />
+            </div>
+
             {/* 构建脚本/配置 */}
             <div className="space-y-2">
               <Label>构建脚本/配置</Label>
