@@ -22,7 +22,6 @@ const menuGroups = [
     label: "设备资源中台",
     items: [
       { title: "主机管理", url: "/devices/servers", icon: Database },
-      // { title: "物理设备管理", url: "/devices/physical", icon: Server },
       { title: "ARM板卡", url: "/devices/boardcards", icon: CircuitBoard },
     ],
   },
@@ -31,28 +30,18 @@ const menuGroups = [
     items: [
       { title: "虚拟机管理", url: "/devices/virtual", icon: Cpu },
       { title: "镜像实例", url: "/devices/clouddrive", icon: CloudCog },
-    ],
-  },
-  {
-    label: "账号与身份中台",
-    items: [
       { title: "账号管理", url: "/accounts", icon: Users },
-    ],
-  },
-  {
-    label: "网络代理中台",
-    items: [
       { title: "IP池管理", url: "/proxy/pool", icon: Wifi },
     ],
   },
   {
     label: "系统管理",
     items: [
-      { title: "应用管理", url: "/apps/manage", icon: Package },
-      { title: "文件上传", url: "/apps/files", icon: FileUp },
-      { title: "脚本仓库", url: "/scripts/hub", icon: Code },
       { title: "镜像文件", url: "/devices/images", icon: HardDrive },
       { title: "标签管理", url: "/devices/tags", icon: Tag },
+      { title: "文件上传", url: "/apps/files", icon: FileUp },
+      { title: "脚本仓库", url: "/scripts/hub", icon: Code },
+      { title: "应用管理", url: "/apps/manage", icon: Package },
     ],
   },
   {
