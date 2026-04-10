@@ -167,7 +167,7 @@ export default function ImageLibrary() {
             <RefreshCw className="h-4 w-4 mr-1" />批量更新
           </Button>
           <Button size="sm" onClick={() => setShowUploadRom(true)}>
-            <Upload className="h-4 w-4 mr-1" />上传镜像模版
+            <Upload className="h-4 w-4 mr-1" />上传镜像文件
           </Button>
         </div>
       </div>
@@ -331,7 +331,7 @@ export default function ImageLibrary() {
                             <Pencil className="h-3 w-3 mr-1" />编辑
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>编辑镜像模版信息</TooltipContent>
+                        <TooltipContent>编辑镜像文件信息</TooltipContent>
                       </Tooltip>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -339,7 +339,7 @@ export default function ImageLibrary() {
                             <Trash2 className="h-3 w-3 mr-1" />删除
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>删除此镜像模版</TooltipContent>
+                        <TooltipContent>删除此镜像文件</TooltipContent>
                       </Tooltip>
                     </div>
                   </TableCell>
@@ -375,12 +375,12 @@ export default function ImageLibrary() {
         </div>
       </div>
 
-      {/* 上传镜像模版 */}
+      {/* 上传镜像文件 */}
       <Dialog open={showUploadRom} onOpenChange={setShowUploadRom}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>上传新镜像模版</DialogTitle>
-            <DialogDescription>上传云机容器、Windows虚拟机、浏览器或插件镜像模版</DialogDescription>
+            <DialogTitle>上传新镜像文件</DialogTitle>
+            <DialogDescription>上传云机容器、Windows虚拟机、浏览器或插件镜像文件</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
             {/* 模版名称 */}
@@ -585,12 +585,12 @@ export default function ImageLibrary() {
         </DialogContent>
       </Dialog>
 
-      {/* 编辑镜像模版 */}
+      {/* 编辑镜像文件 */}
       <Dialog open={!!editImage} onOpenChange={(open) => !open && setEditImage(null)}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>编辑镜像模版</DialogTitle>
-            <DialogDescription>修改镜像模版 {editImage?.id.slice(0, 8)}... 的基本信息</DialogDescription>
+            <DialogTitle>编辑镜像文件</DialogTitle>
+            <DialogDescription>修改镜像文件 {editImage?.id.slice(0, 8)}... 的基本信息</DialogDescription>
           </DialogHeader>
            <div className="grid gap-4 py-2">
             {/* 模版名称 */}
@@ -756,7 +756,7 @@ export default function ImageLibrary() {
       <Dialog open={showBatchUpdate} onOpenChange={setShowBatchUpdate}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>批量更新镜像模版</DialogTitle>
+            <DialogTitle>批量更新镜像文件</DialogTitle>
             <DialogDescription>选择需要批量更新的镜像类型和目标版本</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
@@ -813,12 +813,12 @@ export default function ImageLibrary() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              确认{toggleConfirm?.imageStatus === "normal" ? "锁定" : "启用"}镜像模版？
+              确认{toggleConfirm?.imageStatus === "normal" ? "锁定" : "启用"}镜像文件？
             </AlertDialogTitle>
             <AlertDialogDescription>
               {toggleConfirm?.imageStatus === "normal"
-                ? `锁定后，镜像模版 ${toggleConfirm?.name} (${toggleConfirm?.version}) 将不可用于创建新实例。`
-                : `启用后，镜像模版 ${toggleConfirm?.name} (${toggleConfirm?.version}) 将可用于创建新实例。`}
+                ? `锁定后，镜像文件 ${toggleConfirm?.name} (${toggleConfirm?.version}) 将不可用于创建新实例。`
+                : `启用后，镜像文件 ${toggleConfirm?.name} (${toggleConfirm?.version}) 将可用于创建新实例。`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -834,9 +834,9 @@ export default function ImageLibrary() {
       <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>确认删除镜像模版？</AlertDialogTitle>
+            <AlertDialogTitle>确认删除镜像文件？</AlertDialogTitle>
             <AlertDialogDescription>
-              确定要删除镜像模版 {deleteConfirm?.name} ({deleteConfirm?.version}) 吗？删除后将无法恢复。
+              确定要删除镜像文件 {deleteConfirm?.name} ({deleteConfirm?.version}) 吗？删除后将无法恢复。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
