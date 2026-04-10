@@ -218,6 +218,7 @@ export default function ImageLibrary() {
                 <TableHead className="whitespace-nowrap">模版名称</TableHead>
                 <TableHead className="whitespace-nowrap">类型</TableHead>
                 <TableHead className="whitespace-nowrap">标签</TableHead>
+                <TableHead className="whitespace-nowrap">镜像文件版本</TableHead>
                 <TableHead className="whitespace-nowrap">架构</TableHead>
                 <TableHead className="whitespace-nowrap">镜像格式</TableHead>
                 <TableHead className="whitespace-nowrap">操作系统版本</TableHead>
@@ -249,6 +250,7 @@ export default function ImageLibrary() {
                       ))}
                     </div>
                   </TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">{(rom as any).imageFileVersion || "-"}</TableCell>
                   <TableCell className="text-xs whitespace-nowrap">{rom.architecture}</TableCell>
                   <TableCell className="text-xs whitespace-nowrap">
                     <Badge variant="outline" className="text-[10px] font-mono">{rom.imageFormat}</Badge>
