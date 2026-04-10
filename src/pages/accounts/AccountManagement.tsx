@@ -141,7 +141,7 @@ export default function AccountManagement() {
                 <TableHead className="text-right">权重</TableHead>
                 <TableHead className="text-center">状态</TableHead>
                 <TableHead>镜像实例</TableHead>
-                <TableHead>物理设备</TableHead>
+                
                 <TableHead>绑定IP</TableHead>
                 <TableHead>最后检测</TableHead>
                 <TableHead className="text-center">操作</TableHead>
@@ -183,7 +183,7 @@ export default function AccountManagement() {
                     </Tooltip>
                   </TableCell>
                   <TableCell className="font-mono text-xs">{acc.cloudDriveId ? (initialDrives.find(d => d.id === acc.cloudDriveId)?.name || acc.cloudDriveId) : "-"}</TableCell>
-                  <TableCell className="font-mono text-xs">{acc.physicalDeviceId || "-"}</TableCell>
+                  
                   <TableCell className="font-mono text-xs">{acc.proxyIp || "-"}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{acc.lastCheck}</TableCell>
                   <TableCell className="text-center" onClick={e => e.stopPropagation()}>
@@ -281,16 +281,6 @@ export default function AccountManagement() {
                 <Select><SelectTrigger><SelectValue placeholder="选择镜像实例" /></SelectTrigger>
                   <SelectContent>
                     {initialDrives.map(d => (
-                      <SelectItem key={d.id} value={d.id}>{d.name} ({d.id})</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>物理设备</Label>
-                <Select><SelectTrigger><SelectValue placeholder="选择物理设备" /></SelectTrigger>
-                  <SelectContent>
-                    {physicalDevices.filter(d => d.status === "online").map(d => (
                       <SelectItem key={d.id} value={d.id}>{d.name} ({d.id})</SelectItem>
                     ))}
                   </SelectContent>
