@@ -63,7 +63,7 @@ export default function ImageLibrary() {
   const [editImage, setEditImage] = useState<RomImage | null>(null);
   const [uploadTags, setUploadTags] = useState<string[]>([]);
   const [editForm, setEditForm] = useState({
-    name: "", version: "", description: "", remark: "",
+    name: "", version: "", imageFileVersion: "", description: "", remark: "",
     architecture: "ARM64" as ImageArchitecture,
     os: "Android" as ImageOS,
     osVersion: "",
@@ -120,7 +120,7 @@ export default function ImageLibrary() {
 
   const openEdit = (rom: RomImage) => {
     setEditForm({
-      name: rom.name, version: rom.version, description: rom.description, remark: rom.remark,
+      name: rom.name, version: rom.version, imageFileVersion: (rom as any).imageFileVersion || "", description: rom.description, remark: rom.remark,
       architecture: rom.architecture, os: rom.os, osVersion: rom.osVersion,
       imageFormat: rom.imageFormat, buildScript: rom.buildScript,
       disk: rom.resourceSpec.disk, preinstalledSoftware: rom.preinstalledSoftware.join(", "),
@@ -218,6 +218,7 @@ export default function ImageLibrary() {
                 <TableHead className="whitespace-nowrap">模版名称</TableHead>
                 <TableHead className="whitespace-nowrap">类型</TableHead>
                 <TableHead className="whitespace-nowrap">标签</TableHead>
+                <TableHead className="whitespace-nowrap">镜像文件版本</TableHead>
                 <TableHead className="whitespace-nowrap">架构</TableHead>
                 <TableHead className="whitespace-nowrap">镜像格式</TableHead>
                 <TableHead className="whitespace-nowrap">操作系统版本</TableHead>
@@ -249,6 +250,7 @@ export default function ImageLibrary() {
                       ))}
                     </div>
                   </TableCell>
+                  <TableCell className="text-xs whitespace-nowrap">{(rom as any).imageFileVersion || "-"}</TableCell>
                   <TableCell className="text-xs whitespace-nowrap">{rom.architecture}</TableCell>
                   <TableCell className="text-xs whitespace-nowrap">
                     <Badge variant="outline" className="text-[10px] font-mono">{rom.imageFormat}</Badge>
@@ -473,6 +475,12 @@ export default function ImageLibrary() {
               <Input placeholder="CentOS 9 / Windows 11 / Ubuntu 22.04 / Android 12" />
             </div>
 
+            {/* 镜像文件版本 */}
+            <div className="space-y-2">
+              <Label>镜像文件版本</Label>
+              <Input placeholder="如：v1.0.0" />
+            </div>
+
             {/* 构建脚本/配置 */}
             <div className="space-y-2">
               <Label>构建脚本/配置</Label>
@@ -690,6 +698,11 @@ export default function ImageLibrary() {
             <div className="space-y-2">
               <Label>预置软件清单</Label>
               <Input value={editForm.preinstalledSoftware} onChange={e => setEditForm(f => ({ ...f, preinstalledSoftware: e.target.value }))} placeholder="多个软件用逗号分隔，例: Nginx, MySQL, Redis" />
+            </div>
+            {/* 镜像文件版本 */}
+            <div className="space-y-2">
+              <Label>镜像文件版本</Label>
+              <Input value={editForm.imageFileVersion} onChange={e => setEditForm(f => ({ ...f, imageFileVersion: e.target.value }))} placeholder="如：v1.0.0" />
             </div>
             {/* 版本号 & 描述 */}
             <div className="grid grid-cols-2 gap-4">
