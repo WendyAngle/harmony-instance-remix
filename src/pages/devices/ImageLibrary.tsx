@@ -63,7 +63,7 @@ export default function ImageLibrary() {
   const [editImage, setEditImage] = useState<RomImage | null>(null);
   const [uploadTags, setUploadTags] = useState<string[]>([]);
   const [editForm, setEditForm] = useState({
-    name: "", version: "", description: "", remark: "",
+    name: "", version: "", imageFileVersion: "", description: "", remark: "",
     architecture: "ARM64" as ImageArchitecture,
     os: "Android" as ImageOS,
     osVersion: "",
