@@ -120,7 +120,7 @@ export default function ImageLibrary() {
 
   const openEdit = (rom: RomImage) => {
     setEditForm({
-      name: rom.name, version: rom.version, description: rom.description, remark: rom.remark,
+      name: rom.name, version: rom.version, imageFileVersion: (rom as any).imageFileVersion || "", description: rom.description, remark: rom.remark,
       architecture: rom.architecture, os: rom.os, osVersion: rom.osVersion,
       imageFormat: rom.imageFormat, buildScript: rom.buildScript,
       disk: rom.resourceSpec.disk, preinstalledSoftware: rom.preinstalledSoftware.join(", "),
