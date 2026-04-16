@@ -16,6 +16,7 @@ const menuGroups = [
     label: "总览",
     items: [
       { title: "控制台", url: "/", icon: LayoutDashboard },
+      { title: "新控制台", url: "/new-dashboard", icon: LayoutDashboard },
     ],
   },
   {
