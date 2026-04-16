@@ -3,10 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   hostServers,
   virtualInstances,
-  socialAccounts,
   proxyItems,
   romImages,
   tasks,
+  scripts,
   type HostServer,
 } from "@/data/mock-data";
 import {
@@ -16,7 +16,7 @@ import {
   Shield,
   Package,
   HardDrive,
-  ArrowUpRight,
+  ArrowUp,
   Activity,
 } from "lucide-react";
 import {
@@ -24,10 +24,9 @@ import {
   Pie,
   Cell,
   ResponsiveContainer,
-  Tooltip,
 } from "recharts";
 
-// ── derived stats ──
+/* ── derived stats ── */
 const onlineServers = hostServers.filter((s) => s.status === "online").length;
 const totalServers = hostServers.length;
 
@@ -40,8 +39,9 @@ const mountedBrowser = browserInstances.filter((v) => v.status === "running").le
 const healthyProxies = proxyItems.filter((p) => p.status === "available").length;
 const totalProxies = proxyItems.length;
 
-const activeApps = 8; // mock
 const totalImages = romImages.length;
+const activeApps = scripts.filter((s) => s.status === "active").length;
+const deprecatedApps = scripts.filter((s) => s.status === "deprecated").length;
 
 const armServers = hostServers.filter((s) => s.type === "arm").length;
 const x86Servers = hostServers.filter((s) => s.type === "x86").length;
@@ -58,100 +58,203 @@ const instancePie = [
 
 const recentTasks = tasks.slice(0, 4);
 
-// ── gradient icon backgrounds ──
-const iconStyles: Record<string, string> = {
-  server: "from-blue-500/20 to-blue-600/10 text-blue-500",
-  cloud: "from-emerald-500/20 to-emerald-600/10 text-emerald-500",
-  browser: "from-orange-500/20 to-orange-600/10 text-orange-500",
-  proxy: "from-indigo-500/20 to-indigo-600/10 text-indigo-500",
-  app: "from-rose-500/20 to-rose-600/10 text-rose-500",
-  image: "from-purple-500/20 to-purple-600/10 text-purple-500",
-};
+/* ── stat card config ── */
+const statCards = [
+  {
+    label: "服务器状态",
+    value: `${onlineServers}/${totalServers}`,
+    unit: "台",
+    sub: "在线/总数",
+    icon: Server,
+    iconBg: "bg-blue-500",
+  },
+  {
+    label: "云机实例",
+    value: `${mountedCloud}/${cloudInstances.length}`,
+    unit: "",
+    sub: "已挂载/总数",
+    icon: Cpu,
+    iconBg: "bg-emerald-500",
+    trend: true,
+  },
+  {
+    label: "指纹浏览器",
+    value: `${mountedBrowser}/${browserInstances.length}`,
+    unit: "",
+    sub: "使用中/总数",
+    icon: Globe,
+    iconBg: "bg-orange-500",
+    trend: true,
+  },
+  {
+    label: "健康代理",
+    value: `${healthyProxies}/${totalProxies}`,
+    unit: "",
+    sub: "健康/总数",
+    icon: Shield,
+    iconBg: "bg-indigo-500",
+    trend: true,
+  },
+  {
+    label: "应用包",
+    value: `${activeApps + deprecatedApps}`,
+    unit: "",
+    sub: `${activeApps} 活跃 · ${deprecatedApps} 废弃`,
+    icon: Package,
+    iconBg: "bg-rose-500",
+    trend: true,
+  },
+  {
+    label: "镜像文件",
+    value: `${totalImages}`,
+    unit: "",
+    sub: "已创建总数",
+    icon: HardDrive,
+    iconBg: "bg-purple-500",
+    trend: true,
+  },
+];
 
-interface StatCardProps {
-  label: string;
-  value: string;
-  sub: string;
-  icon: React.ElementType;
-  style: string;
-}
-
-function StatCard({ label, value, sub, icon: Icon, style }: StatCardProps) {
+/* ── Stat Card ── */
+function StatCard({
+  label,
+  value,
+  unit,
+  sub,
+  icon: Icon,
+  iconBg,
+  trend,
+}: (typeof statCards)[number]) {
   return (
-    <Card className="group relative overflow-hidden border border-border/60 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
-      <CardContent className="p-5 flex items-center justify-between">
-        <div className="space-y-1.5">
-          <p className="text-xs font-medium text-muted-foreground tracking-wide">{label}</p>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-bold tracking-tight">{value}</span>
-            <ArrowUpRight className="h-3.5 w-3.5 text-success opacity-70" />
+    <Card className="group relative overflow-hidden hover:shadow-md transition-all duration-300">
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between mb-3">
+          <p className="text-sm text-muted-foreground font-medium">{label}</p>
+          <div
+            className={`h-10 w-10 rounded-xl ${iconBg} flex items-center justify-center shadow-sm`}
+          >
+            <Icon className="h-5 w-5 text-white" />
           </div>
-          <p className="text-[11px] text-muted-foreground">{sub}</p>
         </div>
-        <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${style} flex items-center justify-center shrink-0`}>
-          <Icon className="h-5 w-5" />
+        <div className="flex items-baseline gap-1">
+          <span className="text-3xl font-bold tracking-tight">{value}</span>
+          {unit && (
+            <span className="text-sm text-muted-foreground font-medium ml-0.5">
+              {unit}
+            </span>
+          )}
+          {trend && (
+            <ArrowUp className="h-3.5 w-3.5 text-success ml-1.5 opacity-80" />
+          )}
         </div>
+        <p className="text-xs text-muted-foreground mt-1.5">{sub}</p>
       </CardContent>
     </Card>
   );
 }
 
-function PieSection({
+/* ── Donut Chart with center label ── */
+function DonutCard({
   title,
   data,
+  total,
 }: {
   title: string;
   data: { name: string; value: number; color: string }[];
+  total: number;
 }) {
   return (
-    <Card className="border border-border/60">
-      <CardHeader className="pb-2">
+    <Card>
+      <CardHeader className="pb-3">
         <CardTitle className="text-sm font-semibold">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex items-center gap-6">
-        <ResponsiveContainer width={120} height={120}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={32}
-              outerRadius={50}
-              dataKey="value"
-              stroke="none"
-              animationBegin={0}
-              animationDuration={800}
-            >
-              {data.map((entry, i) => (
-                <Cell key={i} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "hsl(var(--card))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: 8,
-                fontSize: 12,
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="space-y-2">
-          {data.map((d) => (
-            <div key={d.name} className="flex items-center gap-2.5 text-sm">
-              <div className="h-2.5 w-2.5 rounded-full" style={{ background: d.color }} />
-              <span className="text-muted-foreground">{d.name}:</span>
-              <span className="font-semibold">{d.value}</span>
+      <CardContent>
+        <div className="flex items-center justify-center gap-8">
+          <div className="relative">
+            <ResponsiveContainer width={140} height={140}>
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={38}
+                  outerRadius={60}
+                  dataKey="value"
+                  stroke="hsl(var(--card))"
+                  strokeWidth={3}
+                  animationBegin={0}
+                  animationDuration={800}
+                >
+                  {data.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            {/* center number */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <span className="text-xl font-bold">{total}</span>
             </div>
-          ))}
+          </div>
+          <div className="space-y-3">
+            {data.map((d) => (
+              <div key={d.name} className="flex items-center gap-2.5">
+                <div
+                  className="h-3 w-3 rounded-full shrink-0"
+                  style={{ background: d.color }}
+                />
+                <div>
+                  <p className="text-sm font-medium">{d.name}</p>
+                  <p className="text-xs text-muted-foreground">{d.value} 台</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-function ServerStatusItem({ server }: { server: HostServer }) {
-  const statusDot =
+/* ── Task Item ── */
+function TaskItem({ task }: { task: (typeof tasks)[number] }) {
+  return (
+    <div className="flex items-center justify-between py-3 border-b border-border/40 last:border-0">
+      <div className="min-w-0 flex-1 mr-3">
+        <p className="text-sm font-mono text-foreground truncate leading-relaxed">
+          {task.id.toLowerCase().replace("task-", "")}{task.name.slice(0, 20)}
+        </p>
+        <p className="text-xs text-muted-foreground mt-0.5 uppercase tracking-wider">
+          {task.scriptName?.split(" ")[0] || "RESTART"}
+        </p>
+      </div>
+      <Badge
+        variant={
+          task.status === "completed"
+            ? "default"
+            : task.status === "running"
+              ? "secondary"
+              : task.status === "failed"
+                ? "destructive"
+                : "outline"
+        }
+        className="text-[10px] shrink-0"
+      >
+        {task.status === "completed"
+          ? "完成"
+          : task.status === "running"
+            ? "运行中"
+            : task.status === "failed"
+              ? "失败"
+              : "等待"}
+      </Badge>
+    </div>
+  );
+}
+
+/* ── Server Row ── */
+function ServerRow({ server }: { server: HostServer }) {
+  const statusColor =
     server.status === "online"
       ? "bg-success"
       : server.status === "error"
@@ -161,22 +264,25 @@ function ServerStatusItem({ server }: { server: HostServer }) {
           : "bg-muted-foreground";
 
   return (
-    <div className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors">
+    <div className="flex items-center justify-between py-3 border-b border-border/40 last:border-0">
       <div className="flex items-center gap-3 min-w-0">
-        <div className={`h-2 w-2 rounded-full ${statusDot} shrink-0`} />
+        <div className={`h-2.5 w-2.5 rounded-full ${statusColor} shrink-0 ring-2 ring-offset-2 ring-offset-card ${statusColor}/30`} />
         <div className="min-w-0">
           <p className="text-sm font-medium truncate">{server.name}</p>
-          <p className="text-[11px] text-muted-foreground">{server.type === "arm" ? "ARM" : "X86"}</p>
+          <p className="text-xs text-muted-foreground">
+            {server.type === "arm" ? "ARM" : "X86"}
+          </p>
         </div>
       </div>
-      <div className="flex items-center gap-4 text-xs text-muted-foreground shrink-0">
-        <span>CPU {server.cpu}%</span>
-        <span>内存 {server.memory}%</span>
+      <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
+        <span className="tabular-nums">CPU {server.cpu}%</span>
+        <span className="tabular-nums">内存 {server.memory}%</span>
       </div>
     </div>
   );
 }
 
+/* ── Main Page ── */
 export default function NewDashboard() {
   return (
     <div className="space-y-6">
@@ -188,115 +294,52 @@ export default function NewDashboard() {
         </p>
       </div>
 
-      {/* ── Stat Cards ── */}
+      {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-        <StatCard
-          label="服务器状态"
-          value={`${onlineServers}/${totalServers}`}
-          sub="在线/总数"
-          icon={Server}
-          style={iconStyles.server}
-        />
-        <StatCard
-          label="云机实例"
-          value={`${mountedCloud}/${cloudInstances.length}`}
-          sub="已挂载/总数"
-          icon={Cpu}
-          style={iconStyles.cloud}
-        />
-        <StatCard
-          label="指纹浏览器"
-          value={`${mountedBrowser}/${browserInstances.length}`}
-          sub="使用中/总数"
-          icon={Globe}
-          style={iconStyles.browser}
-        />
-        <StatCard
-          label="健康代理"
-          value={`${healthyProxies}/${totalProxies}`}
-          sub="健康/总数"
-          icon={Shield}
-          style={iconStyles.proxy}
-        />
-        <StatCard
-          label="应用包"
-          value={`${activeApps}`}
-          sub="0 活跃 · 0 废弃"
-          icon={Package}
-          style={iconStyles.app}
-        />
-        <StatCard
-          label="镜像文件"
-          value={`${totalImages}`}
-          sub="已创建总数"
-          icon={HardDrive}
-          style={iconStyles.image}
-        />
+        {statCards.map((card) => (
+          <StatCard key={card.label} {...card} />
+        ))}
       </div>
 
-      {/* ── Bottom 4-column: Pies + Tasks + Servers ── */}
+      {/* Bottom 4-column */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <PieSection title="服务器类型分布" data={serverPie} />
-        <PieSection title="实例类型分布" data={instancePie} />
+        <DonutCard
+          title="服务器类型分布"
+          data={serverPie}
+          total={totalServers}
+        />
+        <DonutCard
+          title="实例类型分布"
+          data={instancePie}
+          total={cloudInstances.length + browserInstances.length}
+        />
 
         {/* Recent Tasks */}
-        <Card className="border border-border/60">
-          <CardHeader className="pb-2">
+        <Card>
+          <CardHeader className="pb-1">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
               <Activity className="h-4 w-4 text-primary" />
               最近任务
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="px-5">
             {recentTasks.map((task) => (
-              <div
-                key={task.id}
-                className="py-2.5 px-3 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors"
-              >
-                <p className="text-sm font-medium truncate leading-relaxed">
-                  {task.id.replace("TASK-", "")}···{task.name.slice(-6)}
-                </p>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
-                    {task.scriptName?.split(" ")[0] || "TASK"}
-                  </p>
-                  <Badge
-                    variant={
-                      task.status === "completed"
-                        ? "default"
-                        : task.status === "running"
-                          ? "secondary"
-                          : task.status === "failed"
-                            ? "destructive"
-                            : "outline"
-                    }
-                    className="text-[10px] h-5"
-                  >
-                    {task.status === "completed"
-                      ? "完成"
-                      : task.status === "running"
-                        ? "运行中"
-                        : task.status === "failed"
-                          ? "失败"
-                          : "等待"}
-                  </Badge>
-                </div>
-              </div>
+              <TaskItem key={task.id} task={task} />
             ))}
           </CardContent>
         </Card>
 
         {/* Server Status */}
-        <Card className="border border-border/60">
-          <CardHeader className="pb-2">
+        <Card>
+          <CardHeader className="pb-1">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
               <Server className="h-4 w-4 text-primary" />
               设备状态
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="px-5">
             {hostServers.slice(0, 4).map((s) => (
-              <ServerStatusItem key={s.id} server={s} />
+              <ServerRow key={s.id} server={s} />
             ))}
           </CardContent>
         </Card>
