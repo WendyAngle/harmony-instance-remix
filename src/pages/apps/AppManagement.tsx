@@ -351,54 +351,128 @@ export default function AppManagement() {
 
         {/* 安装任务列表 */}
         <TabsContent value="tasks" className="space-y-4">
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>任务ID</TableHead>
-                    <TableHead>应用</TableHead>
-                    <TableHead>版本</TableHead>
-                    <TableHead>目标设备数</TableHead>
-                    <TableHead>进度</TableHead>
-                    <TableHead>状态</TableHead>
-                    <TableHead>创建时间</TableHead>
-                    <TableHead>操作</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {installTasks.map(task => {
-                    const progress = task.totalCount > 0 ? Math.round(((task.successCount + task.failedCount) / task.totalCount) * 100) : 0;
-                    return (
-                      <TableRow key={task.id}>
-                        <TableCell className="font-mono text-xs">{task.id}</TableCell>
-                        <TableCell className="text-sm font-medium">{task.apkName}</TableCell>
-                        <TableCell className="font-mono text-xs">{task.apkVersion}</TableCell>
-                        <TableCell className="text-xs">{task.totalCount} 台</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Progress value={progress} className="h-1.5 w-20" />
-                            <span className="text-xs">{task.successCount}/{task.totalCount}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={task.status === "success" ? "default" : task.status === "installing" ? "outline" : task.status === "failed" ? "destructive" : "secondary"} className="text-[10px]">
-                            {task.status === "success" ? "完成" : task.status === "installing" ? "安装中" : task.status === "failed" ? "失败" : "等待"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{task.createdAt}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setShowTaskDetail(task)}>
-                            查看详情
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          {(() => {
+            const appOptions = Array.from(new Set(installTasks.map(t => t.apkName)));
+            const versionOptions = Array.from(new Set(installTasks.map(t => t.apkVersion)));
+            const filtered = installTasks
+              .filter(t => !taskSearch || t.id.toLowerCase().includes(taskSearch.toLowerCase()))
+              .filter(t => taskAppFilter === "all" || t.apkName === taskAppFilter)
+              .filter(t => taskVersionFilter === "all" || t.apkVersion === taskVersionFilter)
+              .sort((a, b) => taskSortAsc ? a.createdAt.localeCompare(b.createdAt) : b.createdAt.localeCompare(a.createdAt));
+            return (
+              <>
+                <Card>
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex flex-wrap items-end gap-3">
+                      <div className="flex items-center gap-2 flex-1 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">搜索：</Label>
+                        <Input value={taskSearch} onChange={e => setTaskSearch(e.target.value)} placeholder="请输入任务ID搜索" className="h-9" />
+                      </div>
+                      <div className="flex items-center gap-2 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">应用筛选：</Label>
+                        <Select value={taskAppFilter} onValueChange={setTaskAppFilter}>
+                          <SelectTrigger className="h-9"><SelectValue placeholder="应用" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">全部应用</SelectItem>
+                            {appOptions.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center gap-2 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">版本筛选：</Label>
+                        <Select value={taskVersionFilter} onValueChange={setTaskVersionFilter}>
+                          <SelectTrigger className="h-9"><SelectValue placeholder="版本" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">全部版本</SelectItem>
+                            {versionOptions.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button size="sm" className="h-9"><Search className="h-4 w-4 mr-1" />搜索</Button>
+                      <Button variant="outline" size="sm" className="h-9" onClick={() => { setTaskSearch(""); setTaskAppFilter("all"); setTaskVersionFilter("all"); }}>
+                        <Trash2 className="h-4 w-4 mr-1" />重置
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-9 text-primary" onClick={() => setTaskFiltersExpanded(v => !v)}>
+                        {taskFiltersExpanded ? "收起" : "展开"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-0">
+                    <div className="flex justify-end gap-2 p-2 border-b">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setInstallTasks([...installTasksSeed])}>
+                        <RotateCw className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Search className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-12">#</TableHead>
+                          <TableHead>任务ID</TableHead>
+                          <TableHead>应用</TableHead>
+                          <TableHead>包名</TableHead>
+                          <TableHead>版本</TableHead>
+                          <TableHead className="text-center">目标数</TableHead>
+                          <TableHead className="text-center">成功数</TableHead>
+                          <TableHead className="text-center">失败数</TableHead>
+                          <TableHead>状态</TableHead>
+                          <TableHead className="cursor-pointer select-none" onClick={() => setTaskSortAsc(v => !v)}>
+                            创建时间 {taskSortAsc ? "↑" : "↓"}
+                          </TableHead>
+                          <TableHead>操作</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filtered.map((task, idx) => (
+                          <TableRow key={task.id}>
+                            <TableCell className="text-xs text-muted-foreground">{idx + 1}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.id}</TableCell>
+                            <TableCell className="text-xs">{task.apkName}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.packageName}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.apkVersion}</TableCell>
+                            <TableCell className="text-center text-xs">{task.totalCount} 台</TableCell>
+                            <TableCell className="text-center text-xs">{task.successCount} 台</TableCell>
+                            <TableCell className="text-center text-xs">{task.failedCount} 台</TableCell>
+                            <TableCell>
+                              <Badge variant={task.status === "failed" ? "destructive" : task.status === "installing" ? "outline" : "default"} className="text-[10px]">
+                                {task.status === "success" ? "完成" : task.status === "installing" ? "安装中" : task.status === "failed" ? "失败" : "等待"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{task.createdAt}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <button className="text-xs text-primary hover:underline" onClick={() => setShowTaskDetail(task)}>查看详情</button>
+                                {task.status === "failed" && (
+                                  <button className="text-xs text-warning hover:underline" onClick={() => toast({ title: "已提交重试", description: `任务 ${task.id.slice(0,8)} 已重新提交` })}>重试</button>
+                                )}
+                                <button className="text-xs text-destructive hover:underline" onClick={() => setDeleteTask(task)}>删除</button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {filtered.length === 0 && (
+                          <TableRow><TableCell colSpan={11} className="text-center py-10 text-muted-foreground text-sm">暂无数据</TableCell></TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                    <div className="flex items-center justify-end gap-4 p-3 text-xs text-muted-foreground border-t">
+                      <span>共 {filtered.length} 条</span>
+                      <Select defaultValue="25"><SelectTrigger className="h-8 w-24"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="10">10条/页</SelectItem><SelectItem value="25">25条/页</SelectItem><SelectItem value="50">50条/页</SelectItem></SelectContent></Select>
+                      <Button variant="outline" size="icon" className="h-8 w-8"><ChevronLeft className="h-4 w-4" /></Button>
+                      <Button variant="default" size="sm" className="h-8 w-8">1</Button>
+                      <Button variant="outline" size="icon" className="h-8 w-8"><ChevronRight className="h-4 w-4" /></Button>
+                      <span>前往</span><Input className="h-8 w-14" defaultValue="1" /><span>页</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            );
+          })()}
         </TabsContent>
 
         {/* 卸载任务 */}
