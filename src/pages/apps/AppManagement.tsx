@@ -111,6 +111,14 @@ export default function AppManagement() {
   const [singleUninstall, setSingleUninstall] = useState<ApkPackage | null>(null);
   const [singleUninstallSelected, setSingleUninstallSelected] = useState<string[]>([]);
   const [batchUninstallConfirm, setBatchUninstallConfirm] = useState(false);
+  // ---- Install tasks tab state ----
+  const [installTasks, setInstallTasks] = useState<InstallTask[]>(installTasksSeed);
+  const [taskSearch, setTaskSearch] = useState("");
+  const [taskAppFilter, setTaskAppFilter] = useState<string>("all");
+  const [taskVersionFilter, setTaskVersionFilter] = useState<string>("all");
+  const [taskSortAsc, setTaskSortAsc] = useState(false);
+  const [taskFiltersExpanded, setTaskFiltersExpanded] = useState(false);
+  const [deleteTask, setDeleteTask] = useState<InstallTask | null>(null);
   const [deprecateTarget, setDeprecateTarget] = useState<ApkPackage | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ApkPackage | null>(null);
   const [rows, setRows] = useState(apkPackages);
