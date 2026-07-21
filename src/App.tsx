@@ -26,6 +26,7 @@ import FileManagement from "./pages/apps/FileManagement";
 import TaskManagement from "./pages/ops/TaskManagement";
 import NodeManagement from "./pages/ops/NodeManagement";
 import CreateNode from "./pages/ops/CreateNode";
+import Placeholder from "./pages/Placeholder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,9 @@ const App = () => (
             <Route path="/ops/tasks" element={<TaskManagement />} />
             <Route path="/ops/nodes" element={<NodeManagement />} />
             <Route path="/ops/nodes/create" element={<CreateNode />} />
+            <Route path="/proxy/sessions" element={<Placeholder />} />
+            <Route path="/vnc/sessions" element={<Placeholder />} />
+            <Route path="/devices/nodes" element={<Placeholder />} />
           </Route>
           <Route path="/landing" element={<Landing />} />
           <Route path="*" element={<NotFound />} />
