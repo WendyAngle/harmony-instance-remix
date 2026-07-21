@@ -63,6 +63,7 @@ export type InstallTaskStatus = "pending" | "installing" | "success" | "failed";
 interface InstallTask {
   id: string;
   apkName: string;
+  packageName: string;
   apkVersion: string;
   targetDevices: string[];
   totalCount: number;
@@ -71,30 +72,25 @@ interface InstallTask {
   status: InstallTaskStatus;
   createdAt: string;
   completedAt: string | null;
-  details: { deviceId: string; status: InstallTaskStatus; message: string }[];
+  details: { node: string; deviceId: string; deviceName: string; status: InstallTaskStatus; message: string; summary: string }[];
 }
 
-const installTasks: InstallTask[] = [
-  {
-    id: "INST-001", apkName: "TikTok", apkVersion: "33.5.4", targetDevices: ["VM-001", "VM-002", "VM-003", "VM-004", "VM-005"],
-    totalCount: 5, successCount: 4, failedCount: 1, status: "success", createdAt: "2026-04-01 15:00", completedAt: "2026-04-01 15:12",
-    details: [
-      { deviceId: "VM-001", status: "success", message: "安装完成" },
-      { deviceId: "VM-002", status: "success", message: "安装完成" },
-      { deviceId: "VM-003", status: "success", message: "安装完成" },
-      { deviceId: "VM-004", status: "success", message: "安装完成" },
-      { deviceId: "VM-005", status: "failed", message: "设备离线" },
-    ],
-  },
-  {
-    id: "INST-002", apkName: "WhatsApp", apkVersion: "2.24.8.10", targetDevices: ["VM-001", "VM-002", "VM-008"],
-    totalCount: 3, successCount: 1, failedCount: 0, status: "installing", createdAt: "2026-04-02 10:30", completedAt: null,
-    details: [
-      { deviceId: "VM-001", status: "success", message: "安装完成" },
-      { deviceId: "VM-002", status: "installing", message: "安装中..." },
-      { deviceId: "VM-008", status: "pending", message: "等待中" },
-    ],
-  },
+const installTasksSeed: InstallTask[] = [
+  { id: "e03b6b9c81084458a0f8c3a49f1c3580", apkName: "tk", packageName: "tiktok-45-3-3 (1)", apkVersion: "45.3.3", targetDevices: [], totalCount: 1, successCount: 1, failedCount: 0, status: "success", createdAt: "2026-06-25 14:44:14", completedAt: "2026-06-25 14:45:36", details: [{ node: "yaan-test-01", deviceId: "2059591332533673985", deviceName: "test-1-14-i2 测试-1-14-i2", status: "success", message: "-", summary: "ok 好的" }] },
+  { id: "9e8e7dc2d2ea42fab32517e8a13ac4c4", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 2, successCount: 2, failedCount: 0, status: "success", createdAt: "2026-06-04 16:35:05", completedAt: "2026-06-04 16:37:10", details: [{ node: "yaan-test-01", deviceId: "2059591332533673986", deviceName: "test-1-15-i2", status: "success", message: "-", summary: "ok" }, { node: "yaan-test-01", deviceId: "2059591332533673987", deviceName: "test-1-16-i2", status: "success", message: "-", summary: "ok" }] },
+  { id: "79811ec0f70448e8ab0ceadea31f533f", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 3, successCount: 3, failedCount: 0, status: "success", createdAt: "2026-06-04 14:07:28", completedAt: "2026-06-04 14:10:00", details: [] },
+  { id: "2aa386f61f43454c88c2d484605c26f1", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 2, successCount: 2, failedCount: 0, status: "success", createdAt: "2026-06-03 18:33:57", completedAt: "2026-06-03 18:35:00", details: [] },
+  { id: "84183c3a67784bbf89abd51835d42e50", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 1, successCount: 1, failedCount: 0, status: "success", createdAt: "2026-06-03 18:28:04", completedAt: "2026-06-03 18:29:00", details: [] },
+  { id: "2d1cd7ad55864bd09120f8a0a34d78ec", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 9, successCount: 9, failedCount: 0, status: "success", createdAt: "2026-06-03 11:02:16", completedAt: "2026-06-03 11:12:00", details: [] },
+  { id: "224fbb0cf3a54a499d12372ec680b936", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 57, successCount: 40, failedCount: 17, status: "success", createdAt: "2026-06-02 15:31:33", completedAt: "2026-06-02 16:20:00", details: [] },
+  { id: "db956ee436f040b5b5af7c6d14882ae8", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 3, successCount: 1, failedCount: 2, status: "success", createdAt: "2026-06-01 17:49:18", completedAt: "2026-06-01 17:52:00", details: [] },
+  { id: "5ba73f96a9654e11915e19e25c66c78e", apkName: "tk", packageName: "tiktok-45-3-3 (1)", apkVersion: "45.3.3", targetDevices: [], totalCount: 3, successCount: 0, failedCount: 3, status: "failed", createdAt: "2026-06-01 17:37:15", completedAt: "2026-06-01 17:40:00", details: [] },
+  { id: "af7227a03a0948b0a9a55eb183772a77", apkName: "tk", packageName: "tiktok-44.5.3 抖音-44.5.3", apkVersion: "44.5.3", targetDevices: [], totalCount: 3, successCount: 0, failedCount: 3, status: "failed", createdAt: "2026-06-01 17:32:02", completedAt: "2026-06-01 17:35:00", details: [] },
+  { id: "a888e51bb5864700882c04c228663e42", apkName: "tiktok", packageName: "-", apkVersion: "45.4.1", targetDevices: [], totalCount: 3, successCount: 0, failedCount: 3, status: "failed", createdAt: "2026-06-01 16:46:59", completedAt: "2026-06-01 16:50:00", details: [] },
+  { id: "1a053f3eafad4b259c59474bd174d4a7", apkName: "tiktok", packageName: "-", apkVersion: "1.0.0", targetDevices: [], totalCount: 62, successCount: 54, failedCount: 8, status: "success", createdAt: "2026-06-01 16:16:44", completedAt: "2026-06-01 17:00:00", details: [] },
+  { id: "6211ea160d2349f99441b02dceb9da4f", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 1, successCount: 1, failedCount: 0, status: "success", createdAt: "2026-05-25 13:53:48", completedAt: "2026-05-25 13:55:00", details: [] },
+  { id: "3f2c1e9b48a24d8ea87e2b4f9c1a5d67", apkName: "tk", packageName: "tiktok-45-3-3 (1)", apkVersion: "45.3.3", targetDevices: [], totalCount: 5, successCount: 5, failedCount: 0, status: "success", createdAt: "2026-05-20 10:20:10", completedAt: "2026-05-20 10:25:00", details: [] },
+  { id: "b74a91d582e34c7bb0198f6d3c48a2ef", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 4, successCount: 4, failedCount: 0, status: "success", createdAt: "2026-05-18 09:14:22", completedAt: "2026-05-18 09:16:00", details: [] },
 ];
 
 const PAGE_SIZES = [10, 20, 50];
@@ -115,6 +111,14 @@ export default function AppManagement() {
   const [singleUninstall, setSingleUninstall] = useState<ApkPackage | null>(null);
   const [singleUninstallSelected, setSingleUninstallSelected] = useState<string[]>([]);
   const [batchUninstallConfirm, setBatchUninstallConfirm] = useState(false);
+  // ---- Install tasks tab state ----
+  const [installTasks, setInstallTasks] = useState<InstallTask[]>(installTasksSeed);
+  const [taskSearch, setTaskSearch] = useState("");
+  const [taskAppFilter, setTaskAppFilter] = useState<string>("all");
+  const [taskVersionFilter, setTaskVersionFilter] = useState<string>("all");
+  const [taskSortAsc, setTaskSortAsc] = useState(false);
+  const [taskFiltersExpanded, setTaskFiltersExpanded] = useState(false);
+  const [deleteTask, setDeleteTask] = useState<InstallTask | null>(null);
   const [deprecateTarget, setDeprecateTarget] = useState<ApkPackage | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ApkPackage | null>(null);
   const [rows, setRows] = useState(apkPackages);
@@ -347,54 +351,128 @@ export default function AppManagement() {
 
         {/* 安装任务列表 */}
         <TabsContent value="tasks" className="space-y-4">
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>任务ID</TableHead>
-                    <TableHead>应用</TableHead>
-                    <TableHead>版本</TableHead>
-                    <TableHead>目标设备数</TableHead>
-                    <TableHead>进度</TableHead>
-                    <TableHead>状态</TableHead>
-                    <TableHead>创建时间</TableHead>
-                    <TableHead>操作</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {installTasks.map(task => {
-                    const progress = task.totalCount > 0 ? Math.round(((task.successCount + task.failedCount) / task.totalCount) * 100) : 0;
-                    return (
-                      <TableRow key={task.id}>
-                        <TableCell className="font-mono text-xs">{task.id}</TableCell>
-                        <TableCell className="text-sm font-medium">{task.apkName}</TableCell>
-                        <TableCell className="font-mono text-xs">{task.apkVersion}</TableCell>
-                        <TableCell className="text-xs">{task.totalCount} 台</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Progress value={progress} className="h-1.5 w-20" />
-                            <span className="text-xs">{task.successCount}/{task.totalCount}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={task.status === "success" ? "default" : task.status === "installing" ? "outline" : task.status === "failed" ? "destructive" : "secondary"} className="text-[10px]">
-                            {task.status === "success" ? "完成" : task.status === "installing" ? "安装中" : task.status === "failed" ? "失败" : "等待"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{task.createdAt}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setShowTaskDetail(task)}>
-                            查看详情
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          {(() => {
+            const appOptions = Array.from(new Set(installTasks.map(t => t.apkName)));
+            const versionOptions = Array.from(new Set(installTasks.map(t => t.apkVersion)));
+            const filtered = installTasks
+              .filter(t => !taskSearch || t.id.toLowerCase().includes(taskSearch.toLowerCase()))
+              .filter(t => taskAppFilter === "all" || t.apkName === taskAppFilter)
+              .filter(t => taskVersionFilter === "all" || t.apkVersion === taskVersionFilter)
+              .sort((a, b) => taskSortAsc ? a.createdAt.localeCompare(b.createdAt) : b.createdAt.localeCompare(a.createdAt));
+            return (
+              <>
+                <Card>
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex flex-wrap items-end gap-3">
+                      <div className="flex items-center gap-2 flex-1 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">搜索：</Label>
+                        <Input value={taskSearch} onChange={e => setTaskSearch(e.target.value)} placeholder="请输入任务ID搜索" className="h-9" />
+                      </div>
+                      <div className="flex items-center gap-2 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">应用筛选：</Label>
+                        <Select value={taskAppFilter} onValueChange={setTaskAppFilter}>
+                          <SelectTrigger className="h-9"><SelectValue placeholder="应用" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">全部应用</SelectItem>
+                            {appOptions.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center gap-2 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">版本筛选：</Label>
+                        <Select value={taskVersionFilter} onValueChange={setTaskVersionFilter}>
+                          <SelectTrigger className="h-9"><SelectValue placeholder="版本" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">全部版本</SelectItem>
+                            {versionOptions.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button size="sm" className="h-9"><Search className="h-4 w-4 mr-1" />搜索</Button>
+                      <Button variant="outline" size="sm" className="h-9" onClick={() => { setTaskSearch(""); setTaskAppFilter("all"); setTaskVersionFilter("all"); }}>
+                        <Trash2 className="h-4 w-4 mr-1" />重置
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-9 text-primary" onClick={() => setTaskFiltersExpanded(v => !v)}>
+                        {taskFiltersExpanded ? "收起" : "展开"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-0">
+                    <div className="flex justify-end gap-2 p-2 border-b">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setInstallTasks([...installTasksSeed])}>
+                        <RotateCw className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Search className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-12">#</TableHead>
+                          <TableHead>任务ID</TableHead>
+                          <TableHead>应用</TableHead>
+                          <TableHead>包名</TableHead>
+                          <TableHead>版本</TableHead>
+                          <TableHead className="text-center">目标数</TableHead>
+                          <TableHead className="text-center">成功数</TableHead>
+                          <TableHead className="text-center">失败数</TableHead>
+                          <TableHead>状态</TableHead>
+                          <TableHead className="cursor-pointer select-none" onClick={() => setTaskSortAsc(v => !v)}>
+                            创建时间 {taskSortAsc ? "↑" : "↓"}
+                          </TableHead>
+                          <TableHead>操作</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filtered.map((task, idx) => (
+                          <TableRow key={task.id}>
+                            <TableCell className="text-xs text-muted-foreground">{idx + 1}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.id}</TableCell>
+                            <TableCell className="text-xs">{task.apkName}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.packageName}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.apkVersion}</TableCell>
+                            <TableCell className="text-center text-xs">{task.totalCount} 台</TableCell>
+                            <TableCell className="text-center text-xs">{task.successCount} 台</TableCell>
+                            <TableCell className="text-center text-xs">{task.failedCount} 台</TableCell>
+                            <TableCell>
+                              <Badge variant={task.status === "failed" ? "destructive" : task.status === "installing" ? "outline" : "default"} className="text-[10px]">
+                                {task.status === "success" ? "完成" : task.status === "installing" ? "安装中" : task.status === "failed" ? "失败" : "等待"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{task.createdAt}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <button className="text-xs text-primary hover:underline" onClick={() => setShowTaskDetail(task)}>查看详情</button>
+                                {task.status === "failed" && (
+                                  <button className="text-xs text-warning hover:underline" onClick={() => toast({ title: "已提交重试", description: `任务 ${task.id.slice(0,8)} 已重新提交` })}>重试</button>
+                                )}
+                                <button className="text-xs text-destructive hover:underline" onClick={() => setDeleteTask(task)}>删除</button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {filtered.length === 0 && (
+                          <TableRow><TableCell colSpan={11} className="text-center py-10 text-muted-foreground text-sm">暂无数据</TableCell></TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                    <div className="flex items-center justify-end gap-4 p-3 text-xs text-muted-foreground border-t">
+                      <span>共 {filtered.length} 条</span>
+                      <Select defaultValue="25"><SelectTrigger className="h-8 w-24"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="10">10条/页</SelectItem><SelectItem value="25">25条/页</SelectItem><SelectItem value="50">50条/页</SelectItem></SelectContent></Select>
+                      <Button variant="outline" size="icon" className="h-8 w-8"><ChevronLeft className="h-4 w-4" /></Button>
+                      <Button variant="default" size="sm" className="h-8 w-8">1</Button>
+                      <Button variant="outline" size="icon" className="h-8 w-8"><ChevronRight className="h-4 w-4" /></Button>
+                      <span>前往</span><Input className="h-8 w-14" defaultValue="1" /><span>页</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            );
+          })()}
         </TabsContent>
 
         {/* 卸载任务 */}
@@ -500,40 +578,60 @@ export default function AppManagement() {
 
       {/* 安装任务详情弹窗 */}
       <Dialog open={!!showTaskDetail} onOpenChange={() => setShowTaskDetail(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>安装任务详情 - {showTaskDetail?.id}</DialogTitle>
-            <DialogDescription>{showTaskDetail?.apkName} v{showTaskDetail?.apkVersion} · {showTaskDetail?.createdAt}</DialogDescription>
+            <DialogTitle>安装任务详情 - {showTaskDetail?.id.slice(0, 8)}</DialogTitle>
           </DialogHeader>
           {showTaskDetail && (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-lg font-bold">{showTaskDetail.totalCount}</p>
+                  <p className="text-2xl font-bold">{showTaskDetail.totalCount}</p>
                   <p className="text-xs text-muted-foreground">总计</p>
                 </div>
                 <div className="p-3 rounded-lg bg-success/10">
-                  <p className="text-lg font-bold text-success">{showTaskDetail.successCount}</p>
+                  <p className="text-2xl font-bold text-success">{showTaskDetail.successCount}</p>
                   <p className="text-xs text-muted-foreground">成功</p>
                 </div>
                 <div className="p-3 rounded-lg bg-destructive/10">
-                  <p className="text-lg font-bold text-destructive">{showTaskDetail.failedCount}</p>
+                  <p className="text-2xl font-bold text-destructive">{showTaskDetail.failedCount}</p>
                   <p className="text-xs text-muted-foreground">失败</p>
                 </div>
               </div>
+              <div className="rounded-lg bg-muted/40 p-4 grid grid-cols-[80px_1fr] gap-y-2 text-sm">
+                <span className="text-muted-foreground">应用名称：</span><span>{showTaskDetail.apkName}</span>
+                <span className="text-muted-foreground">应用版本：</span><span className="font-mono">{showTaskDetail.apkVersion}</span>
+                <span className="text-muted-foreground">任务状态：</span>
+                <span>
+                  <Badge variant={showTaskDetail.status === "failed" ? "destructive" : showTaskDetail.status === "installing" ? "outline" : "default"} className="text-[10px]">
+                    {showTaskDetail.status === "success" ? "完成" : showTaskDetail.status === "installing" ? "安装中" : showTaskDetail.status === "failed" ? "失败" : "等待"}
+                  </Badge>
+                </span>
+                <span className="text-muted-foreground">创建时间：</span><span className="font-mono text-xs">{showTaskDetail.createdAt}</span>
+                <span className="text-muted-foreground">完成时间：</span><span className="font-mono text-xs">{showTaskDetail.completedAt ?? "-"}</span>
+              </div>
               <div className="border rounded-lg">
+                <div className="px-3 py-2 border-b text-sm font-medium bg-muted/30">设备明细</div>
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>节点</TableHead>
                       <TableHead>设备ID</TableHead>
+                      <TableHead>设备名称</TableHead>
                       <TableHead>状态</TableHead>
                       <TableHead>消息</TableHead>
+                      <TableHead>概要描述</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
+                    {showTaskDetail.details.length === 0 && (
+                      <TableRow><TableCell colSpan={6} className="text-center py-6 text-xs text-muted-foreground">暂无明细</TableCell></TableRow>
+                    )}
                     {showTaskDetail.details.map(d => (
                       <TableRow key={d.deviceId}>
+                        <TableCell className="text-xs">{d.node}</TableCell>
                         <TableCell className="font-mono text-xs">{d.deviceId}</TableCell>
+                        <TableCell className="text-xs">{d.deviceName}</TableCell>
                         <TableCell>
                           {d.status === "success" && <CheckCircle className="h-4 w-4 text-success" />}
                           {d.status === "failed" && <XCircle className="h-4 w-4 text-destructive" />}
@@ -541,6 +639,7 @@ export default function AppManagement() {
                           {d.status === "pending" && <Clock className="h-4 w-4 text-muted-foreground" />}
                         </TableCell>
                         <TableCell className="text-xs">{d.message}</TableCell>
+                        <TableCell className="text-xs">{d.summary}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -548,6 +647,30 @@ export default function AppManagement() {
               </div>
             </div>
           )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowTaskDetail(null)}>关闭</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 删除任务确认 */}
+      <Dialog open={!!deleteTask} onOpenChange={(o) => !o && setDeleteTask(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>确认删除</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-start gap-3 py-2">
+            <AlertCircle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+            <p className="text-sm text-muted-foreground">确定要删除安装任务吗？将同时删除该任务下的所有明细记录。</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTask(null)}>取消</Button>
+            <Button onClick={() => {
+              if (deleteTask) setInstallTasks(prev => prev.filter(t => t.id !== deleteTask.id));
+              toast({ title: "已删除", description: "安装任务已删除" });
+              setDeleteTask(null);
+            }}>删除</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
