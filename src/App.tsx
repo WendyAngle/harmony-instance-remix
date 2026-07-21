@@ -19,6 +19,7 @@ import BoardCardManagement from "./pages/devices/BoardCardManagement";
 import TagManagement from "./pages/devices/TagManagement";
 import CloudStorageConfig from "./pages/system/CloudStorageConfig";
 import SystemMessages from "./pages/system/SystemMessages";
+import LogCenter from "./pages/system/LogCenter";
 import AccountManagement from "./pages/accounts/AccountManagement";
 import ProxyPool from "./pages/proxy/ProxyPool";
 import ProxySessions from "./pages/proxy/ProxySessions";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/devices/tags" element={<TagManagement />} />
             <Route path="/system/storage" element={<CloudStorageConfig />} />
             <Route path="/system/messages" element={<SystemMessages />} />
+            <Route path="/system/logs" element={<LogCenter />} />
             <Route path="/devices/virtual" element={<VirtualInstances />} />
             <Route path="/devices/virtual/create" element={<SelectVmType />} />
             <Route path="/devices/virtual/create/cloud" element={<CreateContainer />} />
