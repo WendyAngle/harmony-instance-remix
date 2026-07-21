@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Cpu, Database, Wifi, Code, LayoutDashboard, HardDrive,
   Package, FileUp, CloudCog, CircuitBoard, Tag, Cloud,
-  Monitor, Server, MonitorPlay, Settings, ChevronDown, Rocket, CloudUpload, Bell,
+  Monitor, Server, MonitorPlay, Settings, ChevronDown, Rocket, CloudUpload, Bell, FileText,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -47,6 +47,7 @@ const groups: Group[] = [
       { title: "应用管理", url: "/apps/manage", icon: Package },
       { title: "云存储配置", url: "/system/storage", icon: CloudUpload },
       { title: "系统消息", url: "/system/messages", icon: Bell },
+      { title: "日志中心", url: "/system/logs", icon: FileText },
       { title: "文件上传", url: "/apps/files", icon: FileUp },
       { title: "脚本仓库", url: "/scripts/hub", icon: Code },
       { title: "镜像文件", url: "/devices/images", icon: HardDrive },
