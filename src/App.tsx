@@ -20,6 +20,7 @@ import TagManagement from "./pages/devices/TagManagement";
 import AccountManagement from "./pages/accounts/AccountManagement";
 import ProxyPool from "./pages/proxy/ProxyPool";
 import ProxySessions from "./pages/proxy/ProxySessions";
+import ServiceNodes from "./pages/devices/ServiceNodes";
 import ScriptHub from "./pages/scripts/ScriptHub";
 import TaskOrchestration from "./pages/scripts/TaskOrchestration";
 import AppManagement from "./pages/apps/AppManagement";
@@ -63,7 +64,7 @@ const App = () => (
             <Route path="/ops/nodes/create" element={<CreateNode />} />
             <Route path="/proxy/sessions" element={<ProxySessions />} />
             <Route path="/vnc/sessions" element={<Placeholder />} />
-            <Route path="/devices/nodes" element={<Placeholder />} />
+            <Route path="/devices/nodes" element={<ServiceNodes />} />
           </Route>
           <Route path="/landing" element={<Landing />} />
           <Route path="*" element={<NotFound />} />
