@@ -10,7 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Package, Plus, Upload, Download, Search, Clock, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Upload, Download, Search, Clock, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight, RotateCw, Share2, Trash2, AlertCircle, Inbox } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { virtualInstances } from "@/data/mock-data";
 
 // ============ APK Mock Data ============
@@ -40,6 +41,22 @@ const apkPackages: ApkPackage[] = [
   { id: "APK-005", name: "Twitter/X", packageName: "com.twitter.android", version: "10.35.0", versionCode: 103500, size: "92MB", icon: "🐦", minAndroid: "6.0", targetAndroid: "14", versionNote: "时间线算法更新", uploadedAt: "2026-03-15 11:30", uploadedBy: "admin", status: "active", installedCount: 4, totalDevices: 10 },
   { id: "APK-006", name: "TikTok (旧版)", packageName: "com.zhiliaoapp.musically", version: "32.0.0", versionCode: 320000, size: "120MB", icon: "🎵", minAndroid: "5.0", targetAndroid: "13", versionNote: "旧版本，已废弃", uploadedAt: "2026-02-10 08:00", uploadedBy: "admin", status: "deprecated", installedCount: 0, totalDevices: 10 },
 ];
+
+// Serve nodes for 上传到指定节点
+const serviceNodes = [
+  { id: "192.168.110.48", name: "本地测试节点", online: true, uploaded: false },
+  { id: "172.30.11.173", name: "雅安测试节点", online: true, uploaded: true },
+];
+
+// 应用ID mapping (mock)
+const apkAppIds: Record<string, string> = {
+  "APK-001": "2061384248581287938",
+  "APK-002": "2061380363879837698",
+  "APK-003": "2061370694851047426",
+  "APK-004": "2057397766832177153",
+  "APK-005": "2057368943793930242",
+  "APK-006": "2057368943793930999",
+};
 
 export type InstallTaskStatus = "pending" | "installing" | "success" | "failed";
 
@@ -90,13 +107,26 @@ export default function AppManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "deprecated">("all");
+  const [selectedApks, setSelectedApks] = useState<string[]>([]);
+  const [showUploadTasks, setShowUploadTasks] = useState(false);
+  const [uploadToNode, setUploadToNode] = useState<ApkPackage | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string>("");
+  const [singleUninstall, setSingleUninstall] = useState<ApkPackage | null>(null);
+  const [singleUninstallSelected, setSingleUninstallSelected] = useState<string[]>([]);
+  const [batchUninstallConfirm, setBatchUninstallConfirm] = useState(false);
+  const [deprecateTarget, setDeprecateTarget] = useState<ApkPackage | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ApkPackage | null>(null);
+  const [rows, setRows] = useState(apkPackages);
 
   const cloudDevices = virtualInstances.filter(v => v.type === "cloud");
 
-  const filteredApks = useMemo(() => apkPackages.filter(a =>
-    a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    a.packageName.toLowerCase().includes(searchQuery.toLowerCase())
-  ), [searchQuery]);
+  const filteredApks = useMemo(() => rows.filter(a => {
+    const q = searchQuery.trim().toLowerCase();
+    if (q && !a.name.toLowerCase().includes(q) && !a.packageName.toLowerCase().includes(q)) return false;
+    if (statusFilter !== "all" && a.status !== statusFilter) return false;
+    return true;
+  }), [rows, searchQuery, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredApks.length / pageSize));
   const pagedApks = filteredApks.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -113,6 +143,31 @@ export default function AppManagement() {
     }
   };
 
+  const toggleApk = (id: string) =>
+    setSelectedApks(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  const toggleAllApks = () =>
+    setSelectedApks(p => p.length === pagedApks.length ? [] : pagedApks.map(a => a.id));
+
+  const resetFilters = () => { setSearchQuery(""); setStatusFilter("all"); setCurrentPage(1); };
+
+  const confirmDeprecate = () => {
+    if (!deprecateTarget) return;
+    setRows(list => list.map(a => a.id === deprecateTarget.id ? { ...a, status: "deprecated" } : a));
+    toast({ title: `已废弃应用 "${deprecateTarget.name}"` });
+    setDeprecateTarget(null);
+  };
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    setRows(list => list.filter(a => a.id !== deleteTarget.id));
+    setSelectedApks(p => p.filter(x => x !== deleteTarget.id));
+    toast({ title: `已删除应用 "${deleteTarget.name}"` });
+    setDeleteTarget(null);
+  };
+
+  const totalInstalledForSelected = rows
+    .filter(a => selectedApks.includes(a.id))
+    .reduce((s, a) => s + a.installedCount, 0);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -120,24 +175,63 @@ export default function AppManagement() {
           <h1 className="text-2xl font-bold">应用管理</h1>
           <p className="text-sm text-muted-foreground mt-1">管理 Android 云机上运行的 APK 安装包</p>
         </div>
-        <Button onClick={() => setShowUpload(true)}>
-          <Plus className="h-4 w-4 mr-1" />
-          上传 APK
-        </Button>
       </div>
 
       <Tabs defaultValue="packages">
         <TabsList>
           <TabsTrigger value="packages">安装包列表</TabsTrigger>
           <TabsTrigger value="tasks">安装任务</TabsTrigger>
+          <TabsTrigger value="uninstall">卸载任务</TabsTrigger>
         </TabsList>
 
         {/* 安装包列表 */}
         <TabsContent value="packages" className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input placeholder="搜索应用名称或包名..." className="pl-8 h-8 text-xs" value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} />
+          {/* Filter bar */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex flex-wrap items-end gap-4">
+                <div className="space-y-1.5 flex-1 min-w-[240px]">
+                  <Label className="text-xs text-muted-foreground">搜索</Label>
+                  <Input placeholder="请输入应用名称/包名搜索" value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} />
+                </div>
+                <div className="space-y-1.5 w-64">
+                  <Label className="text-xs text-muted-foreground">状态筛选</Label>
+                  <Select value={statusFilter} onValueChange={v => { setStatusFilter(v as typeof statusFilter); setCurrentPage(1); }}>
+                    <SelectTrigger><SelectValue placeholder="状态" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">全部</SelectItem>
+                      <SelectItem value="active">活跃</SelectItem>
+                      <SelectItem value="deprecated">已废弃</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-2 ml-auto">
+                  <Button onClick={() => setCurrentPage(1)} className="gap-1"><Search className="w-4 h-4" />搜索</Button>
+                  <Button variant="outline" onClick={resetFilters} className="gap-1"><RotateCw className="w-4 h-4" />重置</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-2">
+            <Button onClick={() => setShowUpload(true)} className="gap-1">
+              <Upload className="w-4 h-4" />上传 APK
+            </Button>
+            <Button variant="outline" onClick={() => setShowUploadTasks(true)} className="gap-1">
+              <Clock className="w-4 h-4" />上传进度
+            </Button>
+            <Button
+              variant="outline"
+              disabled={selectedApks.length === 0}
+              onClick={() => setBatchUninstallConfirm(true)}
+              className="gap-1 text-destructive hover:text-destructive disabled:opacity-50"
+            >
+              <Trash2 className="w-4 h-4" />批量卸载APK（{selectedApks.length}）
+            </Button>
+            <div className="ml-auto flex gap-1">
+              <Button variant="outline" size="icon" className="h-9 w-9"><RotateCw className="w-4 h-4" /></Button>
+              <Button variant="outline" size="icon" className="h-9 w-9"><Search className="w-4 h-4" /></Button>
             </div>
           </div>
 
@@ -145,57 +239,81 @@ export default function AppManagement() {
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                 <TableRow>
-                     <TableHead>应用</TableHead>
-                     <TableHead>包名</TableHead>
-                     <TableHead>版本</TableHead>
-                     <TableHead>版本说明</TableHead>
-                     <TableHead>大小</TableHead>
-                     <TableHead>兼容 Android</TableHead>
-                     <TableHead>安装覆盖</TableHead>
-                     <TableHead>上传时间</TableHead>
-                     <TableHead>上传者</TableHead>
-                     <TableHead>状态</TableHead>
-                     <TableHead>操作</TableHead>
-                   </TableRow>
+                  <TableRow className="bg-muted/40">
+                    <TableHead className="w-10">
+                      <Checkbox
+                        checked={pagedApks.length > 0 && pagedApks.every(a => selectedApks.includes(a.id))}
+                        onCheckedChange={toggleAllApks}
+                      />
+                    </TableHead>
+                    <TableHead className="w-14">#</TableHead>
+                    <TableHead>应用ID</TableHead>
+                    <TableHead>应用</TableHead>
+                    <TableHead>包名</TableHead>
+                    <TableHead>版本</TableHead>
+                    <TableHead>版本说明</TableHead>
+                    <TableHead>大小</TableHead>
+                    <TableHead>最低ANDROID版本</TableHead>
+                    <TableHead className="text-center">操作</TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pagedApks.map(apk => (
-                    <TableRow key={apk.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">{apk.icon}</span>
-                          <span className="font-medium text-sm">{apk.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-mono text-xs text-muted-foreground">{apk.packageName}</TableCell>
-                      <TableCell className="font-mono text-xs">{apk.version}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{apk.versionNote}</TableCell>
-                      <TableCell className="text-xs">{apk.size}</TableCell>
-                      <TableCell className="text-xs">{apk.minAndroid}+</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Progress value={(apk.installedCount / apk.totalDevices) * 100} className="h-1.5 w-16" />
-                          <span className="text-xs text-muted-foreground">{apk.installedCount}/{apk.totalDevices}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{apk.uploadedAt}</TableCell>
-                      <TableCell className="text-xs">{apk.uploadedBy}</TableCell>
-                      <TableCell>
-                        <Badge variant={apk.status === "active" ? "default" : "secondary"} className="text-[10px]">
-                          {apk.status === "active" ? "活跃" : "已废弃"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => { setShowBatchInstall(apk); setSelectedDevices([]); }} disabled={apk.status === "deprecated"}>
-                            <Download className="h-3 w-3 mr-1" />
-                            批量安装/更新
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {pagedApks.map((apk, idx) => {
+                    const deprecated = apk.status === "deprecated";
+                    return (
+                      <TableRow key={apk.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedApks.includes(apk.id)}
+                            onCheckedChange={() => toggleApk(apk.id)}
+                          />
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{(currentPage - 1) * pageSize + idx + 1}</TableCell>
+                        <TableCell className="font-mono text-xs">{apkAppIds[apk.id] ?? apk.id}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-2">
+                            <span className="text-lg">{apk.icon}</span>
+                            <span className="text-sm">{apk.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground">{apk.packageName}</TableCell>
+                        <TableCell className="font-mono text-xs">{apk.version}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground max-w-[180px] truncate">{apk.versionNote || "-"}</TableCell>
+                        <TableCell className="text-xs">{apk.size}</TableCell>
+                        <TableCell className="text-xs">{apk.minAndroid}+</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-3 text-xs whitespace-nowrap">
+                            <button className="inline-flex items-center gap-1 text-primary hover:underline" onClick={() => { setUploadToNode(apk); setSelectedNodeId(""); }}>
+                              <Share2 className="w-3 h-3" />上传到节点
+                            </button>
+                            <button className="inline-flex items-center gap-1 text-primary hover:underline disabled:opacity-40" disabled={deprecated} onClick={() => { setShowBatchInstall(apk); setSelectedDevices([]); }}>
+                              <Download className="w-3 h-3" />批量安装
+                            </button>
+                            <button
+                              className="inline-flex items-center gap-1 text-destructive hover:underline disabled:opacity-40"
+                              disabled={deprecated || apk.installedCount === 0}
+                              onClick={() => { setSingleUninstall(apk); setSingleUninstallSelected([]); }}
+                            >
+                              <Trash2 className="w-3 h-3" />批量卸载
+                            </button>
+                            <button
+                              className="text-muted-foreground hover:text-foreground hover:underline disabled:opacity-40"
+                              disabled={deprecated}
+                              onClick={() => setDeprecateTarget(apk)}
+                            >
+                              废弃
+                            </button>
+                            <button className="inline-flex items-center gap-1 text-destructive hover:underline" onClick={() => setDeleteTarget(apk)}>
+                              <Trash2 className="w-3 h-3" />删除
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {pagedApks.length === 0 && (
+                    <TableRow><TableCell colSpan={10} className="text-center text-muted-foreground py-10">暂无数据</TableCell></TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
@@ -275,6 +393,18 @@ export default function AppManagement() {
                   })}
                 </TableBody>
               </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* 卸载任务 */}
+        <TabsContent value="uninstall" className="space-y-4">
+          <Card>
+            <CardContent className="p-10">
+              <div className="flex flex-col items-center justify-center text-muted-foreground gap-2">
+                <Inbox className="w-12 h-12" />
+                <div className="text-sm">暂无卸载任务</div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -418,6 +548,264 @@ export default function AppManagement() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* 上传任务列表 */}
+      <Dialog open={showUploadTasks} onOpenChange={setShowUploadTasks}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>上传任务列表</DialogTitle>
+            <DialogDescription>仅显示最近24小时内的上传任务</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="space-y-1.5 flex-1 min-w-[240px]">
+                <Label className="text-xs text-muted-foreground">搜索</Label>
+                <Input placeholder="请输入任务ID/应用名称/错误消息搜索" />
+              </div>
+              <div className="space-y-1.5 w-48">
+                <Label className="text-xs text-muted-foreground">状态</Label>
+                <Select defaultValue="all">
+                  <SelectTrigger><SelectValue placeholder="状态" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">全部</SelectItem>
+                    <SelectItem value="running">进行中</SelectItem>
+                    <SelectItem value="success">成功</SelectItem>
+                    <SelectItem value="failed">失败</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2 ml-auto">
+                <Button className="gap-1"><Search className="w-4 h-4" />搜索</Button>
+                <Button variant="outline" className="gap-1"><RotateCw className="w-4 h-4" />重置</Button>
+              </div>
+            </div>
+            <div>
+              <Button size="sm" className="gap-1"><RotateCw className="w-3 h-3" />刷新列表</Button>
+            </div>
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40">
+                    <TableHead className="w-14">#</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead>任务ID</TableHead>
+                    <TableHead>应用名称</TableHead>
+                    <TableHead>包名</TableHead>
+                    <TableHead>进度</TableHead>
+                    <TableHead>文件大小</TableHead>
+                    <TableHead>开始时间</TableHead>
+                    <TableHead>错误信息</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center text-muted-foreground py-14">
+                      <div className="flex flex-col items-center gap-2">
+                        <Inbox className="w-10 h-10" />
+                        <div className="text-xs">暂无数据</div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 上传到指定节点 */}
+      <Dialog open={!!uploadToNode} onOpenChange={(o) => !o && setUploadToNode(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>上传到指定节点</DialogTitle>
+          </DialogHeader>
+          {uploadToNode && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-md border border-border bg-muted/30 px-4 py-3 text-sm flex flex-wrap items-center gap-x-6 gap-y-1">
+                <div><span className="text-muted-foreground">应用：</span><span className="text-lg mr-1">{uploadToNode.icon}</span>{uploadToNode.name}</div>
+                <div><span className="text-muted-foreground">包名：</span><span className="font-mono text-xs">{uploadToNode.packageName}</span></div>
+                <div><span className="text-muted-foreground">版本：</span><span className="font-mono text-xs">{uploadToNode.version}</span></div>
+              </div>
+              <div className="border rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/40">
+                      <TableHead className="w-10"></TableHead>
+                      <TableHead>节点ID</TableHead>
+                      <TableHead>节点名称</TableHead>
+                      <TableHead>上传状态</TableHead>
+                      <TableHead>节点状态</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {serviceNodes.map(n => (
+                      <TableRow key={n.id} className="cursor-pointer" onClick={() => setSelectedNodeId(n.id)}>
+                        <TableCell>
+                          <input type="radio" checked={selectedNodeId === n.id} onChange={() => setSelectedNodeId(n.id)} />
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">{n.id}</TableCell>
+                        <TableCell>{n.name}</TableCell>
+                        <TableCell>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs border ${
+                            n.uploaded ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-slate-100 text-slate-600 border-slate-200"
+                          }`}>{n.uploaded ? "已上传" : "未上传"}</span>
+                        </TableCell>
+                        <TableCell>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs border ${
+                            n.online ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-slate-100 text-slate-600 border-slate-200"
+                          }`}>{n.online ? "在线" : "离线"}</span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setUploadToNode(null)}>取消</Button>
+            <Button
+              disabled={!selectedNodeId}
+              onClick={() => {
+                toast({ title: "已发起上传任务" });
+                setUploadToNode(null);
+              }}
+            >确定</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 单个 APK 批量卸载 */}
+      <Dialog open={!!singleUninstall} onOpenChange={(o) => !o && setSingleUninstall(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>批量卸载 - {singleUninstall?.name} v{singleUninstall?.version}</DialogTitle>
+          </DialogHeader>
+          {singleUninstall && (() => {
+            const list = cloudDevices.slice(0, singleUninstall.installedCount);
+            const allSelected = list.length > 0 && singleUninstallSelected.length === list.length;
+            const toggleAll = () => setSingleUninstallSelected(allSelected ? [] : list.map(d => d.id));
+            const toggleOne = (id: string) =>
+              setSingleUninstallSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+            return (
+              <div className="space-y-3 py-1">
+                <div className="text-sm text-muted-foreground">
+                  已安装 {singleUninstall.name} v{singleUninstall.version} 的设备列表，勾选需要卸载的设备后确认
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm">已选择 <span className="font-semibold text-primary">{singleUninstallSelected.length}</span> / {list.length} 台设备</div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setSingleUninstallSelected(list.map(d => d.id))}>全选</Button>
+                    <Button variant="outline" size="sm" onClick={() => setSingleUninstallSelected([])}>取消全选</Button>
+                  </div>
+                </div>
+                <div className="border rounded-md max-h-72 overflow-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/40">
+                        <TableHead className="w-10"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></TableHead>
+                        <TableHead className="w-12">#</TableHead>
+                        <TableHead>设备名称</TableHead>
+                        <TableHead>设备ID</TableHead>
+                        <TableHead>容器UUID</TableHead>
+                        <TableHead>节点</TableHead>
+                        <TableHead>状态</TableHead>
+                        <TableHead>安装版本</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {list.map((d, i) => (
+                        <TableRow key={d.id}>
+                          <TableCell><Checkbox checked={singleUninstallSelected.includes(d.id)} onCheckedChange={() => toggleOne(d.id)} /></TableCell>
+                          <TableCell className="text-muted-foreground">{i + 1}</TableCell>
+                          <TableCell className="text-xs">{d.name}</TableCell>
+                          <TableCell className="font-mono text-xs">{d.id.slice(0, 12)}...</TableCell>
+                          <TableCell className="font-mono text-xs">{d.hostServerId.slice(0, 16)}...</TableCell>
+                          <TableCell className="text-xs">yaan-test</TableCell>
+                          <TableCell>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs border bg-emerald-50 text-emerald-600 border-emerald-200">
+                              {d.status === "running" ? "运行中" : d.status === "idle" ? "空闲" : "在线"}
+                            </span>
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">{singleUninstall.version}</TableCell>
+                        </TableRow>
+                      ))}
+                      {list.length === 0 && (
+                        <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-6">暂无已安装设备</TableCell></TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            );
+          })()}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSingleUninstall(null)}>取消</Button>
+            <Button
+              disabled={singleUninstallSelected.length === 0}
+              onClick={() => {
+                toast({ title: `已发起卸载任务（${singleUninstallSelected.length} 台设备）` });
+                setSingleUninstall(null);
+              }}
+            >
+              确认卸载（{singleUninstallSelected.length} 台设备）
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 批量卸载确认 (multi apk) */}
+      <Dialog open={batchUninstallConfirm} onOpenChange={setBatchUninstallConfirm}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>批量卸载确认</DialogTitle></DialogHeader>
+          <div className="flex items-start gap-2 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              将对 <span className="font-semibold">{selectedApks.length}</span> 个APK的全部已安装设备（共 <span className="font-semibold">{totalInstalledForSelected}</span> 台）发起卸载，确定继续？
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBatchUninstallConfirm(false)}>取消</Button>
+            <Button
+              onClick={() => {
+                toast({ title: `已发起 ${selectedApks.length} 个APK的批量卸载任务` });
+                setSelectedApks([]);
+                setBatchUninstallConfirm(false);
+              }}
+            >确定卸载</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 确认废弃 */}
+      <Dialog open={!!deprecateTarget} onOpenChange={(o) => !o && setDeprecateTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>确认废弃</DialogTitle></DialogHeader>
+          <div className="flex items-start gap-2 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <span>确定要废弃应用 "{deprecateTarget?.name}" 吗?</span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeprecateTarget(null)}>取消</Button>
+            <Button onClick={confirmDeprecate}>确定</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 确认删除 */}
+      <Dialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>确认删除</DialogTitle></DialogHeader>
+          <div className="flex items-start gap-2 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <span>确定要删除应用 "{deleteTarget?.name}" 吗? 删除后将无法恢复。</span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>取消</Button>
+            <Button onClick={confirmDelete}>删除</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
