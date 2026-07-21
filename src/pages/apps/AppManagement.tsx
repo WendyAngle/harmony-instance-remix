@@ -107,13 +107,26 @@ export default function AppManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "deprecated">("all");
+  const [selectedApks, setSelectedApks] = useState<string[]>([]);
+  const [showUploadTasks, setShowUploadTasks] = useState(false);
+  const [uploadToNode, setUploadToNode] = useState<ApkPackage | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string>("");
+  const [singleUninstall, setSingleUninstall] = useState<ApkPackage | null>(null);
+  const [singleUninstallSelected, setSingleUninstallSelected] = useState<string[]>([]);
+  const [batchUninstallConfirm, setBatchUninstallConfirm] = useState(false);
+  const [deprecateTarget, setDeprecateTarget] = useState<ApkPackage | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ApkPackage | null>(null);
+  const [rows, setRows] = useState(apkPackages);
 
   const cloudDevices = virtualInstances.filter(v => v.type === "cloud");
 
-  const filteredApks = useMemo(() => apkPackages.filter(a =>
-    a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    a.packageName.toLowerCase().includes(searchQuery.toLowerCase())
-  ), [searchQuery]);
+  const filteredApks = useMemo(() => rows.filter(a => {
+    const q = searchQuery.trim().toLowerCase();
+    if (q && !a.name.toLowerCase().includes(q) && !a.packageName.toLowerCase().includes(q)) return false;
+    if (statusFilter !== "all" && a.status !== statusFilter) return false;
+    return true;
+  }), [rows, searchQuery, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredApks.length / pageSize));
   const pagedApks = filteredApks.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -129,6 +142,31 @@ export default function AppManagement() {
       setSelectedDevices(cloudDevices.map(d => d.id));
     }
   };
+
+  const toggleApk = (id: string) =>
+    setSelectedApks(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  const toggleAllApks = () =>
+    setSelectedApks(p => p.length === pagedApks.length ? [] : pagedApks.map(a => a.id));
+
+  const resetFilters = () => { setSearchQuery(""); setStatusFilter("all"); setCurrentPage(1); };
+
+  const confirmDeprecate = () => {
+    if (!deprecateTarget) return;
+    setRows(list => list.map(a => a.id === deprecateTarget.id ? { ...a, status: "deprecated" } : a));
+    toast({ title: `已废弃应用 "${deprecateTarget.name}"` });
+    setDeprecateTarget(null);
+  };
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    setRows(list => list.filter(a => a.id !== deleteTarget.id));
+    setSelectedApks(p => p.filter(x => x !== deleteTarget.id));
+    toast({ title: `已删除应用 "${deleteTarget.name}"` });
+    setDeleteTarget(null);
+  };
+
+  const totalInstalledForSelected = rows
+    .filter(a => selectedApks.includes(a.id))
+    .reduce((s, a) => s + a.installedCount, 0);
 
   return (
     <div className="space-y-6">
