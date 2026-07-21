@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import { Inbox } from "lucide-react";
 import {
   hostServers,
   virtualInstances,
@@ -344,6 +346,23 @@ export default function NewDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* System Messages */}
+      <Card>
+        <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-sm font-semibold">系统消息</CardTitle>
+          <Link
+            to="/system/messages"
+            className="text-sm text-primary hover:underline"
+          >
+            查看更多
+          </Link>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+          <Inbox className="h-16 w-16 opacity-30 mb-3" />
+          <span className="text-sm">暂无消息</span>
+        </CardContent>
+      </Card>
     </div>
   );
 }
