@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Cpu, Database, Wifi, Code, LayoutDashboard, HardDrive,
   Package, FileUp, CloudCog, CircuitBoard, Tag, Cloud,
-  Monitor, Server, MonitorPlay, Settings, ChevronDown,
+  Monitor, Server, MonitorPlay, Settings, ChevronDown, Rocket,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -15,7 +15,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 type Item = { title: string; url: string; icon: React.ComponentType<{ className?: string }> };
 type Group = { label: string; icon: React.ComponentType<{ className?: string }>; items: Item[] };
 
-const topItem: Item = { title: "控制台", url: "/", icon: LayoutDashboard };
+const topItems: Item[] = [
+  { title: "控制台", url: "/", icon: LayoutDashboard },
+  { title: "新控制台", url: "/new-dashboard", icon: LayoutDashboard },
+  { title: "落地页", url: "/landing", icon: Rocket },
+];
 
 const groups: Group[] = [
   {
@@ -88,21 +92,23 @@ export function AppSidebar() {
         </div>
 
         <div className="px-2 py-3 space-y-1">
-          {/* Top-level 控制台 */}
+          {/* Top-level items */}
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <NavLink
-                  to={topItem.url}
-                  end
-                  className={linkClass(isActive(topItem.url))}
-                  activeClassName=""
-                >
-                  <topItem.icon className="h-4 w-4 shrink-0" />
-                  {!collapsed && <span>{topItem.title}</span>}
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {topItems.map((item) => (
+              <SidebarMenuItem key={item.url}>
+                <SidebarMenuButton asChild>
+                  <NavLink
+                    to={item.url}
+                    end={item.url === "/"}
+                    className={linkClass(isActive(item.url))}
+                    activeClassName=""
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    {!collapsed && <span>{item.title}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
 
           {/* Collapsible groups */}
