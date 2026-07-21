@@ -522,16 +522,247 @@ export default function AppManagement() {
 
         {/* 卸载任务 */}
         <TabsContent value="uninstall" className="space-y-4">
-          <Card>
-            <CardContent className="p-10">
-              <div className="flex flex-col items-center justify-center text-muted-foreground gap-2">
-                <Inbox className="w-12 h-12" />
-                <div className="text-sm">暂无卸载任务</div>
-              </div>
-            </CardContent>
-          </Card>
+          {(() => {
+            const appOptions = Array.from(new Set(uninstallTasks.map(t => t.apkName)));
+            const versionOptions = Array.from(new Set(uninstallTasks.map(t => t.apkVersion)));
+            const filtered = uninstallTasks
+              .filter(t => !unSearch || t.id.toLowerCase().includes(unSearch.toLowerCase()))
+              .filter(t => unAppFilter === "all" || t.apkName === unAppFilter)
+              .filter(t => unVersionFilter === "all" || t.apkVersion === unVersionFilter)
+              .sort((a, b) => unSortAsc ? a.createdAt.localeCompare(b.createdAt) : b.createdAt.localeCompare(a.createdAt));
+            return (
+              <>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex flex-wrap items-end gap-3">
+                      <div className="flex items-center gap-2 flex-1 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">搜索：</Label>
+                        <Input value={unSearch} onChange={e => setUnSearch(e.target.value)} placeholder="请输入任务ID搜索" className="h-9" />
+                      </div>
+                      <div className="flex items-center gap-2 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">应用筛选：</Label>
+                        <Select value={unAppFilter} onValueChange={setUnAppFilter}>
+                          <SelectTrigger className="h-9"><SelectValue placeholder="应用" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">全部应用</SelectItem>
+                            {appOptions.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center gap-2 min-w-[240px]">
+                        <Label className="text-xs text-muted-foreground whitespace-nowrap">版本筛选：</Label>
+                        <Select value={unVersionFilter} onValueChange={setUnVersionFilter}>
+                          <SelectTrigger className="h-9"><SelectValue placeholder="版本" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">全部版本</SelectItem>
+                            {versionOptions.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button size="sm" className="h-9"><Search className="h-4 w-4 mr-1" />搜索</Button>
+                      <Button variant="outline" size="sm" className="h-9" onClick={() => { setUnSearch(""); setUnAppFilter("all"); setUnVersionFilter("all"); }}>
+                        <Trash2 className="h-4 w-4 mr-1" />重置
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-9 text-primary">展开</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-0">
+                    <div className="flex justify-end gap-2 p-2 border-b">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setUninstallTasks([...uninstallTasksSeed])}>
+                        <RotateCw className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Search className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-12">#</TableHead>
+                          <TableHead>任务ID</TableHead>
+                          <TableHead>应用</TableHead>
+                          <TableHead>包名</TableHead>
+                          <TableHead>版本</TableHead>
+                          <TableHead className="text-center">目标数</TableHead>
+                          <TableHead className="text-center">成功数</TableHead>
+                          <TableHead className="text-center">失败数</TableHead>
+                          <TableHead>状态</TableHead>
+                          <TableHead className="cursor-pointer select-none" onClick={() => setUnSortAsc(v => !v)}>
+                            创建时间 {unSortAsc ? "↑" : "↓"}
+                          </TableHead>
+                          <TableHead>操作</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filtered.map((task, idx) => (
+                          <TableRow key={task.id}>
+                            <TableCell className="text-xs text-muted-foreground">{idx + 1}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.id}</TableCell>
+                            <TableCell className="text-xs">{task.apkName}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.packageName}</TableCell>
+                            <TableCell className="font-mono text-xs">{task.apkVersion}</TableCell>
+                            <TableCell className="text-center text-xs">{task.totalCount} 台</TableCell>
+                            <TableCell className="text-center text-xs">{task.successCount} 台</TableCell>
+                            <TableCell className="text-center text-xs">{task.failedCount} 台</TableCell>
+                            <TableCell>
+                              <Badge variant={task.status === "failed" ? "destructive" : task.status === "running" ? "outline" : "default"} className="text-[10px]">
+                                {task.status === "success" ? "完成" : task.status === "running" ? "进行中" : "失败"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{task.createdAt}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <button className="text-xs text-primary hover:underline" onClick={() => setShowUnDetail(task)}>查看详情</button>
+                                <button className="text-xs text-destructive hover:underline" onClick={() => setDeleteUnTask(task)}>删除</button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {filtered.length === 0 && (
+                          <TableRow><TableCell colSpan={11} className="text-center py-10 text-muted-foreground text-sm">暂无数据</TableCell></TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                    <div className="flex items-center justify-end gap-4 p-3 text-xs text-muted-foreground border-t">
+                      <span>共 {filtered.length} 条</span>
+                      <Select defaultValue="25"><SelectTrigger className="h-8 w-24"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="10">10条/页</SelectItem><SelectItem value="25">25条/页</SelectItem><SelectItem value="50">50条/页</SelectItem></SelectContent></Select>
+                      <Button variant="outline" size="icon" className="h-8 w-8"><ChevronLeft className="h-4 w-4" /></Button>
+                      <Button variant="default" size="sm" className="h-8 w-8">1</Button>
+                      <Button variant="outline" size="icon" className="h-8 w-8"><ChevronRight className="h-4 w-4" /></Button>
+                      <span>前往</span><Input className="h-8 w-14" defaultValue="1" /><span>页</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            );
+          })()}
         </TabsContent>
       </Tabs>
+
+      {/* 卸载任务详情弹窗 */}
+      <Dialog open={!!showUnDetail} onOpenChange={() => setShowUnDetail(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>卸载任务详情 - {showUnDetail?.id.slice(0, 9)}</DialogTitle>
+          </DialogHeader>
+          {showUnDetail && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="p-4 rounded-lg bg-muted">
+                  <p className="text-2xl font-bold">{showUnDetail.totalCount}</p>
+                  <p className="text-xs text-muted-foreground">总计</p>
+                </div>
+                <div className="p-4 rounded-lg bg-success/10">
+                  <p className="text-2xl font-bold text-success">{showUnDetail.successCount}</p>
+                  <p className="text-xs text-muted-foreground">成功</p>
+                </div>
+                <div className="p-4 rounded-lg bg-destructive/10">
+                  <p className="text-2xl font-bold text-destructive">{showUnDetail.failedCount}</p>
+                  <p className="text-xs text-muted-foreground">失败</p>
+                </div>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-4 grid grid-cols-[80px_1fr] gap-y-2 text-sm">
+                <span className="text-muted-foreground">应用名称：</span><span>{showUnDetail.apkName}</span>
+                <span className="text-muted-foreground">应用版本：</span><span className="font-mono">{showUnDetail.apkVersion}</span>
+                <span className="text-muted-foreground">目标包名：</span><span className="font-mono">{showUnDetail.packageName}</span>
+                <span className="text-muted-foreground">任务状态：</span>
+                <span>
+                  <Badge variant={showUnDetail.status === "failed" ? "destructive" : showUnDetail.status === "running" ? "outline" : "default"} className="text-[10px]">
+                    {showUnDetail.status === "success" ? "完成" : showUnDetail.status === "running" ? "进行中" : "失败"}
+                  </Badge>
+                </span>
+                <span className="text-muted-foreground">创建时间：</span><span className="font-mono text-xs">{showUnDetail.createdAt}</span>
+                <span className="text-muted-foreground">完成时间：</span><span className="font-mono text-xs">{showUnDetail.completedAt ?? "-"}</span>
+              </div>
+              <div className="border rounded-lg">
+                <div className="px-3 py-2 border-b text-sm font-medium bg-muted/30">节点汇总</div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>节点名称</TableHead>
+                      <TableHead>来源类型</TableHead>
+                      <TableHead className="text-center">目标数</TableHead>
+                      <TableHead className="text-center">成功数</TableHead>
+                      <TableHead className="text-center">失败数</TableHead>
+                      <TableHead>状态</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {showUnDetail.nodeSummary.map((n, i) => (
+                      <TableRow key={i}>
+                        <TableCell className="text-xs">{n.node}</TableCell>
+                        <TableCell className="text-xs">{n.sourceType}</TableCell>
+                        <TableCell className="text-center text-xs">{n.total} 台</TableCell>
+                        <TableCell className="text-center text-xs text-success font-medium">{n.success}</TableCell>
+                        <TableCell className="text-center text-xs">{n.failed}</TableCell>
+                        <TableCell>
+                          {n.status === "success" && <CheckCircle className="h-4 w-4 text-success" />}
+                          {n.status === "failed" && <XCircle className="h-4 w-4 text-destructive" />}
+                          {n.status === "running" && <Loader2 className="h-4 w-4 text-primary animate-spin" />}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="border rounded-lg">
+                <div className="px-3 py-2 border-b text-sm font-medium bg-muted/30">设备明细</div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>节点</TableHead>
+                      <TableHead>设备ID</TableHead>
+                      <TableHead>设备名称</TableHead>
+                      <TableHead>状态</TableHead>
+                      <TableHead>消息</TableHead>
+                      <TableHead>概要描述</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {showUnDetail.details.map(d => (
+                      <TableRow key={d.deviceId}>
+                        <TableCell className="text-xs">{d.node}</TableCell>
+                        <TableCell className="font-mono text-xs">{d.deviceId}</TableCell>
+                        <TableCell className="text-xs">{d.deviceName}</TableCell>
+                        <TableCell>
+                          {d.status === "success" ? <CheckCircle className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-destructive" />}
+                        </TableCell>
+                        <TableCell className="text-xs">{d.message}</TableCell>
+                        <TableCell className="text-xs">{d.summary}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowUnDetail(null)}>关闭</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 卸载任务删除确认 */}
+      <Dialog open={!!deleteUnTask} onOpenChange={(o) => !o && setDeleteUnTask(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>删除确认</DialogTitle></DialogHeader>
+          <div className="flex items-start gap-3 py-2">
+            <AlertCircle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+            <p className="text-sm text-muted-foreground">确定删除此卸载任务吗？</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteUnTask(null)}>取消</Button>
+            <Button onClick={() => {
+              if (deleteUnTask) setUninstallTasks(prev => prev.filter(t => t.id !== deleteUnTask.id));
+              toast({ title: "已删除", description: "卸载任务已删除" });
+              setDeleteUnTask(null);
+            }}>确定</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* 上传 APK 弹窗 */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
