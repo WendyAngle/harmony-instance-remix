@@ -3,7 +3,7 @@ import {
   Users, Wifi,
   Code, Play, LayoutDashboard, HardDrive,
   Package, FileUp, CloudCog, ClipboardList, CircuitBoard, Tag, Network
-} from "lucide-react";
+, Rocket } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -17,6 +17,7 @@ const menuGroups = [
     items: [
       { title: "控制台", url: "/", icon: LayoutDashboard },
       { title: "新控制台", url: "/new-dashboard", icon: LayoutDashboard },
+      { title: "落地页", url: "/landing", icon: Rocket },
     ],
   },
   {

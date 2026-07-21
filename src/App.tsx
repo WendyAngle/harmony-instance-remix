@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import NewDashboard from "./pages/NewDashboard";
+import Landing from "./pages/Landing";
 import PhysicalDevices from "./pages/devices/PhysicalDevices";
 import HostServers from "./pages/devices/HostServers";
 import VirtualInstances from "./pages/devices/VirtualInstances";
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/ops/nodes" element={<NodeManagement />} />
             <Route path="/ops/nodes/create" element={<CreateNode />} />
           </Route>
+          <Route path="/landing" element={<Landing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
