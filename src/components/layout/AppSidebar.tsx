@@ -43,12 +43,12 @@ const groups: Group[] = [
   {
     label: "系统管理", icon: Settings,
     items: [
-      { title: "镜像文件", url: "/devices/images", icon: HardDrive },
       { title: "标签管理", url: "/devices/tags", icon: Tag },
       { title: "应用管理", url: "/apps/manage", icon: Package },
       { title: "云存储配置", url: "/system/storage", icon: CloudUpload },
       { title: "文件上传", url: "/apps/files", icon: FileUp },
       { title: "脚本仓库", url: "/scripts/hub", icon: Code },
+      { title: "镜像文件", url: "/devices/images", icon: HardDrive },
     ],
   },
 ];
