@@ -93,6 +93,43 @@ const installTasksSeed: InstallTask[] = [
   { id: "b74a91d582e34c7bb0198f6d3c48a2ef", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 4, successCount: 4, failedCount: 0, status: "success", createdAt: "2026-05-18 09:14:22", completedAt: "2026-05-18 09:16:00", details: [] },
 ];
 
+interface UninstallTask {
+  id: string;
+  apkName: string;
+  packageName: string;
+  apkVersion: string;
+  totalCount: number;
+  successCount: number;
+  failedCount: number;
+  status: "success" | "failed" | "running";
+  createdAt: string;
+  completedAt: string | null;
+  nodeSummary: { node: string; sourceType: string; total: number; success: number; failed: number; status: "success" | "failed" | "running" }[];
+  details: { node: string; deviceId: string; deviceName: string; status: "success" | "failed"; message: string; summary: string }[];
+}
+
+const uninstallTasksSeed: UninstallTask[] = [
+  {
+    id: "UN_7B327BFE208347AF", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6",
+    totalCount: 2, successCount: 2, failedCount: 0, status: "success",
+    createdAt: "2026-06-03 18:36:29", completedAt: "2026-06-03 18:36:55",
+    nodeSummary: [{ node: "yaan-test-01", sourceType: "-", total: 2, success: 2, failed: 0, status: "success" }],
+    details: [
+      { node: "yaan-test-01", deviceId: "2059591332470759426", deviceName: "test-1-25-i1 测试-1-25-i1", status: "success", message: "-", summary: "ok 好的" },
+      { node: "yaan-test-01", deviceId: "2059591332705640449", deviceName: "test-1-18-i3 测试-1-18-i3", status: "success", message: "-", summary: "ok 好的" },
+    ],
+  },
+  {
+    id: "UN_8F31010E519945CE", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6",
+    totalCount: 1, successCount: 1, failedCount: 0, status: "success",
+    createdAt: "2026-06-03 18:29:05", completedAt: "2026-06-03 18:29:40",
+    nodeSummary: [{ node: "yaan-test-01", sourceType: "-", total: 1, success: 1, failed: 0, status: "success" }],
+    details: [
+      { node: "yaan-test-01", deviceId: "2059591332705640450", deviceName: "test-1-19-i3 测试-1-19-i3", status: "success", message: "-", summary: "ok 好的" },
+    ],
+  },
+];
+
 const PAGE_SIZES = [10, 20, 50];
 
 export default function AppManagement() {
