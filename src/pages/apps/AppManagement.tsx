@@ -10,7 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Package, Plus, Upload, Download, Search, Clock, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Upload, Download, Search, Clock, CheckCircle, XCircle, Loader2, ChevronLeft, ChevronRight, RotateCw, Share2, Trash2, AlertCircle, Inbox } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { virtualInstances } from "@/data/mock-data";
 
 // ============ APK Mock Data ============
@@ -40,6 +41,22 @@ const apkPackages: ApkPackage[] = [
   { id: "APK-005", name: "Twitter/X", packageName: "com.twitter.android", version: "10.35.0", versionCode: 103500, size: "92MB", icon: "🐦", minAndroid: "6.0", targetAndroid: "14", versionNote: "时间线算法更新", uploadedAt: "2026-03-15 11:30", uploadedBy: "admin", status: "active", installedCount: 4, totalDevices: 10 },
   { id: "APK-006", name: "TikTok (旧版)", packageName: "com.zhiliaoapp.musically", version: "32.0.0", versionCode: 320000, size: "120MB", icon: "🎵", minAndroid: "5.0", targetAndroid: "13", versionNote: "旧版本，已废弃", uploadedAt: "2026-02-10 08:00", uploadedBy: "admin", status: "deprecated", installedCount: 0, totalDevices: 10 },
 ];
+
+// Serve nodes for 上传到指定节点
+const serviceNodes = [
+  { id: "192.168.110.48", name: "本地测试节点", online: true, uploaded: false },
+  { id: "172.30.11.173", name: "雅安测试节点", online: true, uploaded: true },
+];
+
+// 应用ID mapping (mock)
+const apkAppIds: Record<string, string> = {
+  "APK-001": "2061384248581287938",
+  "APK-002": "2061380363879837698",
+  "APK-003": "2061370694851047426",
+  "APK-004": "2057397766832177153",
+  "APK-005": "2057368943793930242",
+  "APK-006": "2057368943793930999",
+};
 
 export type InstallTaskStatus = "pending" | "installing" | "success" | "failed";
 
