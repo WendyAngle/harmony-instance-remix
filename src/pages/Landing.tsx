@@ -16,7 +16,11 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-sky-50/40 to-sky-100/40">
+    <div className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-indigo-50">
+      {/* Ambient background blobs */}
+      <div className="pointer-events-none absolute -top-32 -left-32 h-[520px] w-[520px] rounded-full bg-emerald-300/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -right-32 h-[560px] w-[560px] rounded-full bg-indigo-300/40 blur-3xl" />
+      <div className="relative flex-1 flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-8 md:px-16 py-6">
         <div className="flex items-center gap-3">
@@ -76,6 +80,7 @@ export default function Landing() {
       <footer className="text-center py-6 text-sm text-muted-foreground border-t border-border/40">
         © 2026 Matrix Device · 矩阵设备服务平台
       </footer>
+      </div>
     </div>
   );
 }
