@@ -396,6 +396,18 @@ export default function AppManagement() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* 卸载任务 */}
+        <TabsContent value="uninstall" className="space-y-4">
+          <Card>
+            <CardContent className="p-10">
+              <div className="flex flex-col items-center justify-center text-muted-foreground gap-2">
+                <Inbox className="w-12 h-12" />
+                <div className="text-sm">暂无卸载任务</div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* 上传 APK 弹窗 */}
@@ -536,6 +548,264 @@ export default function AppManagement() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* 上传任务列表 */}
+      <Dialog open={showUploadTasks} onOpenChange={setShowUploadTasks}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>上传任务列表</DialogTitle>
+            <DialogDescription>仅显示最近24小时内的上传任务</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="space-y-1.5 flex-1 min-w-[240px]">
+                <Label className="text-xs text-muted-foreground">搜索</Label>
+                <Input placeholder="请输入任务ID/应用名称/错误消息搜索" />
+              </div>
+              <div className="space-y-1.5 w-48">
+                <Label className="text-xs text-muted-foreground">状态</Label>
+                <Select defaultValue="all">
+                  <SelectTrigger><SelectValue placeholder="状态" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">全部</SelectItem>
+                    <SelectItem value="running">进行中</SelectItem>
+                    <SelectItem value="success">成功</SelectItem>
+                    <SelectItem value="failed">失败</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2 ml-auto">
+                <Button className="gap-1"><Search className="w-4 h-4" />搜索</Button>
+                <Button variant="outline" className="gap-1"><RotateCw className="w-4 h-4" />重置</Button>
+              </div>
+            </div>
+            <div>
+              <Button size="sm" className="gap-1"><RotateCw className="w-3 h-3" />刷新列表</Button>
+            </div>
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40">
+                    <TableHead className="w-14">#</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead>任务ID</TableHead>
+                    <TableHead>应用名称</TableHead>
+                    <TableHead>包名</TableHead>
+                    <TableHead>进度</TableHead>
+                    <TableHead>文件大小</TableHead>
+                    <TableHead>开始时间</TableHead>
+                    <TableHead>错误信息</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center text-muted-foreground py-14">
+                      <div className="flex flex-col items-center gap-2">
+                        <Inbox className="w-10 h-10" />
+                        <div className="text-xs">暂无数据</div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 上传到指定节点 */}
+      <Dialog open={!!uploadToNode} onOpenChange={(o) => !o && setUploadToNode(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>上传到指定节点</DialogTitle>
+          </DialogHeader>
+          {uploadToNode && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-md border border-border bg-muted/30 px-4 py-3 text-sm flex flex-wrap items-center gap-x-6 gap-y-1">
+                <div><span className="text-muted-foreground">应用：</span><span className="text-lg mr-1">{uploadToNode.icon}</span>{uploadToNode.name}</div>
+                <div><span className="text-muted-foreground">包名：</span><span className="font-mono text-xs">{uploadToNode.packageName}</span></div>
+                <div><span className="text-muted-foreground">版本：</span><span className="font-mono text-xs">{uploadToNode.version}</span></div>
+              </div>
+              <div className="border rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/40">
+                      <TableHead className="w-10"></TableHead>
+                      <TableHead>节点ID</TableHead>
+                      <TableHead>节点名称</TableHead>
+                      <TableHead>上传状态</TableHead>
+                      <TableHead>节点状态</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {serviceNodes.map(n => (
+                      <TableRow key={n.id} className="cursor-pointer" onClick={() => setSelectedNodeId(n.id)}>
+                        <TableCell>
+                          <input type="radio" checked={selectedNodeId === n.id} onChange={() => setSelectedNodeId(n.id)} />
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">{n.id}</TableCell>
+                        <TableCell>{n.name}</TableCell>
+                        <TableCell>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs border ${
+                            n.uploaded ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-slate-100 text-slate-600 border-slate-200"
+                          }`}>{n.uploaded ? "已上传" : "未上传"}</span>
+                        </TableCell>
+                        <TableCell>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs border ${
+                            n.online ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-slate-100 text-slate-600 border-slate-200"
+                          }`}>{n.online ? "在线" : "离线"}</span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setUploadToNode(null)}>取消</Button>
+            <Button
+              disabled={!selectedNodeId}
+              onClick={() => {
+                toast({ title: "已发起上传任务" });
+                setUploadToNode(null);
+              }}
+            >确定</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 单个 APK 批量卸载 */}
+      <Dialog open={!!singleUninstall} onOpenChange={(o) => !o && setSingleUninstall(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>批量卸载 - {singleUninstall?.name} v{singleUninstall?.version}</DialogTitle>
+          </DialogHeader>
+          {singleUninstall && (() => {
+            const list = cloudDevices.slice(0, singleUninstall.installedCount);
+            const allSelected = list.length > 0 && singleUninstallSelected.length === list.length;
+            const toggleAll = () => setSingleUninstallSelected(allSelected ? [] : list.map(d => d.id));
+            const toggleOne = (id: string) =>
+              setSingleUninstallSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+            return (
+              <div className="space-y-3 py-1">
+                <div className="text-sm text-muted-foreground">
+                  已安装 {singleUninstall.name} v{singleUninstall.version} 的设备列表，勾选需要卸载的设备后确认
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm">已选择 <span className="font-semibold text-primary">{singleUninstallSelected.length}</span> / {list.length} 台设备</div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setSingleUninstallSelected(list.map(d => d.id))}>全选</Button>
+                    <Button variant="outline" size="sm" onClick={() => setSingleUninstallSelected([])}>取消全选</Button>
+                  </div>
+                </div>
+                <div className="border rounded-md max-h-72 overflow-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/40">
+                        <TableHead className="w-10"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></TableHead>
+                        <TableHead className="w-12">#</TableHead>
+                        <TableHead>设备名称</TableHead>
+                        <TableHead>设备ID</TableHead>
+                        <TableHead>容器UUID</TableHead>
+                        <TableHead>节点</TableHead>
+                        <TableHead>状态</TableHead>
+                        <TableHead>安装版本</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {list.map((d, i) => (
+                        <TableRow key={d.id}>
+                          <TableCell><Checkbox checked={singleUninstallSelected.includes(d.id)} onCheckedChange={() => toggleOne(d.id)} /></TableCell>
+                          <TableCell className="text-muted-foreground">{i + 1}</TableCell>
+                          <TableCell className="text-xs">{d.name}</TableCell>
+                          <TableCell className="font-mono text-xs">{d.id.slice(0, 12)}...</TableCell>
+                          <TableCell className="font-mono text-xs">{d.hostServerId.slice(0, 16)}...</TableCell>
+                          <TableCell className="text-xs">yaan-test</TableCell>
+                          <TableCell>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs border bg-emerald-50 text-emerald-600 border-emerald-200">
+                              {d.status === "running" ? "运行中" : d.status === "idle" ? "空闲" : "在线"}
+                            </span>
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">{singleUninstall.version}</TableCell>
+                        </TableRow>
+                      ))}
+                      {list.length === 0 && (
+                        <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-6">暂无已安装设备</TableCell></TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            );
+          })()}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSingleUninstall(null)}>取消</Button>
+            <Button
+              disabled={singleUninstallSelected.length === 0}
+              onClick={() => {
+                toast({ title: `已发起卸载任务（${singleUninstallSelected.length} 台设备）` });
+                setSingleUninstall(null);
+              }}
+            >
+              确认卸载（{singleUninstallSelected.length} 台设备）
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 批量卸载确认 (multi apk) */}
+      <Dialog open={batchUninstallConfirm} onOpenChange={setBatchUninstallConfirm}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>批量卸载确认</DialogTitle></DialogHeader>
+          <div className="flex items-start gap-2 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              将对 <span className="font-semibold">{selectedApks.length}</span> 个APK的全部已安装设备（共 <span className="font-semibold">{totalInstalledForSelected}</span> 台）发起卸载，确定继续？
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBatchUninstallConfirm(false)}>取消</Button>
+            <Button
+              onClick={() => {
+                toast({ title: `已发起 ${selectedApks.length} 个APK的批量卸载任务` });
+                setSelectedApks([]);
+                setBatchUninstallConfirm(false);
+              }}
+            >确定卸载</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 确认废弃 */}
+      <Dialog open={!!deprecateTarget} onOpenChange={(o) => !o && setDeprecateTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>确认废弃</DialogTitle></DialogHeader>
+          <div className="flex items-start gap-2 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <span>确定要废弃应用 "{deprecateTarget?.name}" 吗?</span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeprecateTarget(null)}>取消</Button>
+            <Button onClick={confirmDeprecate}>确定</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 确认删除 */}
+      <Dialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>确认删除</DialogTitle></DialogHeader>
+          <div className="flex items-start gap-2 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <span>确定要删除应用 "{deleteTarget?.name}" 吗? 删除后将无法恢复。</span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>取消</Button>
+            <Button onClick={confirmDelete}>删除</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
