@@ -445,6 +445,23 @@ export default function ProxySessions() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Close confirm dialog */}
+      <Dialog open={!!closeTarget} onOpenChange={(o) => !o && setCloseTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>提示</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-start gap-3 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+            <div>确定要关闭该代理会话吗?</div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCloseTarget(null)}>取消</Button>
+            <Button onClick={confirmClose}>确定</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
