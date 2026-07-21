@@ -40,7 +40,6 @@ const App = () => (
           <Route element={<AppLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/new-dashboard" element={<NewDashboard />} />
-            <Route path="/landing" element={<Landing />} />
             <Route path="/devices/servers" element={<HostServers />} />
             <Route path="/devices/physical" element={<PhysicalDevices />} />
             <Route path="/devices/boardcards" element={<BoardCardManagement />} />
@@ -61,6 +60,7 @@ const App = () => (
             <Route path="/ops/nodes" element={<NodeManagement />} />
             <Route path="/ops/nodes/create" element={<CreateNode />} />
           </Route>
+          <Route path="/landing" element={<Landing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
