@@ -1,7 +1,7 @@
 import { ArrowRight, Layers, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const LOGIN_URL = "https://id.bohaiyun.com/login";
+const LOGIN_URL = "http://172.30.11.151/login";
 
 const stats = [
   { value: "10,000+", label: "在线设备" },
