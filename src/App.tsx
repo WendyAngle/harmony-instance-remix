@@ -17,6 +17,7 @@ import ImageLibrary from "./pages/devices/ImageLibrary";
 import CloudDrive from "./pages/devices/CloudDrive";
 import BoardCardManagement from "./pages/devices/BoardCardManagement";
 import TagManagement from "./pages/devices/TagManagement";
+import CloudStorageConfig from "./pages/system/CloudStorageConfig";
 import AccountManagement from "./pages/accounts/AccountManagement";
 import ProxyPool from "./pages/proxy/ProxyPool";
 import ProxySessions from "./pages/proxy/ProxySessions";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/devices/physical" element={<PhysicalDevices />} />
             <Route path="/devices/boardcards" element={<BoardCardManagement />} />
             <Route path="/devices/tags" element={<TagManagement />} />
+            <Route path="/system/storage" element={<CloudStorageConfig />} />
             <Route path="/devices/virtual" element={<VirtualInstances />} />
             <Route path="/devices/virtual/create" element={<SelectVmType />} />
             <Route path="/devices/virtual/create/cloud" element={<CreateContainer />} />
