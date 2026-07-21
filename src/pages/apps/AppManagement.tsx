@@ -578,40 +578,60 @@ export default function AppManagement() {
 
       {/* 安装任务详情弹窗 */}
       <Dialog open={!!showTaskDetail} onOpenChange={() => setShowTaskDetail(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>安装任务详情 - {showTaskDetail?.id}</DialogTitle>
-            <DialogDescription>{showTaskDetail?.apkName} v{showTaskDetail?.apkVersion} · {showTaskDetail?.createdAt}</DialogDescription>
+            <DialogTitle>安装任务详情 - {showTaskDetail?.id.slice(0, 8)}</DialogTitle>
           </DialogHeader>
           {showTaskDetail && (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-lg font-bold">{showTaskDetail.totalCount}</p>
+                  <p className="text-2xl font-bold">{showTaskDetail.totalCount}</p>
                   <p className="text-xs text-muted-foreground">总计</p>
                 </div>
                 <div className="p-3 rounded-lg bg-success/10">
-                  <p className="text-lg font-bold text-success">{showTaskDetail.successCount}</p>
+                  <p className="text-2xl font-bold text-success">{showTaskDetail.successCount}</p>
                   <p className="text-xs text-muted-foreground">成功</p>
                 </div>
                 <div className="p-3 rounded-lg bg-destructive/10">
-                  <p className="text-lg font-bold text-destructive">{showTaskDetail.failedCount}</p>
+                  <p className="text-2xl font-bold text-destructive">{showTaskDetail.failedCount}</p>
                   <p className="text-xs text-muted-foreground">失败</p>
                 </div>
               </div>
+              <div className="rounded-lg bg-muted/40 p-4 grid grid-cols-[80px_1fr] gap-y-2 text-sm">
+                <span className="text-muted-foreground">应用名称：</span><span>{showTaskDetail.apkName}</span>
+                <span className="text-muted-foreground">应用版本：</span><span className="font-mono">{showTaskDetail.apkVersion}</span>
+                <span className="text-muted-foreground">任务状态：</span>
+                <span>
+                  <Badge variant={showTaskDetail.status === "failed" ? "destructive" : showTaskDetail.status === "installing" ? "outline" : "default"} className="text-[10px]">
+                    {showTaskDetail.status === "success" ? "完成" : showTaskDetail.status === "installing" ? "安装中" : showTaskDetail.status === "failed" ? "失败" : "等待"}
+                  </Badge>
+                </span>
+                <span className="text-muted-foreground">创建时间：</span><span className="font-mono text-xs">{showTaskDetail.createdAt}</span>
+                <span className="text-muted-foreground">完成时间：</span><span className="font-mono text-xs">{showTaskDetail.completedAt ?? "-"}</span>
+              </div>
               <div className="border rounded-lg">
+                <div className="px-3 py-2 border-b text-sm font-medium bg-muted/30">设备明细</div>
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>节点</TableHead>
                       <TableHead>设备ID</TableHead>
+                      <TableHead>设备名称</TableHead>
                       <TableHead>状态</TableHead>
                       <TableHead>消息</TableHead>
+                      <TableHead>概要描述</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
+                    {showTaskDetail.details.length === 0 && (
+                      <TableRow><TableCell colSpan={6} className="text-center py-6 text-xs text-muted-foreground">暂无明细</TableCell></TableRow>
+                    )}
                     {showTaskDetail.details.map(d => (
                       <TableRow key={d.deviceId}>
+                        <TableCell className="text-xs">{d.node}</TableCell>
                         <TableCell className="font-mono text-xs">{d.deviceId}</TableCell>
+                        <TableCell className="text-xs">{d.deviceName}</TableCell>
                         <TableCell>
                           {d.status === "success" && <CheckCircle className="h-4 w-4 text-success" />}
                           {d.status === "failed" && <XCircle className="h-4 w-4 text-destructive" />}
@@ -619,6 +639,7 @@ export default function AppManagement() {
                           {d.status === "pending" && <Clock className="h-4 w-4 text-muted-foreground" />}
                         </TableCell>
                         <TableCell className="text-xs">{d.message}</TableCell>
+                        <TableCell className="text-xs">{d.summary}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -626,6 +647,30 @@ export default function AppManagement() {
               </div>
             </div>
           )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowTaskDetail(null)}>关闭</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 删除任务确认 */}
+      <Dialog open={!!deleteTask} onOpenChange={(o) => !o && setDeleteTask(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>确认删除</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-start gap-3 py-2">
+            <AlertCircle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+            <p className="text-sm text-muted-foreground">确定要删除安装任务吗？将同时删除该任务下的所有明细记录。</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTask(null)}>取消</Button>
+            <Button onClick={() => {
+              if (deleteTask) setInstallTasks(prev => prev.filter(t => t.id !== deleteTask.id));
+              toast({ title: "已删除", description: "安装任务已删除" });
+              setDeleteTask(null);
+            }}>删除</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
