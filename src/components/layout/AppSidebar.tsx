@@ -19,7 +19,7 @@ const topItem: Item = { title: "控制台", url: "/", icon: LayoutDashboard };
 
 const groups: Group[] = [
   {
-    label: "云资源中台", icon: Monitor,
+    label: "云资源管理", icon: Monitor,
     items: [
       { title: "虚拟机管理", url: "/devices/virtual", icon: Cpu },
       { title: "镜像实例", url: "/devices/clouddrive", icon: CloudCog },
@@ -29,7 +29,7 @@ const groups: Group[] = [
     ],
   },
   {
-    label: "设备资源中台", icon: Server,
+    label: "设备资源管理", icon: Server,
     items: [
       { title: "主机管理", url: "/devices/servers", icon: Database },
       { title: "ARM板卡", url: "/devices/boardcards", icon: CircuitBoard },
