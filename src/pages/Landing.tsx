@@ -80,6 +80,7 @@ export default function Landing() {
       <footer className="text-center py-6 text-sm text-muted-foreground border-t border-border/40">
         © 2026 Matrix Device · 矩阵设备服务平台
       </footer>
+      </div>
     </div>
   );
 }
