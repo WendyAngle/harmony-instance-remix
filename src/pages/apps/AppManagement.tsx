@@ -63,6 +63,7 @@ export type InstallTaskStatus = "pending" | "installing" | "success" | "failed";
 interface InstallTask {
   id: string;
   apkName: string;
+  packageName: string;
   apkVersion: string;
   targetDevices: string[];
   totalCount: number;
@@ -71,30 +72,25 @@ interface InstallTask {
   status: InstallTaskStatus;
   createdAt: string;
   completedAt: string | null;
-  details: { deviceId: string; status: InstallTaskStatus; message: string }[];
+  details: { node: string; deviceId: string; deviceName: string; status: InstallTaskStatus; message: string; summary: string }[];
 }
 
-const installTasks: InstallTask[] = [
-  {
-    id: "INST-001", apkName: "TikTok", apkVersion: "33.5.4", targetDevices: ["VM-001", "VM-002", "VM-003", "VM-004", "VM-005"],
-    totalCount: 5, successCount: 4, failedCount: 1, status: "success", createdAt: "2026-04-01 15:00", completedAt: "2026-04-01 15:12",
-    details: [
-      { deviceId: "VM-001", status: "success", message: "安装完成" },
-      { deviceId: "VM-002", status: "success", message: "安装完成" },
-      { deviceId: "VM-003", status: "success", message: "安装完成" },
-      { deviceId: "VM-004", status: "success", message: "安装完成" },
-      { deviceId: "VM-005", status: "failed", message: "设备离线" },
-    ],
-  },
-  {
-    id: "INST-002", apkName: "WhatsApp", apkVersion: "2.24.8.10", targetDevices: ["VM-001", "VM-002", "VM-008"],
-    totalCount: 3, successCount: 1, failedCount: 0, status: "installing", createdAt: "2026-04-02 10:30", completedAt: null,
-    details: [
-      { deviceId: "VM-001", status: "success", message: "安装完成" },
-      { deviceId: "VM-002", status: "installing", message: "安装中..." },
-      { deviceId: "VM-008", status: "pending", message: "等待中" },
-    ],
-  },
+const installTasksSeed: InstallTask[] = [
+  { id: "e03b6b9c81084458a0f8c3a49f1c3580", apkName: "tk", packageName: "tiktok-45-3-3 (1)", apkVersion: "45.3.3", targetDevices: [], totalCount: 1, successCount: 1, failedCount: 0, status: "success", createdAt: "2026-06-25 14:44:14", completedAt: "2026-06-25 14:45:36", details: [{ node: "yaan-test-01", deviceId: "2059591332533673985", deviceName: "test-1-14-i2 测试-1-14-i2", status: "success", message: "-", summary: "ok 好的" }] },
+  { id: "9e8e7dc2d2ea42fab32517e8a13ac4c4", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 2, successCount: 2, failedCount: 0, status: "success", createdAt: "2026-06-04 16:35:05", completedAt: "2026-06-04 16:37:10", details: [{ node: "yaan-test-01", deviceId: "2059591332533673986", deviceName: "test-1-15-i2", status: "success", message: "-", summary: "ok" }, { node: "yaan-test-01", deviceId: "2059591332533673987", deviceName: "test-1-16-i2", status: "success", message: "-", summary: "ok" }] },
+  { id: "79811ec0f70448e8ab0ceadea31f533f", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 3, successCount: 3, failedCount: 0, status: "success", createdAt: "2026-06-04 14:07:28", completedAt: "2026-06-04 14:10:00", details: [] },
+  { id: "2aa386f61f43454c88c2d484605c26f1", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 2, successCount: 2, failedCount: 0, status: "success", createdAt: "2026-06-03 18:33:57", completedAt: "2026-06-03 18:35:00", details: [] },
+  { id: "84183c3a67784bbf89abd51835d42e50", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 1, successCount: 1, failedCount: 0, status: "success", createdAt: "2026-06-03 18:28:04", completedAt: "2026-06-03 18:29:00", details: [] },
+  { id: "2d1cd7ad55864bd09120f8a0a34d78ec", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 9, successCount: 9, failedCount: 0, status: "success", createdAt: "2026-06-03 11:02:16", completedAt: "2026-06-03 11:12:00", details: [] },
+  { id: "224fbb0cf3a54a499d12372ec680b936", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 57, successCount: 40, failedCount: 17, status: "success", createdAt: "2026-06-02 15:31:33", completedAt: "2026-06-02 16:20:00", details: [] },
+  { id: "db956ee436f040b5b5af7c6d14882ae8", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 3, successCount: 1, failedCount: 2, status: "success", createdAt: "2026-06-01 17:49:18", completedAt: "2026-06-01 17:52:00", details: [] },
+  { id: "5ba73f96a9654e11915e19e25c66c78e", apkName: "tk", packageName: "tiktok-45-3-3 (1)", apkVersion: "45.3.3", targetDevices: [], totalCount: 3, successCount: 0, failedCount: 3, status: "failed", createdAt: "2026-06-01 17:37:15", completedAt: "2026-06-01 17:40:00", details: [] },
+  { id: "af7227a03a0948b0a9a55eb183772a77", apkName: "tk", packageName: "tiktok-44.5.3 抖音-44.5.3", apkVersion: "44.5.3", targetDevices: [], totalCount: 3, successCount: 0, failedCount: 3, status: "failed", createdAt: "2026-06-01 17:32:02", completedAt: "2026-06-01 17:35:00", details: [] },
+  { id: "a888e51bb5864700882c04c228663e42", apkName: "tiktok", packageName: "-", apkVersion: "45.4.1", targetDevices: [], totalCount: 3, successCount: 0, failedCount: 3, status: "failed", createdAt: "2026-06-01 16:46:59", completedAt: "2026-06-01 16:50:00", details: [] },
+  { id: "1a053f3eafad4b259c59474bd174d4a7", apkName: "tiktok", packageName: "-", apkVersion: "1.0.0", targetDevices: [], totalCount: 62, successCount: 54, failedCount: 8, status: "success", createdAt: "2026-06-01 16:16:44", completedAt: "2026-06-01 17:00:00", details: [] },
+  { id: "6211ea160d2349f99441b02dceb9da4f", apkName: "xiaohongshu 小红书", packageName: "com.xingin.xhs", apkVersion: "8.6", targetDevices: [], totalCount: 1, successCount: 1, failedCount: 0, status: "success", createdAt: "2026-05-25 13:53:48", completedAt: "2026-05-25 13:55:00", details: [] },
+  { id: "3f2c1e9b48a24d8ea87e2b4f9c1a5d67", apkName: "tk", packageName: "tiktok-45-3-3 (1)", apkVersion: "45.3.3", targetDevices: [], totalCount: 5, successCount: 5, failedCount: 0, status: "success", createdAt: "2026-05-20 10:20:10", completedAt: "2026-05-20 10:25:00", details: [] },
+  { id: "b74a91d582e34c7bb0198f6d3c48a2ef", apkName: "tiktok", packageName: "com.zhiliaoapp.musically", apkVersion: "45.4.3", targetDevices: [], totalCount: 4, successCount: 4, failedCount: 0, status: "success", createdAt: "2026-05-18 09:14:22", completedAt: "2026-05-18 09:16:00", details: [] },
 ];
 
 const PAGE_SIZES = [10, 20, 50];
