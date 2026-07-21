@@ -175,24 +175,63 @@ export default function AppManagement() {
           <h1 className="text-2xl font-bold">应用管理</h1>
           <p className="text-sm text-muted-foreground mt-1">管理 Android 云机上运行的 APK 安装包</p>
         </div>
-        <Button onClick={() => setShowUpload(true)}>
-          <Plus className="h-4 w-4 mr-1" />
-          上传 APK
-        </Button>
       </div>
 
       <Tabs defaultValue="packages">
         <TabsList>
           <TabsTrigger value="packages">安装包列表</TabsTrigger>
           <TabsTrigger value="tasks">安装任务</TabsTrigger>
+          <TabsTrigger value="uninstall">卸载任务</TabsTrigger>
         </TabsList>
 
         {/* 安装包列表 */}
         <TabsContent value="packages" className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input placeholder="搜索应用名称或包名..." className="pl-8 h-8 text-xs" value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} />
+          {/* Filter bar */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex flex-wrap items-end gap-4">
+                <div className="space-y-1.5 flex-1 min-w-[240px]">
+                  <Label className="text-xs text-muted-foreground">搜索</Label>
+                  <Input placeholder="请输入应用名称/包名搜索" value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} />
+                </div>
+                <div className="space-y-1.5 w-64">
+                  <Label className="text-xs text-muted-foreground">状态筛选</Label>
+                  <Select value={statusFilter} onValueChange={v => { setStatusFilter(v as typeof statusFilter); setCurrentPage(1); }}>
+                    <SelectTrigger><SelectValue placeholder="状态" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">全部</SelectItem>
+                      <SelectItem value="active">活跃</SelectItem>
+                      <SelectItem value="deprecated">已废弃</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-2 ml-auto">
+                  <Button onClick={() => setCurrentPage(1)} className="gap-1"><Search className="w-4 h-4" />搜索</Button>
+                  <Button variant="outline" onClick={resetFilters} className="gap-1"><RotateCw className="w-4 h-4" />重置</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-2">
+            <Button onClick={() => setShowUpload(true)} className="gap-1">
+              <Upload className="w-4 h-4" />上传 APK
+            </Button>
+            <Button variant="outline" onClick={() => setShowUploadTasks(true)} className="gap-1">
+              <Clock className="w-4 h-4" />上传进度
+            </Button>
+            <Button
+              variant="outline"
+              disabled={selectedApks.length === 0}
+              onClick={() => setBatchUninstallConfirm(true)}
+              className="gap-1 text-destructive hover:text-destructive disabled:opacity-50"
+            >
+              <Trash2 className="w-4 h-4" />批量卸载APK（{selectedApks.length}）
+            </Button>
+            <div className="ml-auto flex gap-1">
+              <Button variant="outline" size="icon" className="h-9 w-9"><RotateCw className="w-4 h-4" /></Button>
+              <Button variant="outline" size="icon" className="h-9 w-9"><Search className="w-4 h-4" /></Button>
             </div>
           </div>
 
@@ -200,57 +239,81 @@ export default function AppManagement() {
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                 <TableRow>
-                     <TableHead>应用</TableHead>
-                     <TableHead>包名</TableHead>
-                     <TableHead>版本</TableHead>
-                     <TableHead>版本说明</TableHead>
-                     <TableHead>大小</TableHead>
-                     <TableHead>兼容 Android</TableHead>
-                     <TableHead>安装覆盖</TableHead>
-                     <TableHead>上传时间</TableHead>
-                     <TableHead>上传者</TableHead>
-                     <TableHead>状态</TableHead>
-                     <TableHead>操作</TableHead>
-                   </TableRow>
+                  <TableRow className="bg-muted/40">
+                    <TableHead className="w-10">
+                      <Checkbox
+                        checked={pagedApks.length > 0 && pagedApks.every(a => selectedApks.includes(a.id))}
+                        onCheckedChange={toggleAllApks}
+                      />
+                    </TableHead>
+                    <TableHead className="w-14">#</TableHead>
+                    <TableHead>应用ID</TableHead>
+                    <TableHead>应用</TableHead>
+                    <TableHead>包名</TableHead>
+                    <TableHead>版本</TableHead>
+                    <TableHead>版本说明</TableHead>
+                    <TableHead>大小</TableHead>
+                    <TableHead>最低ANDROID版本</TableHead>
+                    <TableHead className="text-center">操作</TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pagedApks.map(apk => (
-                    <TableRow key={apk.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">{apk.icon}</span>
-                          <span className="font-medium text-sm">{apk.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-mono text-xs text-muted-foreground">{apk.packageName}</TableCell>
-                      <TableCell className="font-mono text-xs">{apk.version}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{apk.versionNote}</TableCell>
-                      <TableCell className="text-xs">{apk.size}</TableCell>
-                      <TableCell className="text-xs">{apk.minAndroid}+</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Progress value={(apk.installedCount / apk.totalDevices) * 100} className="h-1.5 w-16" />
-                          <span className="text-xs text-muted-foreground">{apk.installedCount}/{apk.totalDevices}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{apk.uploadedAt}</TableCell>
-                      <TableCell className="text-xs">{apk.uploadedBy}</TableCell>
-                      <TableCell>
-                        <Badge variant={apk.status === "active" ? "default" : "secondary"} className="text-[10px]">
-                          {apk.status === "active" ? "活跃" : "已废弃"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => { setShowBatchInstall(apk); setSelectedDevices([]); }} disabled={apk.status === "deprecated"}>
-                            <Download className="h-3 w-3 mr-1" />
-                            批量安装/更新
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {pagedApks.map((apk, idx) => {
+                    const deprecated = apk.status === "deprecated";
+                    return (
+                      <TableRow key={apk.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedApks.includes(apk.id)}
+                            onCheckedChange={() => toggleApk(apk.id)}
+                          />
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{(currentPage - 1) * pageSize + idx + 1}</TableCell>
+                        <TableCell className="font-mono text-xs">{apkAppIds[apk.id] ?? apk.id}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-2">
+                            <span className="text-lg">{apk.icon}</span>
+                            <span className="text-sm">{apk.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground">{apk.packageName}</TableCell>
+                        <TableCell className="font-mono text-xs">{apk.version}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground max-w-[180px] truncate">{apk.versionNote || "-"}</TableCell>
+                        <TableCell className="text-xs">{apk.size}</TableCell>
+                        <TableCell className="text-xs">{apk.minAndroid}+</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-3 text-xs whitespace-nowrap">
+                            <button className="inline-flex items-center gap-1 text-primary hover:underline" onClick={() => { setUploadToNode(apk); setSelectedNodeId(""); }}>
+                              <Share2 className="w-3 h-3" />上传到节点
+                            </button>
+                            <button className="inline-flex items-center gap-1 text-primary hover:underline disabled:opacity-40" disabled={deprecated} onClick={() => { setShowBatchInstall(apk); setSelectedDevices([]); }}>
+                              <Download className="w-3 h-3" />批量安装
+                            </button>
+                            <button
+                              className="inline-flex items-center gap-1 text-destructive hover:underline disabled:opacity-40"
+                              disabled={deprecated || apk.installedCount === 0}
+                              onClick={() => { setSingleUninstall(apk); setSingleUninstallSelected([]); }}
+                            >
+                              <Trash2 className="w-3 h-3" />批量卸载
+                            </button>
+                            <button
+                              className="text-muted-foreground hover:text-foreground hover:underline disabled:opacity-40"
+                              disabled={deprecated}
+                              onClick={() => setDeprecateTarget(apk)}
+                            >
+                              废弃
+                            </button>
+                            <button className="inline-flex items-center gap-1 text-destructive hover:underline" onClick={() => setDeleteTarget(apk)}>
+                              <Trash2 className="w-3 h-3" />删除
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {pagedApks.length === 0 && (
+                    <TableRow><TableCell colSpan={10} className="text-center text-muted-foreground py-10">暂无数据</TableCell></TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
