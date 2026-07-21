@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Eye, ListOrdered, X, RotateCw, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Eye, ListOrdered, X, RotateCw, Search, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 type SessionStatus = "open_success" | "closed";
 
@@ -193,6 +195,8 @@ export default function ProxySessions() {
   const [pageSize, setPageSize] = useState(25);
   const [detailSession, setDetailSession] = useState<ProxySession | null>(null);
   const [eventsSession, setEventsSession] = useState<ProxySession | null>(null);
+  const [closeTarget, setCloseTarget] = useState<ProxySession | null>(null);
+  const [closedIds, setClosedIds] = useState<Set<string>>(new Set());
 
   const filtered = useMemo(() => {
     return MOCK_SESSIONS.filter((s) => {
@@ -214,8 +218,14 @@ export default function ProxySessions() {
   };
 
   const handleClose = (s: ProxySession) => {
-    // mock action; no state mutation for placeholder session data
-    console.log("close session", s.requestId);
+    setCloseTarget(s);
+  };
+
+  const confirmClose = () => {
+    if (!closeTarget) return;
+    setClosedIds((prev) => new Set(prev).add(closeTarget.requestId));
+    toast({ title: "代理会话已关闭" });
+    setCloseTarget(null);
   };
 
   return (
@@ -316,7 +326,7 @@ export default function ProxySessions() {
                           >
                             <ListOrdered className="w-3.5 h-3.5" />事件
                           </button>
-                          {s.status === "open_success" && (
+                          {s.status === "open_success" && !closedIds.has(s.requestId) && (
                             <button
                               className="inline-flex items-center gap-1 text-destructive hover:underline"
                               onClick={() => handleClose(s)}
@@ -435,6 +445,23 @@ export default function ProxySessions() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Close confirm dialog */}
+      <Dialog open={!!closeTarget} onOpenChange={(o) => !o && setCloseTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>提示</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-start gap-3 py-2 text-sm">
+            <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+            <div>确定要关闭该代理会话吗?</div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCloseTarget(null)}>取消</Button>
+            <Button onClick={confirmClose}>确定</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
