@@ -1,5 +1,6 @@
-import { ArrowRight, Layers, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Layers, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const LOGIN_URL = "http://172.30.11.151/login";
 
@@ -11,6 +12,7 @@ const stats = [
 ];
 
 export default function Landing() {
+  const navigate = useNavigate();
   const goLogin = () => {
     window.location.href = LOGIN_URL;
   };
@@ -77,8 +79,16 @@ export default function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-6 text-sm text-muted-foreground border-t border-border/40">
-        © 2026 Matrix Device · 矩阵设备服务平台
+      <footer className="relative py-6 px-8 md:px-16 text-sm text-muted-foreground border-t border-border/40">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate("/new-dashboard")}
+          className="absolute left-8 md:left-16 top-1/2 -translate-y-1/2 rounded-full"
+        >
+          <ArrowLeft className="mr-1 h-4 w-4" /> 返回
+        </Button>
+        <div className="text-center">© 2026 Matrix Device · 矩阵设备服务平台</div>
       </footer>
       </div>
     </div>
